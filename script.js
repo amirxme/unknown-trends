@@ -1,13 +1,28 @@
-const searchInput = document.getElementById("searchInput");
-const searchButton = document.getElementById("searchButton");
-const trendList = document.getElementById("trendList");
+const searchInput =
+  document.getElementById("searchInput");
 
-const platformButtons = document.querySelectorAll(".platform");
+const searchButton =
+  document.getElementById("searchButton");
 
-const exploreInput = document.getElementById("exploreInput");
-const exploreResults = document.getElementById("exploreResults");
-const exploreFilters = document.querySelectorAll(".explore-filter");
-const exploreCount = document.getElementById("exploreCount");
+const trendList =
+  document.getElementById("trendList");
+
+const platformButtons =
+  document.querySelectorAll(".platform");
+
+
+const exploreInput =
+  document.getElementById("exploreInput");
+
+const exploreResults =
+  document.getElementById("exploreResults");
+
+const exploreFilters =
+  document.querySelectorAll(".explore-filter");
+
+const exploreCount =
+  document.getElementById("exploreCount");
+
 
 let trends = [];
 
@@ -20,26 +35,43 @@ let activeExploreFilter = "all";
 ========================= */
 
 function renderTrends(items) {
+
+  if (!trendList) {
+    return;
+  }
+
   trendList.innerHTML = "";
 
   if (items.length === 0) {
+
     trendList.innerHTML = `
       <div class="trend">
+
         <div></div>
 
         <div class="trend-main">
-          <h3>No signals found</h3>
-          <p>Try another search or platform.</p>
+
+          <h3>
+            No signals found
+          </h3>
+
+          <p>
+            Try another search or platform.
+          </p>
+
         </div>
 
         <strong>—</strong>
+
       </div>
     `;
 
     return;
   }
 
+
   const topTrend = items[0];
+
 
   const momentum =
     Math.max(
@@ -50,6 +82,7 @@ function renderTrends(items) {
       )
     );
 
+
   const momentumLabel =
     momentum >= 70
       ? "HIGH MOMENTUM"
@@ -57,15 +90,21 @@ function renderTrends(items) {
         ? "RISING MOMENTUM"
         : "LOW MOMENTUM";
 
-  const momentumIndex = document.createElement("section");
+
+  const momentumIndex =
+    document.createElement("section");
+
 
   momentumIndex.className =
     "momentum-index";
 
+
   momentumIndex.innerHTML = `
+
     <div class="momentum-index-head">
 
       <div>
+
         <p class="eyebrow">
           MOMENTUM INDEX
         </p>
@@ -74,6 +113,7 @@ function renderTrends(items) {
           ${momentum}
           <span>/100</span>
         </h2>
+
       </div>
 
       <span class="momentum-index-status">
@@ -82,9 +122,11 @@ function renderTrends(items) {
 
     </div>
 
+
     <div class="momentum-index-main">
 
       <div>
+
         <strong>
           ${topTrend.title}
         </strong>
@@ -94,17 +136,23 @@ function renderTrends(items) {
           ·
           ${topTrend.velocity}
         </span>
+
       </div>
 
+
       <div class="momentum-index-bar">
+
         <div
           class="momentum-index-fill"
           style="width: ${momentum}%"
         ></div>
+
       </div>
 
     </div>
+
   `;
+
 
   momentumIndex.addEventListener(
     "click",
@@ -113,15 +161,24 @@ function renderTrends(items) {
     }
   );
 
-  trendList.appendChild(momentumIndex);
 
-  const ranking = document.createElement("section");
+  trendList.appendChild(
+    momentumIndex
+  );
+
+
+  const ranking =
+    document.createElement("section");
+
 
   ranking.className =
     "momentum-ranking";
 
+
   ranking.innerHTML = `
+
     <div class="momentum-ranking-head">
+
       <p class="eyebrow">
         MOMENTUM RANKING
       </p>
@@ -129,17 +186,23 @@ function renderTrends(items) {
       <span>
         TOP ${Math.min(5, items.length)}
       </span>
+
     </div>
+
   `;
+
 
   items
     .slice(0, 5)
     .forEach((trend, index) => {
+
       const row =
         document.createElement("article");
 
+
       row.className =
         "momentum-ranking-row";
+
 
       const score =
         Math.max(
@@ -150,12 +213,16 @@ function renderTrends(items) {
           )
         );
 
+
       row.innerHTML = `
+
         <span class="momentum-ranking-rank">
           ${String(index + 1).padStart(2, "0")}
         </span>
 
+
         <div class="momentum-ranking-main">
+
           <strong>
             ${trend.title}
           </strong>
@@ -165,12 +232,16 @@ function renderTrends(items) {
             ·
             ${trend.velocity}
           </span>
+
         </div>
+
 
         <strong class="momentum-ranking-score">
           ${score}
         </strong>
+
       `;
+
 
       row.addEventListener(
         "click",
@@ -179,33 +250,53 @@ function renderTrends(items) {
         }
       );
 
+
       ranking.appendChild(row);
+
     });
 
-  trendList.appendChild(ranking);
+
+  trendList.appendChild(
+    ranking
+  );
+
 
   items.forEach((trend, index) => {
+
     const article =
       document.createElement("article");
 
-    article.className = "trend";
+
+    article.className =
+      "trend";
+
 
     article.innerHTML = `
+
       <span class="rank">
         ${String(index + 1).padStart(2, "0")}
       </span>
 
+
       <div class="trend-main">
-        <h3>${trend.title}</h3>
+
+        <h3>
+          ${trend.title}
+        </h3>
+
         <p>
           ${trend.platforms.join(" · ")}
         </p>
+
       </div>
+
 
       <strong>
         ${trend.growth}
       </strong>
+
     `;
+
 
     article.addEventListener(
       "click",
@@ -214,32 +305,65 @@ function renderTrends(items) {
       }
     );
 
-    trendList.appendChild(article);
+
+    trendList.appendChild(
+      article
+    );
+
   });
+
 }
 
 
+/* =========================
+   FILTER TRENDS
+========================= */
+
 function filterTrends() {
-  const query = searchInput.value.trim().toLowerCase();
 
-  const filtered = trends.filter((trend) => {
-    const matchesPlatform =
-      activePlatform === "all" ||
-      trend.platforms.some(
-        (platform) =>
-          platform.toLowerCase() === activePlatform.toLowerCase()
+  if (!trendList) {
+    return;
+  }
+
+
+  const query =
+    searchInput
+      ? searchInput.value.trim().toLowerCase()
+      : "";
+
+
+  const filtered =
+    trends.filter((trend) => {
+
+      const matchesPlatform =
+        activePlatform === "all" ||
+        trend.platforms.some(
+          (platform) =>
+            platform.toLowerCase() ===
+            activePlatform.toLowerCase()
+        );
+
+
+      const matchesSearch =
+        !query ||
+        trend.title
+          .toLowerCase()
+          .includes(query) ||
+        trend.platforms.some(
+          (platform) =>
+            platform
+              .toLowerCase()
+              .includes(query)
+        );
+
+
+      return (
+        matchesPlatform &&
+        matchesSearch
       );
 
-    const matchesSearch =
-      !query ||
-      trend.title.toLowerCase().includes(query) ||
-      trend.platforms.some(
-        (platform) =>
-          platform.toLowerCase().includes(query)
-      );
+    });
 
-    return matchesPlatform && matchesSearch;
-  });
 
   renderTrends(filtered);
 }
@@ -249,39 +373,65 @@ function filterTrends() {
    SIGNAL GRAPH
 ========================= */
 
-function createSignalGraph(signalBreakdown) {
+function createSignalGraph(
+  signalBreakdown
+) {
+
   const width = 700;
   const height = 180;
   const padding = 10;
 
-  const values = signalBreakdown || [0, 0, 0, 0];
+
+  const values =
+    signalBreakdown ||
+    [0, 0, 0, 0];
+
 
   const min = 0;
   const max = 100;
   const range = max - min;
 
-  const points = values.map((value, index) => {
-    const x =
-      padding +
-      (index / (values.length - 1)) *
-        (width - padding * 2);
 
-    const y =
-      height -
-      padding -
-      ((value - min) / range) *
-        (height - padding * 2);
+  const points =
+    values.map((value, index) => {
 
-    return `${x},${y}`;
-  });
+      const x =
+        values.length === 1
+          ? width / 2
+          : padding +
+            (index /
+              (values.length - 1)) *
+            (width - padding * 2);
+
+
+      const y =
+        height -
+        padding -
+        ((value - min) / range) *
+          (height - padding * 2);
+
+
+      return `${x},${y}`;
+
+    });
+
 
   return `
+
     <div class="signal-graph">
 
       <div class="graph-head">
-        <span>SIGNAL COMPOSITION</span>
-        <span>0 — 100</span>
+
+        <span>
+          SIGNAL COMPOSITION
+        </span>
+
+        <span>
+          0 — 100
+        </span>
+
       </div>
+
 
       <svg
         viewBox="0 0 ${width} ${height}"
@@ -320,14 +470,29 @@ function createSignalGraph(signalBreakdown) {
 
       </svg>
 
+
       <div class="graph-labels">
-        <span>COVERAGE</span>
-        <span>VOLUME</span>
-        <span>POSITION</span>
-        <span>SIGNAL</span>
+
+        <span>
+          COVERAGE
+        </span>
+
+        <span>
+          VOLUME
+        </span>
+
+        <span>
+          POSITION
+        </span>
+
+        <span>
+          SIGNAL
+        </span>
+
       </div>
 
     </div>
+
   `;
 }
 
@@ -336,70 +501,133 @@ function createSignalGraph(signalBreakdown) {
    HISTORICAL SIGNAL GRAPH
 ========================= */
 
-function createHistoryGraph(history) {
-  if (!history || history.length === 0) {
+function createHistoryGraph(
+  history
+) {
+
+  if (
+    !history ||
+    history.length === 0
+  ) {
+
     return `
+
       <div class="signal-graph">
+
         <div class="graph-head">
-          <span>HISTORICAL SIGNAL</span>
-          <span>NO DATA</span>
+
+          <span>
+            HISTORICAL SIGNAL
+          </span>
+
+          <span>
+            NO DATA
+          </span>
+
         </div>
 
-        <p style="margin:16px 0 0; opacity:.55;">
-          Historical snapshots will appear here as the system collects them.
+
+        <p
+          style="margin:16px 0 0; opacity:.55;"
+        >
+          Historical snapshots will appear here
+          as the system collects them.
         </p>
+
       </div>
+
     `;
+
   }
+
 
   const width = 700;
   const height = 180;
   const padding = 10;
 
-  const values = history.map((item) =>
-    Number(item.global_score) || 0
-  );
 
-  const points = values.map((value, index) => {
-    const x =
-      values.length === 1
-        ? width / 2
-        : padding +
-          (index / (values.length - 1)) *
-            (width - padding * 2);
+  const values =
+    history.map(
+      (item) =>
+        Number(item.global_score) || 0
+    );
 
-    const y =
-      height -
-      padding -
-      (value / 100) *
-        (height - padding * 2);
 
-    return `${x},${y}`;
-  });
+  const points =
+    values.map(
+      (value, index) => {
 
-  const first = values[0];
-  const last = values[values.length - 1];
-  const change = last - first;
+        const x =
+          values.length === 1
+            ? width / 2
+            : padding +
+              (index /
+                (values.length - 1)) *
+              (width - padding * 2);
+
+
+        const y =
+          height -
+          padding -
+          (value / 100) *
+            (height - padding * 2);
+
+
+        return `${x},${y}`;
+
+      }
+    );
+
+
+  const first =
+    values[0];
+
+
+  const last =
+    values[values.length - 1];
+
+
+  const change =
+    last - first;
+
 
   const changeLabel =
     change > 0
       ? `+${change}`
       : `${change}`;
 
-  const timestamps = history.map((item) =>
-    new Date(item.captured_at).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
-    })
-  );
+
+  const timestamps =
+    history.map(
+      (item) =>
+        new Date(
+          item.captured_at
+        ).toLocaleTimeString(
+          [],
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        )
+    );
+
 
   return `
+
     <div class="signal-graph">
 
       <div class="graph-head">
-        <span>HISTORICAL SIGNAL</span>
-        <span>${changeLabel} SCORE</span>
+
+        <span>
+          HISTORICAL SIGNAL
+        </span>
+
+        <span>
+          ${changeLabel} SCORE
+        </span>
+
       </div>
+
 
       <svg
         viewBox="0 0 ${width} ${height}"
@@ -438,13 +666,31 @@ function createHistoryGraph(history) {
 
       </svg>
 
+
       <div class="graph-labels">
-        <span>${timestamps[0]}</span>
-        <span>${timestamps[Math.floor(timestamps.length / 2)] || ""}</span>
-        <span>${timestamps[timestamps.length - 1]}</span>
+
+        <span>
+          ${timestamps[0]}
+        </span>
+
+        <span>
+          ${timestamps[
+            Math.floor(
+              timestamps.length / 2
+            )
+          ] || ""}
+        </span>
+
+        <span>
+          ${timestamps[
+            timestamps.length - 1
+          ]}
+        </span>
+
       </div>
 
     </div>
+
   `;
 }
 
@@ -453,23 +699,43 @@ function createHistoryGraph(history) {
    LOAD HISTORY
 ========================= */
 
-async function loadHistory(title) {
+async function loadHistory(
+  title
+) {
+
   try {
-    const response = await fetch(
-      `/api/history?title=${encodeURIComponent(title)}`
-    );
+
+    const response =
+      await fetch(
+        `/api/history?title=${encodeURIComponent(title)}`
+      );
+
 
     if (!response.ok) {
-      throw new Error("Failed to load history");
+      throw new Error(
+        "Failed to load history"
+      );
     }
 
-    const data = await response.json();
+
+    const data =
+      await response.json();
+
 
     return data.history || [];
+
   } catch (error) {
-    console.error("UNKNOWN history error:", error);
+
+    console.error(
+      "UNKNOWN history error:",
+      error
+    );
+
+
     return [];
+
   }
+
 }
 
 
@@ -477,7 +743,15 @@ async function loadHistory(title) {
    TREND DETAIL
 ========================= */
 
-async function openTrend(trend) {
+async function openTrend(
+  trend
+) {
+
+  if (!trendList) {
+    return;
+  }
+
+
   const confidence =
     Math.max(
       0,
@@ -486,6 +760,7 @@ async function openTrend(trend) {
         Number(trend.confidenceScore) || 0
       )
     );
+
 
   const momentum =
     Math.max(
@@ -496,200 +771,380 @@ async function openTrend(trend) {
       )
     );
 
-  let confidenceLabel = "LOW CONFIDENCE";
+
+  let confidenceLabel =
+    "LOW CONFIDENCE";
+
 
   if (confidence >= 75) {
-    confidenceLabel = "HIGH CONFIDENCE";
+
+    confidenceLabel =
+      "HIGH CONFIDENCE";
+
   } else if (confidence >= 50) {
-    confidenceLabel = "MEDIUM CONFIDENCE";
+
+    confidenceLabel =
+      "MEDIUM CONFIDENCE";
+
   }
 
+
   trendList.innerHTML = `
+
     <article class="trend-detail">
 
-      <button class="back-button" id="backButton">
+      <button
+        class="back-button"
+        id="backButton"
+      >
         ← BACK TO TRENDS
       </button>
 
-      <p class="eyebrow">SIGNAL</p>
 
-      <h2>${trend.title}</h2>
+      <p class="eyebrow">
+        SIGNAL
+      </p>
+
+
+      <h2>
+        ${trend.title}
+      </h2>
+
 
       <div class="detail-meta">
 
         <span>
+
           SCORE
-          <strong>${trend.growth}</strong>
+
+          <strong>
+            ${trend.growth}
+          </strong>
+
         </span>
 
+
         <span>
+
           MOMENTUM
-          <strong>${momentum}/100</strong>
+
+          <strong>
+            ${momentum}/100
+          </strong>
+
 
           <div class="momentum-meter">
+
             <div
               class="momentum-meter-fill"
               style="width: ${momentum}%"
             ></div>
+
           </div>
+
 
           <small class="momentum-status">
             ${trend.status}
           </small>
+
         </span>
 
       </div>
 
+
       <div class="detail-meta">
 
         <span>
+
           CONFIDENCE
-          <strong>${confidence}%</strong>
+
+          <strong>
+            ${confidence}%
+          </strong>
+
 
           <div class="momentum-meter">
+
             <div
               class="momentum-meter-fill"
               style="width: ${confidence}%"
             ></div>
+
           </div>
 
+
           <small class="momentum-status">
-            ${confidenceLabel} · ${trend.historyCount} HISTORICAL SNAPSHOT${trend.historyCount === 1 ? "" : "S"}
+
+            ${confidenceLabel}
+            ·
+            ${trend.historyCount}
+            HISTORICAL SNAPSHOT${trend.historyCount === 1 ? "" : "S"}
+
           </small>
+
         </span>
 
+
         <span>
+
           STATUS
-          <strong>${trend.status}</strong>
+
+          <strong>
+            ${trend.status}
+          </strong>
+
         </span>
 
       </div>
 
+
       <div class="detail-meta">
 
         <span>
+
           VELOCITY
-          <strong>${trend.velocity}</strong>
+
+          <strong>
+            ${trend.velocity}
+          </strong>
+
         </span>
 
+
         <span>
+
           MENTIONS
-          <strong>${trend.mentions}</strong>
+
+          <strong>
+            ${trend.mentions}
+          </strong>
+
         </span>
 
       </div>
+
 
       <div class="detail-meta">
 
         <span>
+
           SIGNAL
-          <strong>${trend.signal}</strong>
+
+          <strong>
+            ${trend.signal}
+          </strong>
+
         </span>
 
+
         <span>
+
           HISTORY
-          <strong>${trend.historyCount}</strong>
+
+          <strong>
+            ${trend.historyCount}
+          </strong>
+
         </span>
 
       </div>
 
-      ${createSignalGraph(trend.signalBreakdown)}
+
+      ${createSignalGraph(
+        trend.signalBreakdown
+      )}
+
 
       <div id="trendHistory">
 
         <div class="signal-graph">
+
           <div class="graph-head">
-            <span>HISTORICAL SIGNAL</span>
-            <span>LOADING</span>
+
+            <span>
+              HISTORICAL SIGNAL
+            </span>
+
+            <span>
+              LOADING
+            </span>
+
           </div>
+
         </div>
 
       </div>
 
+
       <p class="detail-platforms">
         ${trend.platforms.join(" · ")}
       </p>
+
 
       <p class="detail-description">
         ${trend.description}
       </p>
 
     </article>
+
   `;
 
-  document
-    .getElementById("backButton")
-    .addEventListener("click", () => {
-      filterTrends();
-    });
 
-  const history = await loadHistory(trend.title);
+  const backButton =
+    document.getElementById(
+      "backButton"
+    );
+
+
+  if (backButton) {
+
+    backButton.addEventListener(
+      "click",
+      () => {
+        filterTrends();
+      }
+    );
+
+  }
+
+
+  const history =
+    await loadHistory(
+      trend.title
+    );
+
 
   const historyContainer =
-    document.getElementById("trendHistory");
+    document.getElementById(
+      "trendHistory"
+    );
+
 
   if (historyContainer) {
+
     historyContainer.innerHTML =
       createHistoryGraph(history);
+
   }
+
 }
+
 
 /* =========================
    EXPLORE
 ========================= */
 
-function renderExplore(items) {
-  exploreResults.innerHTML = "";
+function renderExplore(
+  items
+) {
 
-  if (items.length === 0) {
-    exploreResults.innerHTML = `
-      <div class="explore-empty">
-        <strong>No signals found.</strong>
-        <span>Try another search or platform.</span>
-      </div>
-    `;
-
+  if (!exploreResults) {
     return;
   }
 
-  items.forEach((trend, index) => {
-    const item = document.createElement("article");
 
-    item.className = "explore-item";
+  exploreResults.innerHTML =
+    "";
 
-    item.innerHTML = `
-      <span class="explore-rank">
-        ${String(index + 1).padStart(2, "0")}
-      </span>
 
-      <div class="explore-main">
+  if (items.length === 0) {
 
-        <h3>${trend.title}</h3>
+    exploreResults.innerHTML = `
 
-        <p>
-          ${trend.platforms.join(" · ")}
-        </p>
+      <div class="explore-empty">
 
-        <span class="explore-platform-count">
-          ${trend.platformCount} PLATFORMS
+        <strong>
+          No signals found.
+        </strong>
+
+        <span>
+          Try another search or platform.
         </span>
 
       </div>
 
-      <div class="explore-growth">
-        <strong>${trend.growth}</strong>
-        <span>${trend.status}</span>
-      </div>
     `;
 
-    item.addEventListener("click", () => {
-      openExploreTrend(trend);
-    });
+    return;
 
-    exploreResults.appendChild(item);
-  });
+  }
+
+
+  items.forEach(
+    (trend, index) => {
+
+      const item =
+        document.createElement(
+          "article"
+        );
+
+
+      item.className =
+        "explore-item";
+
+
+      item.innerHTML = `
+
+        <span class="explore-rank">
+          ${String(index + 1).padStart(2, "0")}
+        </span>
+
+
+        <div class="explore-main">
+
+          <h3>
+            ${trend.title}
+          </h3>
+
+
+          <p>
+            ${trend.platforms.join(" · ")}
+          </p>
+
+
+          <span class="explore-platform-count">
+            ${trend.platformCount} PLATFORMS
+          </span>
+
+        </div>
+
+
+        <div class="explore-growth">
+
+          <strong>
+            ${trend.growth}
+          </strong>
+
+          <span>
+            ${trend.status}
+          </span>
+
+        </div>
+
+      `;
+
+
+      item.addEventListener(
+        "click",
+        () => {
+          openExploreTrend(trend);
+        }
+      );
+
+
+      exploreResults.appendChild(
+        item
+      );
+
+    }
+  );
+
 }
 
+
+/* =========================
+   FILTER EXPLORE
+========================= */
 
 function filterExplore() {
 
@@ -701,163 +1156,328 @@ function filterExplore() {
     return;
   }
 
+
   const query =
-    exploreInput.value.trim().toLowerCase();
+    exploreInput.value
+      .trim()
+      .toLowerCase();
 
-  const filtered = trends.filter((trend) => {
 
-    const matchesFilter =
-      activeExploreFilter === "all" ||
-      trend.platforms.some(
-        (platform) =>
-          platform.toLowerCase() ===
-          activeExploreFilter.toLowerCase()
-      );
+  const filtered =
+    trends.filter(
+      (trend) => {
 
-    const matchesSearch =
-      !query ||
-      trend.title.toLowerCase().includes(query) ||
-      trend.description.toLowerCase().includes(query) ||
-      trend.platforms.some(
-        (platform) =>
-          platform.toLowerCase().includes(query)
-      );
+        const matchesFilter =
+          activeExploreFilter === "all" ||
+          trend.platforms.some(
+            (platform) =>
+              platform
+                .toLowerCase() ===
+              activeExploreFilter
+                .toLowerCase()
+          );
 
-    return matchesFilter && matchesSearch;
-  });
+
+        const matchesSearch =
+          !query ||
+          trend.title
+            .toLowerCase()
+            .includes(query) ||
+          trend.description
+            .toLowerCase()
+            .includes(query) ||
+          trend.platforms.some(
+            (platform) =>
+              platform
+                .toLowerCase()
+                .includes(query)
+          );
+
+
+        return (
+          matchesFilter &&
+          matchesSearch
+        );
+
+      }
+    );
+
 
   exploreCount.textContent =
     `${filtered.length} SIGNALS`;
 
-  renderExplore(filtered);
+
+  renderExplore(
+    filtered
+  );
+
 }
 
 
-async function openExploreTrend(trend) {
+/* =========================
+   EXPLORE DETAIL
+========================= */
+
+async function openExploreTrend(
+  trend
+) {
+
+  if (!exploreResults) {
+    return;
+  }
+
+
   exploreResults.innerHTML = `
+
     <article class="explore-detail">
 
-      <button class="explore-back" id="exploreBack">
+      <button
+        class="explore-back"
+        id="exploreBack"
+      >
         ← BACK TO EXPLORE
       </button>
 
-      <p class="eyebrow">SIGNAL</p>
 
-      <h3>${trend.title}</h3>
+      <p class="eyebrow">
+        SIGNAL
+      </p>
+
+
+      <h3>
+        ${trend.title}
+      </h3>
+
 
       <div class="explore-detail-meta">
 
         <div>
-          <span>GROWTH</span>
-          <strong>${trend.growth}</strong>
+
+          <span>
+            GROWTH
+          </span>
+
+          <strong>
+            ${trend.growth}
+          </strong>
+
         </div>
 
-        <div>
-          <span>STATUS</span>
-          <strong>${trend.status}</strong>
-        </div>
 
         <div>
-          <span>MENTIONS</span>
-          <strong>${trend.mentions}</strong>
+
+          <span>
+            STATUS
+          </span>
+
+          <strong>
+            ${trend.status}
+          </strong>
+
         </div>
 
-        <div>
-          <span>VELOCITY</span>
-          <strong>${trend.velocity}</strong>
-        </div>
 
         <div>
-          <span>PLATFORMS</span>
-          <strong>${trend.platformCount}</strong>
+
+          <span>
+            MENTIONS
+          </span>
+
+          <strong>
+            ${trend.mentions}
+          </strong>
+
         </div>
 
+
         <div>
-          <span>SIGNAL</span>
-          <strong>${trend.signal}</strong>
+
+          <span>
+            VELOCITY
+          </span>
+
+          <strong>
+            ${trend.velocity}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            PLATFORMS
+          </span>
+
+          <strong>
+            ${trend.platformCount}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            SIGNAL
+          </span>
+
+          <strong>
+            ${trend.signal}
+          </strong>
+
         </div>
 
       </div>
+
 
       <p class="explore-detail-platforms">
         ${trend.platforms.join(" · ")}
       </p>
 
+
       <p class="explore-detail-description">
         ${trend.description}
       </p>
 
-      ${createSignalGraph(trend.signalBreakdown)}
+
+      ${createSignalGraph(
+        trend.signalBreakdown
+      )}
+
 
       <div id="exploreHistory">
 
         <div class="signal-graph">
+
           <div class="graph-head">
-            <span>HISTORICAL SIGNAL</span>
-            <span>LOADING</span>
+
+            <span>
+              HISTORICAL SIGNAL
+            </span>
+
+            <span>
+              LOADING
+            </span>
+
           </div>
+
         </div>
 
       </div>
 
     </article>
+
   `;
 
-  document
-    .getElementById("exploreBack")
-    .addEventListener("click", () => {
-      filterExplore();
-    });
 
-  const history = await loadHistory(trend.title);
+  const backButton =
+    document.getElementById(
+      "exploreBack"
+    );
+
+
+  if (backButton) {
+
+    backButton.addEventListener(
+      "click",
+      () => {
+        filterExplore();
+      }
+    );
+
+  }
+
+
+  const history =
+    await loadHistory(
+      trend.title
+    );
+
 
   const historyContainer =
-    document.getElementById("exploreHistory");
+    document.getElementById(
+      "exploreHistory"
+    );
+
 
   if (historyContainer) {
+
     historyContainer.innerHTML =
       createHistoryGraph(history);
+
   }
+
 }
 
 
 /* =========================
-   EVENTS
+   EVENTS — TRENDS
 ========================= */
 
-searchButton.addEventListener(
-  "click",
-  filterTrends
-);
+if (searchButton) {
 
-searchInput.addEventListener(
-  "keydown",
-  (event) => {
-    if (event.key === "Enter") {
-      filterTrends();
+  searchButton.addEventListener(
+    "click",
+    filterTrends
+  );
+
+}
+
+
+if (searchInput) {
+
+  searchInput.addEventListener(
+    "keydown",
+    (event) => {
+
+      if (event.key === "Enter") {
+        filterTrends();
+      }
+
     }
+  );
+
+}
+
+
+platformButtons.forEach(
+  (button) => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        platformButtons.forEach(
+          (item) => {
+            item.classList.remove(
+              "active"
+            );
+          }
+        );
+
+
+        button.classList.add(
+          "active"
+        );
+
+
+        activePlatform =
+          button.dataset.platform;
+
+
+        filterTrends();
+
+      }
+    );
+
   }
 );
 
 
-platformButtons.forEach((button) => {
-
-  button.addEventListener("click", () => {
-
-    platformButtons.forEach((item) => {
-      item.classList.remove("active");
-    });
-
-    button.classList.add("active");
-
-    activePlatform =
-      button.dataset.platform;
-
-    filterTrends();
-  });
-
-});
-
+/* =========================
+   EVENTS — EXPLORE
+========================= */
 
 if (exploreInput) {
 
@@ -871,23 +1491,38 @@ if (exploreInput) {
 }
 
 
-exploreFilters.forEach((button) => {
+exploreFilters.forEach(
+  (button) => {
 
-  button.addEventListener("click", () => {
+    button.addEventListener(
+      "click",
+      () => {
 
-    exploreFilters.forEach((item) => {
-      item.classList.remove("active");
-    });
+        exploreFilters.forEach(
+          (item) => {
+            item.classList.remove(
+              "active"
+            );
+          }
+        );
 
-    button.classList.add("active");
 
-    activeExploreFilter =
-      button.dataset.filter;
+        button.classList.add(
+          "active"
+        );
 
-    filterExplore();
-  });
 
-});
+        activeExploreFilter =
+          button.dataset.filter;
+
+
+        filterExplore();
+
+      }
+    );
+
+  }
+);
 
 
 /* =========================
@@ -899,22 +1534,37 @@ async function loadTrends() {
   try {
 
     const response =
-      await fetch("/api/trends");
+      await fetch(
+        "/api/trends"
+      );
+
 
     if (!response.ok) {
+
       throw new Error(
         "Failed to load trends"
       );
+
     }
+
 
     const data =
       await response.json();
 
+
     trends =
       data.trends || [];
 
-    filterTrends();
-    filterExplore();
+
+    if (trendList) {
+      filterTrends();
+    }
+
+
+    if (exploreResults) {
+      filterExplore();
+    }
+
 
   } catch (error) {
 
@@ -926,5 +1576,6 @@ async function loadTrends() {
   }
 
 }
+
 
 loadTrends();
