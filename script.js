@@ -325,6 +325,32 @@ async function loadHistory(title) {
 ========================= */
 
 async function openTrend(trend) {
+  const confidence =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(trend.confidenceScore) || 0
+      )
+    );
+
+  const momentum =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(trend.momentumScore) || 0
+      )
+    );
+
+  let confidenceLabel = "LOW CONFIDENCE";
+
+  if (confidence >= 75) {
+    confidenceLabel = "HIGH CONFIDENCE";
+  } else if (confidence >= 50) {
+    confidenceLabel = "MEDIUM CONFIDENCE";
+  }
+
   trendList.innerHTML = `
     <article class="trend-detail">
 
@@ -345,12 +371,12 @@ async function openTrend(trend) {
 
         <span>
           MOMENTUM
-          <strong>${trend.momentumScore}/100</strong>
+          <strong>${momentum}/100</strong>
 
           <div class="momentum-meter">
             <div
               class="momentum-meter-fill"
-              style="width: ${Math.max(0, Math.min(100, Number(trend.momentumScore) || 0))}%"
+              style="width: ${momentum}%"
             ></div>
           </div>
 
@@ -365,17 +391,17 @@ async function openTrend(trend) {
 
         <span>
           CONFIDENCE
-          <strong>${trend.confidenceScore}%</strong>
+          <strong>${confidence}%</strong>
 
           <div class="momentum-meter">
             <div
               class="momentum-meter-fill"
-              style="width: ${Math.max(0, Math.min(100, Number(trend.confidenceScore) || 0))}%"
+              style="width: ${confidence}%"
             ></div>
           </div>
 
           <small class="momentum-status">
-            ${trend.historyCount} HISTORICAL SNAPSHOT${trend.historyCount === 1 ? "" : "S"}
+            ${confidenceLabel} · ${trend.historyCount} HISTORICAL SNAPSHOT${trend.historyCount === 1 ? "" : "S"}
           </small>
         </span>
 
@@ -454,7 +480,6 @@ async function openTrend(trend) {
       createHistoryGraph(history);
   }
 }
-
 
 /* =========================
    EXPLORE
