@@ -686,9 +686,11 @@ footer span:first-child {
 }
 
   .updated {
-    white-space: nowrap;
-    font-size: 9px;
-  }
+  white-space: nowrap;
+  font-size: 8px;
+  color: var(--soft);
+  letter-spacing: 0.08em;
+}
 
   .signal-bar {
     display: flex;
