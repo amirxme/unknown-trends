@@ -1881,15 +1881,15 @@ footer span:first-child {
     font-size: 8px;
   }
 
-  .momentum-ranking-row {
+    .momentum-ranking-row {
     grid-template-columns:
-      30px
+      28px
       minmax(0, 1fr)
       42px;
 
-    min-height: 72px;
+    min-height: 68px;
 
-    gap: 10px;
+    gap: 9px;
   }
 
   .momentum-ranking-row:hover {
