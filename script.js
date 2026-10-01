@@ -55,7 +55,6 @@ function filterTrends() {
   const query = searchInput.value.trim().toLowerCase();
 
   const filtered = trends.filter((trend) => {
-
     const matchesPlatform =
       activePlatform === "all" ||
       trend.platforms.some(
@@ -99,6 +98,34 @@ function openTrend(trend) {
         <span>
           STATUS
           <strong>${trend.status}</strong>
+        </span>
+
+      </div>
+
+      <div class="detail-meta">
+
+        <span>
+          MENTIONS
+          <strong>${trend.mentions}</strong>
+        </span>
+
+        <span>
+          VELOCITY
+          <strong>${trend.velocity}</strong>
+        </span>
+
+      </div>
+
+      <div class="detail-meta">
+
+        <span>
+          PLATFORMS
+          <strong>${trend.platformCount}</strong>
+        </span>
+
+        <span>
+          SIGNAL
+          <strong>${trend.signal}</strong>
         </span>
 
       </div>
