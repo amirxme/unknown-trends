@@ -595,12 +595,15 @@ footer span:first-child {
   line-height: 0.98;
 }
 
-  .trend {
-    min-height: 100px;
+    .trend {
+    min-height: 88px;
 
-    grid-template-columns: 35px minmax(0, 1fr) 60px;
+    grid-template-columns:
+      30px
+      minmax(0, 1fr)
+      58px;
 
-    gap: 10px;
+    gap: 9px;
   }
 
   .trend:hover {
