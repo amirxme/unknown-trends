@@ -1,6 +1,7 @@
 {
   "name": "unknown-trends",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2"
   }
