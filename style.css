@@ -1715,8 +1715,9 @@ footer span:first-child {
     padding-right: 6px;
   }
 
-  .momentum-index-head {
-    gap: 16px;
+    .momentum-index-head {
+    gap: 12px;
+    align-items: center;
   }
 
   .momentum-index h2 {
