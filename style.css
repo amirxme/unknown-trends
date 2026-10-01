@@ -711,3 +711,82 @@ footer span:first-child {
   }
 
 }
+/* =========================
+   SIGNAL GRAPH
+========================= */
+
+.signal-graph {
+  margin: 42px 0 34px;
+}
+
+.graph-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 18px;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.signal-graph svg {
+  display: block;
+  width: 100%;
+  height: 180px;
+
+  overflow: visible;
+}
+
+.graph-grid {
+  stroke: #e5e5e3;
+  stroke-width: 1;
+}
+
+.graph-line {
+  fill: none;
+  stroke: #111;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.graph-labels {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 10px;
+
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #999;
+}
+
+@media (max-width: 700px) {
+
+  .signal-graph {
+    margin: 38px 0 30px;
+  }
+
+  .graph-head {
+    font-size: 10px;
+    margin-bottom: 14px;
+  }
+
+  .signal-graph svg {
+    height: 150px;
+  }
+
+  .graph-line {
+    stroke-width: 2.5;
+  }
+
+  .graph-labels {
+    margin-top: 8px;
+    font-size: 8px;
+  }
+
+}
