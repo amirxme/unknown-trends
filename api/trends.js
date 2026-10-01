@@ -353,12 +353,24 @@ function calculateMomentumScore(
       ? (momentum / previousScore) * 100
       : 0;
 
+  /*
+    Current signal
+    Represents the strength of the trend right now.
+  */
   const currentComponent =
-    globalScore * 0.20;
+    globalScore * 0.25;
 
+  /*
+    Coverage
+    More regions = stronger confirmation.
+  */
   const coverageComponent =
     coverageScore * 0.15;
 
+  /*
+    Velocity
+    Measures how quickly the score is changing.
+  */
   const velocitySignal =
     Math.max(
       0,
@@ -369,20 +381,29 @@ function calculateMomentumScore(
     );
 
   const velocityComponent =
-    velocitySignal * 0.30;
+    velocitySignal * 0.25;
 
+  /*
+    Acceleration
+    Measures whether the trend itself is gaining speed.
+  */
   const accelerationSignal =
     Math.max(
       0,
       Math.min(
         100,
-        50 + acceleration * 3
+        50 + acceleration * 4
       )
     );
 
   const accelerationComponent =
     accelerationSignal * 0.20;
 
+  /*
+    Recent momentum
+    Measures the percentage change from
+    the previous snapshot.
+  */
   const momentumSignal =
     Math.max(
       0,
@@ -395,6 +416,10 @@ function calculateMomentumScore(
   const momentumComponent =
     momentumSignal * 0.10;
 
+  /*
+    Historical confidence
+    More snapshots = more reliable dynamics.
+  */
   const historyConfidence =
     Math.min(
       100,
