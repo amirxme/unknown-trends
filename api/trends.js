@@ -741,116 +741,122 @@ export default async function handler(req, res) {
         .push(row);
     });
 
-    const trends = rawTrends.map(
-  (trend) => {
-    const history =
-      historyMap.get(
-        trend.titleKey
-      ) || [];
+    const trends = rawTrends
+  .map(
+    (trend) => {
+      const history =
+        historyMap.get(
+          trend.titleKey
+        ) || [];
 
-    const dynamics =
-      calculateDynamics(
-        history,
-        trend.globalScore
-      );
+      const dynamics =
+        calculateDynamics(
+          history,
+          trend.globalScore
+        );
 
-    const status =
-      getDynamicStatus(
-        trend.globalScore,
-        dynamics
-      );
+      const status =
+        getDynamicStatus(
+          trend.globalScore,
+          dynamics
+        );
 
-    const momentumScore =
-      calculateMomentumScore(
-        trend.globalScore,
-        trend.coverageScore,
-        dynamics
-      );
+      const momentumScore =
+        calculateMomentumScore(
+          trend.globalScore,
+          trend.coverageScore,
+          dynamics
+        );
 
-    const confidenceScore =
-  calculateConfidenceScore(
-    dynamics.historyCount,
-    history
+      const confidenceScore =
+        calculateConfidenceScore(
+          dynamics.historyCount,
+          history
+        );
+
+      let signal = "MEDIUM";
+
+      if (
+        trend.globalScore >= 70
+      ) {
+        signal = "HIGH";
+      }
+
+      if (
+        trend.globalScore >= 85
+      ) {
+        signal = "VERY HIGH";
+      }
+
+      return {
+        title: trend.title,
+
+        platforms: ["Google"],
+
+        growth:
+          `${trend.globalScore}/100`,
+
+        status,
+
+        mentions:
+          trend.traffic ||
+          "Unknown",
+
+        velocity:
+          `${dynamics.velocity}%/H`,
+
+        platformCount: 1,
+
+        signal,
+
+        globalScore:
+          trend.globalScore,
+
+        momentumScore,
+
+        confidenceScore,
+
+        coverageScore:
+          trend.coverageScore,
+
+        volumeScore:
+          trend.volumeScore,
+
+        positionScore:
+          trend.positionScore,
+
+        momentum:
+          dynamics.momentum,
+
+        velocityScore:
+          dynamics.velocity,
+
+        acceleration:
+          dynamics.acceleration,
+
+        historyCount:
+          dynamics.historyCount,
+
+        regions:
+          trend.regions,
+
+        signalBreakdown: [
+          trend.coverageScore,
+          trend.volumeScore,
+          trend.positionScore,
+          trend.globalScore
+        ],
+
+        description:
+          `Signal calculated from global coverage, search volume and regional position across ${regions.length} tracked regions.`
+      };
+    }
+  )
+  .sort(
+    (a, b) =>
+      b.momentumScore -
+      a.momentumScore
   );
-
-    let signal = "MEDIUM";
-
-    if (
-      trend.globalScore >= 70
-    ) {
-      signal = "HIGH";
-    }
-
-    if (
-      trend.globalScore >= 85
-    ) {
-      signal = "VERY HIGH";
-    }
-
-    return {
-      title: trend.title,
-
-      platforms: ["Google"],
-
-      growth:
-        `${trend.globalScore}/100`,
-
-      status,
-
-      mentions:
-        trend.traffic ||
-        "Unknown",
-
-      velocity:
-        `${dynamics.velocity}%/H`,
-
-      platformCount: 1,
-
-      signal,
-
-      globalScore:
-        trend.globalScore,
-
-      momentumScore,
-
-      confidenceScore,
-
-      coverageScore:
-        trend.coverageScore,
-
-      volumeScore:
-        trend.volumeScore,
-
-      positionScore:
-        trend.positionScore,
-
-      momentum:
-        dynamics.momentum,
-
-      velocityScore:
-        dynamics.velocity,
-
-      acceleration:
-        dynamics.acceleration,
-
-      historyCount:
-        dynamics.historyCount,
-
-      regions:
-        trend.regions,
-
-      signalBreakdown: [
-        trend.coverageScore,
-        trend.volumeScore,
-        trend.positionScore,
-        trend.globalScore
-      ],
-
-      description:
-        `Signal calculated from global coverage, search volume and regional position across ${regions.length} tracked regions.`
-    };
-  }
-);
 
     res.status(200).json({
       success: true,
