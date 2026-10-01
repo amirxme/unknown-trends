@@ -1197,3 +1197,11 @@ footer span:first-child {
   }
 
 }
+.explore-platform-count {
+  display: block;
+  margin-top: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+}
