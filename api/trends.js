@@ -75,11 +75,20 @@ function cleanText(value) {
 }
 
 function normalizeTitle(title) {
-  const normalized = title
+  const raw = title
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .join(" ");
+
+  if (phraseAliases[raw]) {
+    return phraseAliases[raw];
+  }
+
+  const normalized = raw
     .split(/\s+/)
     .filter(Boolean)
     .map((word) => aliases[word] || word)
