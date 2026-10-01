@@ -672,10 +672,11 @@ footer span:first-child {
   line-height: 1.5;
 }
 
+  
   .section-head {
-    align-items: flex-start;
-    gap: 20px;
-  }
+  align-items: flex-end;
+  gap: 20px;
+}
 
   .live-meta {
     flex-direction: column;
