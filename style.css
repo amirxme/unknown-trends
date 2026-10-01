@@ -1620,7 +1620,7 @@ footer span:first-child {
 ========================= */
 
 .momentum-ranking {
-  margin-bottom: 42px;
+  margin-bottom: 48px;
 }
 
 .momentum-ranking-head {
@@ -1628,9 +1628,9 @@ footer span:first-child {
   align-items: center;
   justify-content: space-between;
 
-  padding: 22px 0 16px;
+  padding: 24px 0 16px;
 
-  border-bottom: 1px solid #e5e5e3;
+  border-bottom: 1px solid var(--line);
 }
 
 .momentum-ranking-head .eyebrow {
@@ -1641,22 +1641,26 @@ footer span:first-child {
   font-size: 9px;
   font-weight: 700;
 
-  color: #999;
+  color: var(--soft);
 
-  letter-spacing: 0.12em;
+  letter-spacing: 0.13em;
 }
 
 .momentum-ranking-row {
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 45px;
+
+  grid-template-columns:
+    48px
+    minmax(0, 1fr)
+    56px;
 
   align-items: center;
 
-  min-height: 74px;
+  min-height: 82px;
 
-  gap: 16px;
+  gap: 18px;
 
-  border-bottom: 1px solid #e5e5e3;
+  border-bottom: 1px solid var(--line);
 
   cursor: pointer;
 
@@ -1666,17 +1670,17 @@ footer span:first-child {
 }
 
 .momentum-ranking-row:hover {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
 
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .momentum-ranking-rank {
   font-size: 10px;
   font-weight: 700;
 
-  color: #999;
+  color: var(--soft);
 
   letter-spacing: 0.08em;
 }
@@ -1690,8 +1694,8 @@ footer span:first-child {
 
   overflow: hidden;
 
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
 
   line-height: 1.2;
 
@@ -1709,18 +1713,18 @@ footer span:first-child {
   font-size: 8px;
   font-weight: 700;
 
-  color: #999;
+  color: var(--soft);
 
-  letter-spacing: 0.1em;
+  letter-spacing: 0.11em;
 }
 
 .momentum-ranking-score {
   text-align: right;
 
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
 
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 
@@ -1731,11 +1735,11 @@ footer span:first-child {
 @media (max-width: 700px) {
 
   .momentum-ranking {
-    margin-bottom: 34px;
+    margin-bottom: 36px;
   }
 
   .momentum-ranking-head {
-    padding: 18px 0 14px;
+    padding: 20px 0 14px;
   }
 
   .momentum-ranking-head > span {
@@ -1743,9 +1747,12 @@ footer span:first-child {
   }
 
   .momentum-ranking-row {
-    grid-template-columns: 30px minmax(0, 1fr) 35px;
+    grid-template-columns:
+      30px
+      minmax(0, 1fr)
+      42px;
 
-    min-height: 68px;
+    min-height: 72px;
 
     gap: 10px;
   }
@@ -1762,11 +1769,11 @@ footer span:first-child {
   .momentum-ranking-main span {
     margin-top: 5px;
 
-    font-size: 8px;
+    font-size: 7px;
   }
 
   .momentum-ranking-score {
-    font-size: 14px;
+    font-size: 15px;
   }
 
 }
