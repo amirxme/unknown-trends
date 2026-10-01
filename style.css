@@ -679,10 +679,11 @@ footer span:first-child {
 }
 
   .live-meta {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-  }
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
 
   .updated {
     white-space: nowrap;
