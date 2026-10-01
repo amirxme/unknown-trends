@@ -497,6 +497,8 @@ exploreFilters.forEach((button) => {
    INITIAL RENDER
 ========================= */
 
+exploreCount.textContent = `${trends.length} SIGNALS`;
+
 renderTrends(trends);
 
 if (exploreResults) {
