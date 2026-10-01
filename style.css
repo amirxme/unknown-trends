@@ -710,12 +710,12 @@ footer span:first-child {
   white-space: nowrap;
 }
 
-  .platforms {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 6px;
-}
+    .platforms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 6px;
+  }
 
   .platform {
   padding: 7px 10px;
