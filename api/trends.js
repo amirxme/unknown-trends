@@ -333,6 +333,87 @@ function getDynamicStatus(score, dynamics) {
   return "STABLE";
 }
 
+function calculateMomentumScore(
+  globalScore,
+  coverageScore,
+  dynamics
+) {
+  const {
+    momentum,
+    velocity,
+    acceleration,
+    historyCount
+  } = dynamics;
+
+  const previousScore =
+    globalScore - momentum;
+
+  const relativeMomentum =
+    previousScore > 0
+      ? (momentum / previousScore) * 100
+      : 0;
+
+  const currentComponent =
+    globalScore * 0.20;
+
+  const coverageComponent =
+    coverageScore * 0.15;
+
+  const velocitySignal =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        50 + velocity * 2
+      )
+    );
+
+  const velocityComponent =
+    velocitySignal * 0.30;
+
+  const accelerationSignal =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        50 + acceleration * 3
+      )
+    );
+
+  const accelerationComponent =
+    accelerationSignal * 0.20;
+
+  const momentumSignal =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        50 + relativeMomentum * 3
+      )
+    );
+
+  const momentumComponent =
+    momentumSignal * 0.10;
+
+  const historyConfidence =
+    Math.min(
+      100,
+      (historyCount / 4) * 100
+    );
+
+  const historyComponent =
+    historyConfidence * 0.05;
+
+  return Math.round(
+    currentComponent +
+    coverageComponent +
+    velocityComponent +
+    accelerationComponent +
+    momentumComponent +
+    historyComponent
+  );
+}
+
 export default async function handler(req, res) {
   try {
     const results = await Promise.all(
