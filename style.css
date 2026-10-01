@@ -1910,8 +1910,10 @@ footer span:first-child {
     letter-spacing: 0.1em;
   }
 
-  .momentum-ranking-score {
-    font-size: 15px;
+    .momentum-ranking-score {
+    font-size: 14px;
+    line-height: 1;
+    white-space: nowrap;
   }
 
 }
