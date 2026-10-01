@@ -11,10 +11,74 @@ const regions = [
   { code: "AU", name: "Australia" }
 ];
 
+const aliases = {
+  japon: "japan",
+  japón: "japan",
+  japonia: "japan",
+
+  alemania: "germany",
+  deutschland: "germany",
+
+  francia: "france",
+
+  reino: "kingdom",
+  unido: "united",
+  uk: "united",
+  england: "united",
+
+  brasil: "brazil",
+
+  canada: "canada",
+  canadá: "canada",
+
+  corea: "korea",
+  sur: "south",
+
+  estados: "united",
+  unidos: "united",
+
+  ecuador: "ecuador",
+  equateur: "ecuador"
+};
+
 function cleanText(value) {
-  return value
-    ?.replace(/<!\[CDATA\[|\]\]>/g, "")
-    .trim() || "";
+  return (
+    value
+      ?.replace(/<!\[CDATA\[|\]\]>/g, "")
+      .trim() || ""
+  );
+}
+
+function normalizeTitle(title) {
+  return title
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => aliases[word] || word)
+    .filter(
+      (word) =>
+        ![
+          "vs",
+          "versus",
+          "v",
+          "and",
+          "the",
+          "el",
+          "la",
+          "de"
+        ].includes(word)
+    )
+    .sort()
+    .join(" ");
+}
+
+function displayTitle(title) {
+  return title
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export default async function handler(req, res) {
@@ -38,9 +102,11 @@ export default async function handler(req, res) {
 
         const xml = await response.text();
 
-        const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+        const items = [
+          ...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)
+        ];
 
-        return items.slice(0, 10).map((match) => {
+        return items.slice(0, 20).map((match) => {
           const item = match[1];
 
           const title = cleanText(
@@ -68,11 +134,13 @@ export default async function handler(req, res) {
     results.flat().forEach((trend) => {
       if (!trend.title) return;
 
-      const key = trend.title.toLowerCase();
+      const key = normalizeTitle(trend.title);
+
+      if (!key) return;
 
       if (!trendMap.has(key)) {
         trendMap.set(key, {
-          title: trend.title,
+          title: displayTitle(trend.title),
           traffic: trend.traffic,
           regions: [],
           regionCodes: []
@@ -84,6 +152,15 @@ export default async function handler(req, res) {
       if (!existing.regionCodes.includes(trend.regionCode)) {
         existing.regions.push(trend.region);
         existing.regionCodes.push(trend.regionCode);
+      }
+
+      if (
+        trend.traffic &&
+        trend.traffic !== "Unknown" &&
+        (!existing.traffic ||
+          existing.traffic === "Unknown")
+      ) {
+        existing.traffic = trend.traffic;
       }
     });
 
@@ -115,31 +192,29 @@ export default async function handler(req, res) {
           status = "ACCELERATING";
         }
 
-        const history = [
-          20,
-          25,
-          31,
-          36,
-          44,
-          51,
-          59,
-          68,
-          78,
-          Math.max(85, globalScore)
-        ];
-
         return {
           title: trend.title,
           platforms: ["Google"],
           growth: `GLOBAL ${globalScore}%`,
           status,
-          mentions: trend.traffic,
+          mentions: trend.traffic || "Unknown",
           velocity: `${regionCount} REGIONS`,
           platformCount: regionCount,
           signal,
           globalScore,
           regions: trend.regions,
-          history,
+          history: [
+            20,
+            25,
+            31,
+            36,
+            44,
+            51,
+            59,
+            68,
+            78,
+            Math.max(85, globalScore)
+          ],
           description:
             `Trending across ${regionCount} of ${regions.length} tracked regions.`
         };
@@ -157,7 +232,10 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("UNKNOWN Global Trends API error:", error);
+    console.error(
+      "UNKNOWN Global Trends API error:",
+      error
+    );
 
     res.status(500).json({
       success: false,
