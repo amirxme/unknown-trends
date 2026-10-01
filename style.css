@@ -566,9 +566,9 @@ footer span:first-child {
   }
 
   .search {
-    height: 54px;
-    margin-top: 34px;
-  }
+  height: 52px;
+  margin-top: 32px;
+}
 
   .search input {
     padding: 0 16px;
