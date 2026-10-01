@@ -332,6 +332,8 @@ function filterExplore() {
     return matchesFilter && matchesSearch;
   });
 
+  exploreCount.textContent = `${filtered.length} SIGNALS`;
+
   renderExplore(filtered);
 }
 
