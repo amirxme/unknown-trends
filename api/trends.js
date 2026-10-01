@@ -297,10 +297,6 @@ function getDynamicStatus(score, dynamics) {
     historyCount
   } = dynamics;
 
-  /*
-    Not enough historical data:
-    use score only.
-  */
   if (historyCount < 2) {
     if (score >= 85) return "VERY HIGH";
     if (score >= 70) return "HIGH";
@@ -309,9 +305,6 @@ function getDynamicStatus(score, dynamics) {
     return "EMERGING";
   }
 
-  /*
-    Real acceleration.
-  */
   if (
     acceleration > 5 &&
     velocity > 5
@@ -319,16 +312,10 @@ function getDynamicStatus(score, dynamics) {
     return "ACCELERATING";
   }
 
-  /*
-    Strong positive movement.
-  */
   if (velocity > 5) {
     return "RISING";
   }
 
-  /*
-    Negative movement.
-  */
   if (velocity < -5) {
     return "COOLING";
   }
