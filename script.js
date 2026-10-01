@@ -39,8 +39,85 @@ function renderTrends(items) {
     return;
   }
 
+  const topTrend = items[0];
+
+  const momentum =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(topTrend.momentumScore) || 0
+      )
+    );
+
+  const momentumLabel =
+    momentum >= 70
+      ? "HIGH MOMENTUM"
+      : momentum >= 50
+        ? "RISING MOMENTUM"
+        : "LOW MOMENTUM";
+
+  const momentumIndex = document.createElement("section");
+
+  momentumIndex.className =
+    "momentum-index";
+
+  momentumIndex.innerHTML = `
+    <div class="momentum-index-head">
+
+      <div>
+        <p class="eyebrow">
+          MOMENTUM INDEX
+        </p>
+
+        <h2>
+          ${momentum}
+          <span>/100</span>
+        </h2>
+      </div>
+
+      <span class="momentum-index-status">
+        ${momentumLabel}
+      </span>
+
+    </div>
+
+    <div class="momentum-index-main">
+
+      <div>
+        <strong>
+          ${topTrend.title}
+        </strong>
+
+        <span>
+          ${topTrend.status}
+          ·
+          ${topTrend.velocity}
+        </span>
+      </div>
+
+      <div class="momentum-index-bar">
+        <div
+          class="momentum-index-fill"
+          style="width: ${momentum}%"
+        ></div>
+      </div>
+
+    </div>
+  `;
+
+  momentumIndex.addEventListener(
+    "click",
+    () => {
+      openTrend(topTrend);
+    }
+  );
+
+  trendList.appendChild(momentumIndex);
+
   items.forEach((trend, index) => {
-    const article = document.createElement("article");
+    const article =
+      document.createElement("article");
 
     article.className = "trend";
 
@@ -51,15 +128,22 @@ function renderTrends(items) {
 
       <div class="trend-main">
         <h3>${trend.title}</h3>
-        <p>${trend.platforms.join(" · ")}</p>
+        <p>
+          ${trend.platforms.join(" · ")}
+        </p>
       </div>
 
-      <strong>${trend.growth}</strong>
+      <strong>
+        ${trend.growth}
+      </strong>
     `;
 
-    article.addEventListener("click", () => {
-      openTrend(trend);
-    });
+    article.addEventListener(
+      "click",
+      () => {
+        openTrend(trend);
+      }
+    );
 
     trendList.appendChild(article);
   });
