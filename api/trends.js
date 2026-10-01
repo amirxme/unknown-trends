@@ -316,9 +316,9 @@ export default async function handler(req, res) {
 
           mentions: trend.traffic || "Unknown",
 
-          velocity: `${regionCount} REGIONS`,
+          velocity: `${coverageScore}% COVERAGE`,
 
-          platformCount: regionCount,
+          platformCount: 1,
 
           signal,
 
