@@ -52,6 +52,20 @@ const aliases = {
   equateur: "ecuador"
 };
 
+const phraseAliases = {
+  "ecuador vs japon": "ecuador japan",
+  "japan vs ecuador": "ecuador japan",
+
+  "日本 対 エクアドル": "ecuador japan",
+  "エクアドル 対 日本": "ecuador japan",
+
+  "일본 대 에콰도르": "ecuador japan",
+  "에콰도르 대 일본": "ecuador japan",
+
+  "japao x equador": "ecuador japan",
+  "equador x japao": "ecuador japan"
+};
+
 function cleanText(value) {
   return (
     value
