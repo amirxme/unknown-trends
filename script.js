@@ -180,10 +180,151 @@ function createSignalGraph(signalBreakdown) {
 
 
 /* =========================
+   HISTORICAL SIGNAL GRAPH
+========================= */
+
+function createHistoryGraph(history) {
+  if (!history || history.length === 0) {
+    return `
+      <div class="signal-graph">
+        <div class="graph-head">
+          <span>HISTORICAL SIGNAL</span>
+          <span>NO DATA</span>
+        </div>
+
+        <p style="margin:16px 0 0; opacity:.55;">
+          Historical snapshots will appear here as the system collects them.
+        </p>
+      </div>
+    `;
+  }
+
+  const width = 700;
+  const height = 180;
+  const padding = 10;
+
+  const values = history.map((item) =>
+    Number(item.global_score) || 0
+  );
+
+  const points = values.map((value, index) => {
+    const x =
+      values.length === 1
+        ? width / 2
+        : padding +
+          (index / (values.length - 1)) *
+            (width - padding * 2);
+
+    const y =
+      height -
+      padding -
+      (value / 100) *
+        (height - padding * 2);
+
+    return `${x},${y}`;
+  });
+
+  const first = values[0];
+  const last = values[values.length - 1];
+  const change = last - first;
+
+  const changeLabel =
+    change > 0
+      ? `+${change}`
+      : `${change}`;
+
+  const timestamps = history.map((item) =>
+    new Date(item.captured_at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    })
+  );
+
+  return `
+    <div class="signal-graph">
+
+      <div class="graph-head">
+        <span>HISTORICAL SIGNAL</span>
+        <span>${changeLabel} SCORE</span>
+      </div>
+
+      <svg
+        viewBox="0 0 ${width} ${height}"
+        preserveAspectRatio="none"
+        aria-label="Historical signal graph"
+      >
+
+        <line
+          x1="0"
+          y1="25%"
+          x2="${width}"
+          y2="25%"
+          class="graph-grid"
+        />
+
+        <line
+          x1="0"
+          y1="50%"
+          x2="${width}"
+          y2="50%"
+          class="graph-grid"
+        />
+
+        <line
+          x1="0"
+          y1="75%"
+          x2="${width}"
+          y2="75%"
+          class="graph-grid"
+        />
+
+        <polyline
+          points="${points.join(" ")}"
+          class="graph-line"
+        />
+
+      </svg>
+
+      <div class="graph-labels">
+        <span>${timestamps[0]}</span>
+        <span>${timestamps[Math.floor(timestamps.length / 2)] || ""}</span>
+        <span>${timestamps[timestamps.length - 1]}</span>
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =========================
+   LOAD HISTORY
+========================= */
+
+async function loadHistory(title) {
+  try {
+    const response = await fetch(
+      `/api/history?title=${encodeURIComponent(title)}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to load history");
+    }
+
+    const data = await response.json();
+
+    return data.history || [];
+  } catch (error) {
+    console.error("UNKNOWN history error:", error);
+    return [];
+  }
+}
+
+
+/* =========================
    TREND DETAIL
 ========================= */
 
-function openTrend(trend) {
+async function openTrend(trend) {
   trendList.innerHTML = `
     <article class="trend-detail">
 
@@ -239,6 +380,17 @@ function openTrend(trend) {
 
       ${createSignalGraph(trend.signalBreakdown)}
 
+      <div id="trendHistory">
+
+        <div class="signal-graph">
+          <div class="graph-head">
+            <span>HISTORICAL SIGNAL</span>
+            <span>LOADING</span>
+          </div>
+        </div>
+
+      </div>
+
       <p class="detail-platforms">
         ${trend.platforms.join(" · ")}
       </p>
@@ -255,6 +407,16 @@ function openTrend(trend) {
     .addEventListener("click", () => {
       filterTrends();
     });
+
+  const history = await loadHistory(trend.title);
+
+  const historyContainer =
+    document.getElementById("trendHistory");
+
+  if (historyContainer) {
+    historyContainer.innerHTML =
+      createHistoryGraph(history);
+  }
 }
 
 
@@ -287,17 +449,18 @@ function renderExplore(items) {
       </span>
 
       <div class="explore-main">
+
         <h3>${trend.title}</h3>
 
         <p>
           ${trend.platforms.join(" · ")}
         </p>
-    
+
         <span class="explore-platform-count">
           ${trend.platformCount} PLATFORMS
         </span>
-        
-           </div> 
+
+      </div>
 
       <div class="explore-growth">
         <strong>${trend.growth}</strong>
@@ -315,7 +478,8 @@ function renderExplore(items) {
 
 
 function filterExplore() {
-  const query = exploreInput.value.trim().toLowerCase();
+  const query =
+    exploreInput.value.trim().toLowerCase();
 
   const filtered = trends.filter((trend) => {
 
@@ -339,13 +503,14 @@ function filterExplore() {
     return matchesFilter && matchesSearch;
   });
 
-  exploreCount.textContent = `${filtered.length} SIGNALS`;
+  exploreCount.textContent =
+    `${filtered.length} SIGNALS`;
 
   renderExplore(filtered);
 }
 
 
-function openExploreTrend(trend) {
+async function openExploreTrend(trend) {
   exploreResults.innerHTML = `
     <article class="explore-detail">
 
@@ -401,6 +566,17 @@ function openExploreTrend(trend) {
 
       ${createSignalGraph(trend.signalBreakdown)}
 
+      <div id="exploreHistory">
+
+        <div class="signal-graph">
+          <div class="graph-head">
+            <span>HISTORICAL SIGNAL</span>
+            <span>LOADING</span>
+          </div>
+        </div>
+
+      </div>
+
     </article>
   `;
 
@@ -409,6 +585,16 @@ function openExploreTrend(trend) {
     .addEventListener("click", () => {
       filterExplore();
     });
+
+  const history = await loadHistory(trend.title);
+
+  const historyContainer =
+    document.getElementById("exploreHistory");
+
+  if (historyContainer) {
+    historyContainer.innerHTML =
+      createHistoryGraph(history);
+  }
 }
 
 
@@ -416,13 +602,19 @@ function openExploreTrend(trend) {
    EVENTS
 ========================= */
 
-searchButton.addEventListener("click", filterTrends);
+searchButton.addEventListener(
+  "click",
+  filterTrends
+);
 
-searchInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    filterTrends();
+searchInput.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key === "Enter") {
+      filterTrends();
+    }
   }
-});
+);
 
 
 platformButtons.forEach((button) => {
@@ -435,7 +627,8 @@ platformButtons.forEach((button) => {
 
     button.classList.add("active");
 
-    activePlatform = button.dataset.platform;
+    activePlatform =
+      button.dataset.platform;
 
     filterTrends();
   });
@@ -445,9 +638,12 @@ platformButtons.forEach((button) => {
 
 if (exploreInput) {
 
-  exploreInput.addEventListener("input", () => {
-    filterExplore();
-  });
+  exploreInput.addEventListener(
+    "input",
+    () => {
+      filterExplore();
+    }
+  );
 
 }
 
@@ -476,22 +672,36 @@ exploreFilters.forEach((button) => {
 ========================= */
 
 async function loadTrends() {
+
   try {
-    const response = await fetch("/api/trends");
+
+    const response =
+      await fetch("/api/trends");
 
     if (!response.ok) {
-      throw new Error("Failed to load trends");
+      throw new Error(
+        "Failed to load trends"
+      );
     }
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
-    trends = data.trends || [];
+    trends =
+      data.trends || [];
 
     filterTrends();
     filterExplore();
+
   } catch (error) {
-    console.error("UNKNOWN API error:", error);
+
+    console.error(
+      "UNKNOWN API error:",
+      error
+    );
+
   }
+
 }
 
 loadTrends();
