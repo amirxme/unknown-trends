@@ -192,92 +192,100 @@ function rankScore(rank) {
   total score change from the previous snapshot
 */
 function calculateDynamics(history, currentScore) {
-  if (!history || history.length === 0) {
+  if (!history || history.length < 2) {
     return {
       momentum: 0,
       velocity: 0,
       acceleration: 0,
-      historyCount: 0
+      historyCount: history?.length || 0
     };
   }
 
   const snapshots = [...history]
     .sort(
       (a, b) =>
-        new Date(a.captured_at) -
-        new Date(b.captured_at)
+        new Date(a.captured_at).getTime() -
+        new Date(b.captured_at).getTime()
     )
-    .slice(-3);
+    .slice(-4);
 
-  const last = snapshots[snapshots.length - 1];
+  const latest = snapshots[snapshots.length - 1];
 
-  const lastScore = Number(last.global_score) || 0;
+  const previous =
+    snapshots.length >= 2
+      ? snapshots[snapshots.length - 2]
+      : null;
 
-  const currentMomentum =
-    currentScore - lastScore;
+  const older =
+    snapshots.length >= 3
+      ? snapshots[snapshots.length - 3]
+      : null;
 
-  if (snapshots.length < 2) {
-    return {
-      momentum: currentMomentum,
-      velocity: currentMomentum,
-      acceleration: 0,
-      historyCount: snapshots.length
-    };
-  }
+  const latestScore = Number(currentScore) || 0;
+  const previousScore = Number(previous?.global_score) || 0;
 
-  const previous = snapshots[snapshots.length - 2];
+  const momentum = latestScore - previousScore;
 
-  const previousScore =
-    Number(previous.global_score) || 0;
+  const latestTime = new Date(
+    latest?.captured_at
+  ).getTime();
 
-  const lastTime =
-    new Date(last.captured_at).getTime();
-
-  const previousTime =
-    new Date(previous.captured_at).getTime();
+  const previousTime = new Date(
+    previous?.captured_at
+  ).getTime();
 
   const hours =
-    Math.max(
-      (lastTime - previousTime) / 3600000,
-      1 / 60
-    );
+    latestTime > previousTime
+      ? (latestTime - previousTime) / 3600000
+      : 0;
 
-  const previousVelocity =
-    (lastScore - previousScore) / hours;
+  // Не считаем короткие тестовые интервалы
+  // быстрее 10 минут полноценной динамикой.
+  const effectiveHours = Math.max(hours, 1 / 6);
 
-  const currentVelocity =
-    currentMomentum / hours;
+  const velocity =
+    momentum / effectiveHours;
 
   let acceleration = 0;
 
-  if (snapshots.length >= 3) {
-    const first = snapshots[snapshots.length - 3];
+  if (older) {
+    const olderTime = new Date(
+      older.captured_at
+    ).getTime();
 
-    const firstScore =
-      Number(first.global_score) || 0;
+    const olderScore =
+      Number(older.global_score) || 0;
 
-    const firstTime =
-      new Date(first.captured_at).getTime();
+    const olderHours =
+      previousTime > olderTime
+        ? (previousTime - olderTime) / 3600000
+        : 0;
 
-    const previousHours =
-      Math.max(
-        (previousTime - firstTime) / 3600000,
-        1 / 60
-      );
+    const effectiveOlderHours =
+      Math.max(olderHours, 1 / 6);
 
-    const olderVelocity =
-      (previousScore - firstScore) /
-      previousHours;
+    const previousVelocity =
+      (previousScore - olderScore) /
+      effectiveOlderHours;
 
     acceleration =
-      currentVelocity - olderVelocity;
+      velocity - previousVelocity;
   }
 
+  const normalizedVelocity =
+    Math.abs(velocity) < 1
+      ? 0
+      : Number(velocity.toFixed(2));
+
+  const normalizedAcceleration =
+    Math.abs(acceleration) < 1
+      ? 0
+      : Number(acceleration.toFixed(2));
+
   return {
-    momentum: Math.round(currentMomentum * 100) / 100,
-    velocity: Math.round(currentVelocity * 100) / 100,
-    acceleration:
-      Math.round(acceleration * 100) / 100,
+    momentum,
+    velocity: normalizedVelocity,
+    acceleration: normalizedAcceleration,
     historyCount: snapshots.length
   };
 }
