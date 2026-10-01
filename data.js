@@ -4,6 +4,10 @@ const trends = [
     platforms: ["X", "Reddit", "YouTube"],
     growth: "+428%",
     status: "ACCELERATING",
+    mentions: "84.2K",
+    velocity: "+31.4K / hour",
+    platformCount: 3,
+    signal: "HIGH",
     description:
       "Growing discussion around autonomous AI systems and agent-based tools."
   },
@@ -13,6 +17,10 @@ const trends = [
     platforms: ["X", "TikTok", "Reddit"],
     growth: "+316%",
     status: "RISING",
+    mentions: "62.8K",
+    velocity: "+18.7K / hour",
+    platformCount: 3,
+    signal: "HIGH",
     description:
       "A rapidly expanding conversation around upcoming Apple hardware."
   },
@@ -22,6 +30,10 @@ const trends = [
     platforms: ["X", "Reddit"],
     growth: "+274%",
     status: "RISING",
+    mentions: "41.6K",
+    velocity: "+12.3K / hour",
+    platformCount: 2,
+    signal: "MEDIUM",
     description:
       "Increasing attention around regulation, policy and the crypto market."
   },
@@ -31,6 +43,10 @@ const trends = [
     platforms: ["TikTok", "X"],
     growth: "+221%",
     status: "EMERGING",
+    mentions: "36.9K",
+    velocity: "+9.8K / hour",
+    platformCount: 2,
+    signal: "MEDIUM",
     description:
       "Renewed interest in streetwear culture, styling and fashion archives."
   },
@@ -40,6 +56,10 @@ const trends = [
     platforms: ["TikTok", "X", "Reddit"],
     growth: "+187%",
     status: "ACTIVE",
+    mentions: "29.4K",
+    velocity: "+7.1K / hour",
+    platformCount: 3,
+    signal: "MEDIUM",
     description:
       "A broad signal connecting several conversations across internet culture."
   }
