@@ -310,7 +310,7 @@ export default async function handler(req, res) {
 
           platforms: ["Google"],
 
-          growth: `SIGNAL ${globalScore}`,
+          growth: `${globalScore}/100`,
 
           status,
 
