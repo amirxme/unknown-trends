@@ -768,9 +768,10 @@ export default async function handler(req, res) {
       );
 
     const confidenceScore =
-      calculateConfidenceScore(
-        dynamics.historyCount
-      );
+  calculateConfidenceScore(
+    dynamics.historyCount,
+    history
+  );
 
     let signal = "MEDIUM";
 
