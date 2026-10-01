@@ -692,6 +692,15 @@ function renderExplore(items) {
 
 
 function filterExplore() {
+
+  if (
+    !exploreInput ||
+    !exploreResults ||
+    !exploreCount
+  ) {
+    return;
+  }
+
   const query =
     exploreInput.value.trim().toLowerCase();
 
