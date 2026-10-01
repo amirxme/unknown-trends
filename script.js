@@ -237,7 +237,7 @@ function openTrend(trend) {
 
       </div>
 
-      ${createSignalGraph(trend.history)}
+      ${createSignalGraph(trend.signalBreakdown)}
 
       <p class="detail-platforms">
         ${trend.platforms.join(" · ")}
