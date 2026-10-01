@@ -347,27 +347,37 @@ function openExploreTrend(trend) {
 
       <div class="explore-detail-meta">
 
-        <div>
-          <span>GROWTH</span>
-          <strong>${trend.growth}</strong>
-        </div>
+  <div>
+    <span>GROWTH</span>
+    <strong>${trend.growth}</strong>
+  </div>
 
-        <div>
-          <span>STATUS</span>
-          <strong>${trend.status}</strong>
-        </div>
+  <div>
+    <span>STATUS</span>
+    <strong>${trend.status}</strong>
+  </div>
 
-        <div>
-          <span>MENTIONS</span>
-          <strong>${trend.mentions}</strong>
-        </div>
+  <div>
+    <span>MENTIONS</span>
+    <strong>${trend.mentions}</strong>
+  </div>
 
-        <div>
-          <span>VELOCITY</span>
-          <strong>${trend.velocity}</strong>
-        </div>
+  <div>
+    <span>VELOCITY</span>
+    <strong>${trend.velocity}</strong>
+  </div>
 
-      </div>
+  <div>
+    <span>PLATFORMS</span>
+    <strong>${trend.platformCount}</strong>
+  </div>
+
+  <div>
+    <span>SIGNAL</span>
+    <strong>${trend.signal}</strong>
+  </div>
+
+</div>
 
       <p class="explore-detail-platforms">
         ${trend.platforms.join(" · ")}
