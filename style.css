@@ -1751,8 +1751,9 @@ footer span:first-child {
     letter-spacing: 0.1em;
   }
 
-  .momentum-index-bar {
-    margin-top: 12px;
+    .momentum-index-bar {
+    margin-top: 11px;
+    height: 2px;
   }
 
 }
