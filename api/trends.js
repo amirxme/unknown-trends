@@ -1,3 +1,5 @@
+import { sql } from "../lib/db.js";
+
 const regions = [
   { code: "US", name: "United States" },
   { code: "GB", name: "United Kingdom" },
@@ -177,6 +179,155 @@ function rankScore(rank) {
   return 35;
 }
 
+/*
+  Calculates real historical movement.
+
+  velocity:
+  score change per hour
+
+  acceleration:
+  change in velocity compared with the previous interval
+
+  momentum:
+  total score change from the previous snapshot
+*/
+function calculateDynamics(history, currentScore) {
+  if (!history || history.length === 0) {
+    return {
+      momentum: 0,
+      velocity: 0,
+      acceleration: 0,
+      historyCount: 0
+    };
+  }
+
+  const snapshots = [...history]
+    .sort(
+      (a, b) =>
+        new Date(a.captured_at) -
+        new Date(b.captured_at)
+    )
+    .slice(-3);
+
+  const last = snapshots[snapshots.length - 1];
+
+  const lastScore = Number(last.global_score) || 0;
+
+  const currentMomentum =
+    currentScore - lastScore;
+
+  if (snapshots.length < 2) {
+    return {
+      momentum: currentMomentum,
+      velocity: currentMomentum,
+      acceleration: 0,
+      historyCount: snapshots.length
+    };
+  }
+
+  const previous = snapshots[snapshots.length - 2];
+
+  const previousScore =
+    Number(previous.global_score) || 0;
+
+  const lastTime =
+    new Date(last.captured_at).getTime();
+
+  const previousTime =
+    new Date(previous.captured_at).getTime();
+
+  const hours =
+    Math.max(
+      (lastTime - previousTime) / 3600000,
+      1 / 60
+    );
+
+  const previousVelocity =
+    (lastScore - previousScore) / hours;
+
+  const currentVelocity =
+    currentMomentum / hours;
+
+  let acceleration = 0;
+
+  if (snapshots.length >= 3) {
+    const first = snapshots[snapshots.length - 3];
+
+    const firstScore =
+      Number(first.global_score) || 0;
+
+    const firstTime =
+      new Date(first.captured_at).getTime();
+
+    const previousHours =
+      Math.max(
+        (previousTime - firstTime) / 3600000,
+        1 / 60
+      );
+
+    const olderVelocity =
+      (previousScore - firstScore) /
+      previousHours;
+
+    acceleration =
+      currentVelocity - olderVelocity;
+  }
+
+  return {
+    momentum: Math.round(currentMomentum * 100) / 100,
+    velocity: Math.round(currentVelocity * 100) / 100,
+    acceleration:
+      Math.round(acceleration * 100) / 100,
+    historyCount: snapshots.length
+  };
+}
+
+function getDynamicStatus(score, dynamics) {
+  const {
+    velocity,
+    acceleration,
+    historyCount
+  } = dynamics;
+
+  /*
+    Not enough historical data:
+    use score only.
+  */
+  if (historyCount < 2) {
+    if (score >= 85) return "VERY HIGH";
+    if (score >= 70) return "HIGH";
+    if (score >= 55) return "RISING";
+
+    return "EMERGING";
+  }
+
+  /*
+    Real acceleration.
+  */
+  if (
+    acceleration > 5 &&
+    velocity > 5
+  ) {
+    return "ACCELERATING";
+  }
+
+  /*
+    Strong positive movement.
+  */
+  if (velocity > 5) {
+    return "RISING";
+  }
+
+  /*
+    Negative movement.
+  */
+  if (velocity < -5) {
+    return "COOLING";
+  }
+
+  return "STABLE";
+}
+
 export default async function handler(req, res) {
   try {
     const results = await Promise.all(
@@ -199,30 +350,36 @@ export default async function handler(req, res) {
         const xml = await response.text();
 
         const items = [
-          ...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)
+          ...xml.matchAll(
+            /<item>([\s\S]*?)<\/item>/g
+          )
         ];
 
-        return items.slice(0, 20).map((match, index) => {
-          const item = match[1];
+        return items
+          .slice(0, 20)
+          .map((match, index) => {
+            const item = match[1];
 
-          const title = cleanText(
-            item.match(/<title>([\s\S]*?)<\/title>/)?.[1]
-          );
+            const title = cleanText(
+              item.match(
+                /<title>([\s\S]*?)<\/title>/
+              )?.[1]
+            );
 
-          const traffic = cleanText(
-            item.match(
-              /<ht:approx_traffic>([\s\S]*?)<\/ht:approx_traffic>/
-            )?.[1]
-          );
+            const traffic = cleanText(
+              item.match(
+                /<ht:approx_traffic>([\s\S]*?)<\/ht:approx_traffic>/
+              )?.[1]
+            );
 
-          return {
-            title,
-            traffic,
-            rank: index + 1,
-            region: region.name,
-            regionCode: region.code
-          };
-        });
+            return {
+              title,
+              traffic,
+              rank: index + 1,
+              region: region.name,
+              regionCode: region.code
+            };
+          });
       })
     );
 
@@ -238,8 +395,11 @@ export default async function handler(req, res) {
       if (!trendMap.has(key)) {
         trendMap.set(key, {
           title: displayTitle(trend.title),
+          titleKey: key,
           traffic: trend.traffic,
-          trafficValue: parseTraffic(trend.traffic),
+          trafficValue: parseTraffic(
+            trend.traffic
+          ),
           bestRank: trend.rank,
           regions: [],
           regionCodes: []
@@ -248,59 +408,155 @@ export default async function handler(req, res) {
 
       const existing = trendMap.get(key);
 
-      if (!existing.regionCodes.includes(trend.regionCode)) {
-        existing.regions.push(trend.region);
-        existing.regionCodes.push(trend.regionCode);
+      if (
+        !existing.regionCodes.includes(
+          trend.regionCode
+        )
+      ) {
+        existing.regions.push(
+          trend.region
+        );
+
+        existing.regionCodes.push(
+          trend.regionCode
+        );
       }
 
       if (trend.rank < existing.bestRank) {
         existing.bestRank = trend.rank;
       }
 
-      const currentTraffic = parseTraffic(trend.traffic);
+      const currentTraffic =
+        parseTraffic(trend.traffic);
 
-      if (currentTraffic > existing.trafficValue) {
-        existing.traffic = trend.traffic;
-        existing.trafficValue = currentTraffic;
+      if (
+        currentTraffic >
+        existing.trafficValue
+      ) {
+        existing.traffic =
+          trend.traffic;
+
+        existing.trafficValue =
+          currentTraffic;
       }
     });
 
-    const trends = Array.from(trendMap.values())
-      .map((trend) => {
-        const regionCount = trend.regions.length;
+    const rawTrends =
+      Array.from(trendMap.values())
+        .map((trend) => {
+          const regionCount =
+            trend.regions.length;
 
-        const coverageScore = Math.round(
-          (regionCount / regions.length) * 100
+          const coverageScore =
+            Math.round(
+              (regionCount /
+                regions.length) *
+                100
+            );
+
+          const volumeScore =
+            trafficScore(
+              trend.traffic
+            );
+
+          const positionScore =
+            rankScore(
+              trend.bestRank
+            );
+
+          const globalScore =
+            Math.round(
+              coverageScore * 0.5 +
+              volumeScore * 0.3 +
+              positionScore * 0.2
+            );
+
+          return {
+            ...trend,
+            regionCount,
+            coverageScore,
+            volumeScore,
+            positionScore,
+            globalScore
+          };
+        })
+        .sort(
+          (a, b) =>
+            b.globalScore -
+            a.globalScore
+        )
+        .slice(0, 20);
+
+    /*
+      Load recent history for all current trends
+      in one database query.
+    */
+    const titleKeys =
+      rawTrends.map(
+        (trend) => trend.titleKey
+      );
+
+    let historyRows = [];
+
+    if (titleKeys.length > 0) {
+      historyRows = await sql`
+        SELECT
+          captured_at,
+          title_key,
+          global_score
+        FROM trend_snapshots
+        WHERE title_key = ANY(${titleKeys})
+        ORDER BY captured_at DESC
+        LIMIT 300
+      `;
+    }
+
+    const historyMap = new Map();
+
+    historyRows.forEach((row) => {
+      if (!historyMap.has(row.title_key)) {
+        historyMap.set(
+          row.title_key,
+          []
         );
+      }
 
-        const volumeScore = trafficScore(trend.traffic);
+      historyMap
+        .get(row.title_key)
+        .push(row);
+    });
 
-        const positionScore = rankScore(trend.bestRank);
+    const trends = rawTrends.map(
+      (trend) => {
+        const history =
+          historyMap.get(
+            trend.titleKey
+          ) || [];
 
-        const globalScore = Math.round(
-          coverageScore * 0.5 +
-          volumeScore * 0.3 +
-          positionScore * 0.2
-        );
+        const dynamics =
+          calculateDynamics(
+            history,
+            trend.globalScore
+          );
+
+        const status =
+          getDynamicStatus(
+            trend.globalScore,
+            dynamics
+          );
 
         let signal = "MEDIUM";
 
-        if (globalScore >= 70) {
+        if (
+          trend.globalScore >= 70
+        ) {
           signal = "HIGH";
         }
 
-        if (globalScore >= 85) {
+        if (
+          trend.globalScore >= 85
+        ) {
           signal = "VERY HIGH";
-        }
-
-        let status = "EMERGING";
-
-        if (globalScore >= 55) {
-          status = "RISING";
-        }
-
-        if (globalScore >= 75) {
-          status = "ACCELERATING";
         }
 
         return {
@@ -308,46 +564,71 @@ export default async function handler(req, res) {
 
           platforms: ["Google"],
 
-          growth: `${globalScore}/100`,
+          growth:
+            `${trend.globalScore}/100`,
 
           status,
 
-          mentions: trend.traffic || "Unknown",
+          mentions:
+            trend.traffic ||
+            "Unknown",
 
-          velocity: `${coverageScore}% COVERAGE`,
+          /*
+            Kept as a percentage for
+            compatibility with the UI.
+          */
+          velocity:
+            `${dynamics.velocity}%/H`,
 
           platformCount: 1,
 
           signal,
 
-          globalScore,
+          globalScore:
+            trend.globalScore,
 
-          coverageScore,
+          coverageScore:
+            trend.coverageScore,
 
-          volumeScore,
+          volumeScore:
+            trend.volumeScore,
 
-          positionScore,
+          positionScore:
+            trend.positionScore,
 
-          regions: trend.regions,
+          momentum:
+            dynamics.momentum,
+
+          velocityScore:
+            dynamics.velocity,
+
+          acceleration:
+            dynamics.acceleration,
+
+          historyCount:
+            dynamics.historyCount,
+
+          regions:
+            trend.regions,
 
           signalBreakdown: [
-            coverageScore,
-            volumeScore,
-            positionScore,
-            globalScore
+            trend.coverageScore,
+            trend.volumeScore,
+            trend.positionScore,
+            trend.globalScore
           ],
 
           description:
             `Signal calculated from global coverage, search volume and regional position across ${regions.length} tracked regions.`
         };
-      })
-      .sort((a, b) => b.globalScore - a.globalScore)
-      .slice(0, 20);
+      }
+    );
 
     res.status(200).json({
       success: true,
 
-      source: "Google Trends Global",
+      source:
+        "Google Trends Global",
 
       scoring: {
         coverage: "50%",
@@ -355,11 +636,25 @@ export default async function handler(req, res) {
         position: "20%"
       },
 
-      regionsTracked: regions.length,
+      dynamics: {
+        momentum:
+          "Current score minus previous snapshot",
 
-      updatedAt: new Date().toISOString(),
+        velocity:
+          "Score change per hour",
 
-      count: trends.length,
+        acceleration:
+          "Change in velocity"
+      },
+
+      regionsTracked:
+        regions.length,
+
+      updatedAt:
+        new Date().toISOString(),
+
+      count:
+        trends.length,
 
       trends
     });
@@ -373,9 +668,11 @@ export default async function handler(req, res) {
     res.status(500).json({
       success: false,
 
-      source: "Google Trends Global",
+      source:
+        "Google Trends Global",
 
-      error: "Failed to load global trends"
+      error:
+        "Failed to load global trends"
     });
   }
 }
