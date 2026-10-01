@@ -1383,3 +1383,158 @@ footer span:first-child {
   }
 
 }
+/* =========================
+   MOMENTUM RANKING
+========================= */
+
+.momentum-ranking {
+  margin-bottom: 42px;
+}
+
+.momentum-ranking-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 22px 0 16px;
+
+  border-bottom: 1px solid #e5e5e3;
+}
+
+.momentum-ranking-head .eyebrow {
+  margin: 0;
+}
+
+.momentum-ranking-head > span {
+  font-size: 9px;
+  font-weight: 700;
+
+  color: #999;
+
+  letter-spacing: 0.12em;
+}
+
+.momentum-ranking-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 45px;
+
+  align-items: center;
+
+  min-height: 74px;
+
+  gap: 16px;
+
+  border-bottom: 1px solid #e5e5e3;
+
+  cursor: pointer;
+
+  transition:
+    padding 0.2s ease,
+    background 0.2s ease;
+}
+
+.momentum-ranking-row:hover {
+  padding-left: 8px;
+  padding-right: 8px;
+
+  background: #ffffff;
+}
+
+.momentum-ranking-rank {
+  font-size: 10px;
+  font-weight: 700;
+
+  color: #999;
+
+  letter-spacing: 0.08em;
+}
+
+.momentum-ranking-main {
+  min-width: 0;
+}
+
+.momentum-ranking-main strong {
+  display: block;
+
+  overflow: hidden;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  letter-spacing: -0.025em;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.momentum-ranking-main span {
+  display: block;
+
+  margin-top: 6px;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  color: #999;
+
+  letter-spacing: 0.1em;
+}
+
+.momentum-ranking-score {
+  text-align: right;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  letter-spacing: -0.02em;
+}
+
+
+/* =========================
+   MOMENTUM RANKING MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+  .momentum-ranking {
+    margin-bottom: 34px;
+  }
+
+  .momentum-ranking-head {
+    padding: 18px 0 14px;
+  }
+
+  .momentum-ranking-head > span {
+    font-size: 8px;
+  }
+
+  .momentum-ranking-row {
+    grid-template-columns: 30px minmax(0, 1fr) 35px;
+
+    min-height: 68px;
+
+    gap: 10px;
+  }
+
+  .momentum-ranking-row:hover {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .momentum-ranking-main strong {
+    font-size: 14px;
+  }
+
+  .momentum-ranking-main span {
+    margin-top: 5px;
+
+    font-size: 8px;
+  }
+
+  .momentum-ranking-score {
+    font-size: 14px;
+  }
+
+}
