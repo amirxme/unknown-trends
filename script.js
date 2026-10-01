@@ -115,6 +115,75 @@ function renderTrends(items) {
 
   trendList.appendChild(momentumIndex);
 
+  const ranking = document.createElement("section");
+
+  ranking.className =
+    "momentum-ranking";
+
+  ranking.innerHTML = `
+    <div class="momentum-ranking-head">
+      <p class="eyebrow">
+        MOMENTUM RANKING
+      </p>
+
+      <span>
+        TOP ${Math.min(5, items.length)}
+      </span>
+    </div>
+  `;
+
+  items
+    .slice(0, 5)
+    .forEach((trend, index) => {
+      const row =
+        document.createElement("article");
+
+      row.className =
+        "momentum-ranking-row";
+
+      const score =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            Number(trend.momentumScore) || 0
+          )
+        );
+
+      row.innerHTML = `
+        <span class="momentum-ranking-rank">
+          ${String(index + 1).padStart(2, "0")}
+        </span>
+
+        <div class="momentum-ranking-main">
+          <strong>
+            ${trend.title}
+          </strong>
+
+          <span>
+            ${trend.status}
+            ·
+            ${trend.velocity}
+          </span>
+        </div>
+
+        <strong class="momentum-ranking-score">
+          ${score}
+        </strong>
+      `;
+
+      row.addEventListener(
+        "click",
+        () => {
+          openTrend(trend);
+        }
+      );
+
+      ranking.appendChild(row);
+    });
+
+  trendList.appendChild(ranking);
+
   items.forEach((trend, index) => {
     const article =
       document.createElement("article");
