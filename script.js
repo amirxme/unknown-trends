@@ -1,6 +1,7 @@
 const searchInput = document.getElementById("searchInput");
 const searchButton = document.getElementById("searchButton");
 const trendList = document.getElementById("trendList");
+const platformButtons = document.querySelectorAll(".platform");
 
 const trends = [
   {
@@ -20,7 +21,7 @@ const trends = [
   },
   {
     title: "Streetwear revival",
-    platforms: "TikTok · Instagram · X",
+    platforms: "TikTok · X",
     growth: "+221%"
   },
   {
@@ -29,6 +30,8 @@ const trends = [
     growth: "+187%"
   }
 ];
+
+let activePlatform = "all";
 
 function renderTrends(items) {
   trendList.innerHTML = "";
@@ -40,7 +43,7 @@ function renderTrends(items) {
 
         <div class="trend-main">
           <h3>No signals found</h3>
-          <p>Try another search.</p>
+          <p>Try another search or platform.</p>
         </div>
 
         <strong>—</strong>
@@ -72,30 +75,49 @@ function renderTrends(items) {
   });
 }
 
-function searchTrends() {
+function filterTrends() {
   const query = searchInput.value.trim().toLowerCase();
 
-  if (!query) {
-    renderTrends(trends);
-    return;
-  }
+  const filtered = trends.filter((trend) => {
 
-  const results = trends.filter((trend) => {
-    return (
+    const matchesPlatform =
+      activePlatform === "all" ||
+      trend.platforms
+        .toLowerCase()
+        .includes(activePlatform.toLowerCase());
+
+    const matchesSearch =
+      !query ||
       trend.title.toLowerCase().includes(query) ||
-      trend.platforms.toLowerCase().includes(query)
-    );
+      trend.platforms.toLowerCase().includes(query);
+
+    return matchesPlatform && matchesSearch;
   });
 
-  renderTrends(results);
+  renderTrends(filtered);
 }
 
-searchButton.addEventListener("click", searchTrends);
+searchButton.addEventListener("click", filterTrends);
 
 searchInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
-    searchTrends();
+    filterTrends();
   }
+});
+
+platformButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+
+    platformButtons.forEach((item) => {
+      item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    activePlatform = button.dataset.platform;
+
+    filterTrends();
+  });
 });
 
 renderTrends(trends);
