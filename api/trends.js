@@ -75,7 +75,7 @@ function cleanText(value) {
 }
 
 function normalizeTitle(title) {
-  return title
+  const normalized = title
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -98,6 +98,8 @@ function normalizeTitle(title) {
     )
     .sort()
     .join(" ");
+
+  return phraseAliases[normalized] || normalized;
 }
 
 function displayTitle(title) {
