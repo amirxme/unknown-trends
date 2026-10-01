@@ -458,33 +458,88 @@ function calculateMomentumScore(
 
 
 function calculateConfidenceScore(
-  historyCount
+  historyCount,
+  history = []
 ) {
   /*
     CONFIDENCE SCORE
 
-    Measures how much historical data exists
-    behind the momentum signal.
+    Measures how reliable the momentum signal is.
 
-    0 snapshots  = 10%
-    1 snapshot   = 25%
-    2 snapshots  = 50%
-    3 snapshots  = 75%
-    4+ snapshots = 100%
+    Confidence is based on:
 
-    A minimum 10% is intentional:
-    a completely new trend is not treated
-    as having zero information.
+    1. Historical depth
+    2. Signal stability
+    3. Recent observations
+
+    More snapshots increase confidence.
+    Large score swings reduce confidence.
   */
 
-  const confidence =
+  if (historyCount <= 0) {
+    return 10;
+  }
+
+  const depthScore =
     Math.min(
-      100,
-      10 + (historyCount * 25)
+      70,
+      10 + historyCount * 15
     );
 
+  if (history.length < 2) {
+    return Math.round(
+      Math.min(100, depthScore)
+    );
+  }
+
+  const scores = history
+    .map(
+      (item) =>
+        Number(item.global_score) || 0
+    );
+
+  let totalChange = 0;
+
+  for (let i = 1; i < scores.length; i++) {
+    totalChange += Math.abs(
+      scores[i] - scores[i - 1]
+    );
+  }
+
+  const averageChange =
+    totalChange /
+    Math.max(1, scores.length - 1);
+
+  /*
+    Stability bonus
+
+    Small changes = stable signal
+    Large changes = less reliable signal
+  */
+
+  let stabilityScore = 30;
+
+  if (averageChange <= 2) {
+    stabilityScore = 30;
+  } else if (averageChange <= 5) {
+    stabilityScore = 25;
+  } else if (averageChange <= 10) {
+    stabilityScore = 15;
+  } else {
+    stabilityScore = 5;
+  }
+
+  const confidence =
+    depthScore + stabilityScore;
+
   return Math.round(
-    confidence
+    Math.max(
+      10,
+      Math.min(
+        100,
+        confidence
+      )
+    )
   );
 }
 
