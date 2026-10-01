@@ -337,8 +337,6 @@ function filterExplore() {
 
 
 function openExploreTrend(trend) {
-  const originalResults = exploreResults.innerHTML;
-
   exploreResults.innerHTML = `
     <article class="explore-detail">
 
@@ -352,37 +350,37 @@ function openExploreTrend(trend) {
 
       <div class="explore-detail-meta">
 
-  <div>
-    <span>GROWTH</span>
-    <strong>${trend.growth}</strong>
-  </div>
+        <div>
+          <span>GROWTH</span>
+          <strong>${trend.growth}</strong>
+        </div>
 
-  <div>
-    <span>STATUS</span>
-    <strong>${trend.status}</strong>
-  </div>
+        <div>
+          <span>STATUS</span>
+          <strong>${trend.status}</strong>
+        </div>
 
-  <div>
-    <span>MENTIONS</span>
-    <strong>${trend.mentions}</strong>
-  </div>
+        <div>
+          <span>MENTIONS</span>
+          <strong>${trend.mentions}</strong>
+        </div>
 
-  <div>
-    <span>VELOCITY</span>
-    <strong>${trend.velocity}</strong>
-  </div>
+        <div>
+          <span>VELOCITY</span>
+          <strong>${trend.velocity}</strong>
+        </div>
 
-  <div>
-    <span>PLATFORMS</span>
-    <strong>${trend.platformCount}</strong>
-  </div>
+        <div>
+          <span>PLATFORMS</span>
+          <strong>${trend.platformCount}</strong>
+        </div>
 
-  <div>
-    <span>SIGNAL</span>
-    <strong>${trend.signal}</strong>
-  </div>
+        <div>
+          <span>SIGNAL</span>
+          <strong>${trend.signal}</strong>
+        </div>
 
-</div>
+      </div>
 
       <p class="explore-detail-platforms">
         ${trend.platforms.join(" · ")}
@@ -400,41 +398,7 @@ function openExploreTrend(trend) {
   document
     .getElementById("exploreBack")
     .addEventListener("click", () => {
-      exploreResults.innerHTML = originalResults;
-
-      document
-        .querySelectorAll(".explore-item")
-        .forEach((item, index) => {
-
-          item.addEventListener("click", () => {
-            openExploreTrend(
-              trends.filter((trend) => {
-                const query =
-                  exploreInput.value.trim().toLowerCase();
-
-                const matchesFilter =
-                  activeExploreFilter === "all" ||
-                  trend.platforms.some(
-                    (platform) =>
-                      platform.toLowerCase() ===
-                      activeExploreFilter.toLowerCase()
-                  );
-
-                const matchesSearch =
-                  !query ||
-                  trend.title.toLowerCase().includes(query) ||
-                  trend.description.toLowerCase().includes(query) ||
-                  trend.platforms.some(
-                    (platform) =>
-                      platform.toLowerCase().includes(query)
-                  );
-
-                return matchesFilter && matchesSearch;
-              })[index]
-            );
-          });
-
-        });
+      filterExplore();
     });
 }
 
