@@ -416,10 +416,11 @@ main {
     font-size: 9px;
   }
 
-  .trend-main h3 {
-    margin-bottom: 6px;
+    .trend-main h3 {
+    margin-bottom: 5px;
 
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.15;
   }
 
   .trend-main p {
