@@ -76,9 +76,50 @@ function normalizeTitle(title) {
 }
 
 function displayTitle(title) {
-  return title
-    .replace(/\s+/g, " ")
-    .trim();
+  return title.replace(/\s+/g, " ").trim();
+}
+
+function parseTraffic(value) {
+  if (!value) return 0;
+
+  const number = Number(
+    value
+      .replace(/,/g, "")
+      .replace(/\+/g, "")
+      .replace(/\s+/g, "")
+  );
+
+  return Number.isFinite(number) ? number : 0;
+}
+
+function trafficScore(value) {
+  const traffic = parseTraffic(value);
+
+  if (traffic >= 1000000) return 100;
+  if (traffic >= 500000) return 95;
+  if (traffic >= 200000) return 90;
+  if (traffic >= 100000) return 85;
+  if (traffic >= 50000) return 75;
+  if (traffic >= 20000) return 65;
+  if (traffic >= 10000) return 55;
+  if (traffic >= 5000) return 45;
+  if (traffic >= 2000) return 35;
+  if (traffic >= 1000) return 25;
+  if (traffic >= 500) return 18;
+  if (traffic >= 200) return 12;
+  if (traffic >= 100) return 8;
+
+  return 5;
+}
+
+function rankScore(rank) {
+  if (rank <= 1) return 100;
+  if (rank <= 3) return 90;
+  if (rank <= 5) return 80;
+  if (rank <= 10) return 65;
+  if (rank <= 15) return 50;
+
+  return 35;
 }
 
 export default async function handler(req, res) {
@@ -106,7 +147,7 @@ export default async function handler(req, res) {
           ...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)
         ];
 
-        return items.slice(0, 20).map((match) => {
+        return items.slice(0, 20).map((match, index) => {
           const item = match[1];
 
           const title = cleanText(
@@ -122,6 +163,7 @@ export default async function handler(req, res) {
           return {
             title,
             traffic,
+            rank: index + 1,
             region: region.name,
             regionCode: region.code
           };
@@ -142,6 +184,8 @@ export default async function handler(req, res) {
         trendMap.set(key, {
           title: displayTitle(trend.title),
           traffic: trend.traffic,
+          trafficValue: parseTraffic(trend.traffic),
+          bestRank: trend.rank,
           regions: [],
           regionCodes: []
         });
@@ -154,13 +198,15 @@ export default async function handler(req, res) {
         existing.regionCodes.push(trend.regionCode);
       }
 
-      if (
-        trend.traffic &&
-        trend.traffic !== "Unknown" &&
-        (!existing.traffic ||
-          existing.traffic === "Unknown")
-      ) {
+      if (trend.rank < existing.bestRank) {
+        existing.bestRank = trend.rank;
+      }
+
+      const currentTraffic = parseTraffic(trend.traffic);
+
+      if (currentTraffic > existing.trafficValue) {
         existing.traffic = trend.traffic;
+        existing.trafficValue = currentTraffic;
       }
     });
 
@@ -168,55 +214,82 @@ export default async function handler(req, res) {
       .map((trend) => {
         const regionCount = trend.regions.length;
 
-        const globalScore = Math.round(
+        const coverageScore = Math.round(
           (regionCount / regions.length) * 100
+        );
+
+        const volumeScore = trafficScore(trend.traffic);
+
+        const positionScore = rankScore(trend.bestRank);
+
+        const globalScore = Math.round(
+          coverageScore * 0.5 +
+          volumeScore * 0.3 +
+          positionScore * 0.2
         );
 
         let signal = "MEDIUM";
 
-        if (globalScore >= 40) {
+        if (globalScore >= 70) {
           signal = "HIGH";
         }
 
-        if (globalScore >= 70) {
+        if (globalScore >= 85) {
           signal = "VERY HIGH";
         }
 
         let status = "EMERGING";
 
-        if (regionCount >= 3) {
+        if (globalScore >= 55) {
           status = "RISING";
         }
 
-        if (regionCount >= 5) {
+        if (globalScore >= 75) {
           status = "ACCELERATING";
         }
 
         return {
           title: trend.title,
+
           platforms: ["Google"],
-          growth: `GLOBAL ${globalScore}%`,
+
+          growth: `SIGNAL ${globalScore}`,
+
           status,
+
           mentions: trend.traffic || "Unknown",
+
           velocity: `${regionCount} REGIONS`,
+
           platformCount: regionCount,
+
           signal,
+
           globalScore,
+
+          coverageScore,
+
+          volumeScore,
+
+          positionScore,
+
           regions: trend.regions,
+
           history: [
-            20,
-            25,
-            31,
-            36,
-            44,
-            51,
-            59,
-            68,
-            78,
-            Math.max(85, globalScore)
+            Math.max(20, positionScore - 35),
+            Math.max(25, positionScore - 30),
+            Math.max(30, positionScore - 25),
+            Math.max(35, positionScore - 20),
+            Math.max(40, positionScore - 15),
+            Math.max(45, positionScore - 10),
+            Math.max(50, positionScore - 7),
+            Math.max(55, positionScore - 4),
+            Math.max(60, positionScore - 2),
+            globalScore
           ],
+
           description:
-            `Trending across ${regionCount} of ${regions.length} tracked regions.`
+            `Signal calculated from global coverage, search volume and regional position across ${regions.length} tracked regions.`
         };
       })
       .sort((a, b) => b.globalScore - a.globalScore)
@@ -224,10 +297,21 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       success: true,
+
       source: "Google Trends Global",
+
+      scoring: {
+        coverage: "50%",
+        volume: "30%",
+        position: "20%"
+      },
+
       regionsTracked: regions.length,
+
       updatedAt: new Date().toISOString(),
+
       count: trends.length,
+
       trends
     });
 
@@ -239,7 +323,9 @@ export default async function handler(req, res) {
 
     res.status(500).json({
       success: false,
+
       source: "Google Trends Global",
+
       error: "Failed to load global trends"
     });
   }
