@@ -84,6 +84,14 @@ function normalizeTitle(title) {
     .filter(Boolean)
     .join(" ");
 
+  // Canonicalize Ecuador vs Japan across languages
+  if (
+    (raw.includes("ecuador") || raw.includes("equador") || raw.includes("エクアドル") || raw.includes("에콰도르")) &&
+    (raw.includes("japan") || raw.includes("japon") || raw.includes("日本") || raw.includes("일본") || raw.includes("japao"))
+  ) {
+    return "ecuador japan";
+  }
+
   if (phraseAliases[raw]) {
     return phraseAliases[raw];
   }
