@@ -1720,8 +1720,9 @@ footer span:first-child {
     align-items: center;
   }
 
-  .momentum-index h2 {
-    font-size: 40px;
+    .momentum-index h2 {
+    font-size: 38px;
+    line-height: 0.9;
   }
 
   .momentum-index-status {
