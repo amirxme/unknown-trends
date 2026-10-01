@@ -571,9 +571,10 @@ footer span:first-child {
 }
 
   .search input {
-    padding: 0 16px;
-    font-size: 13px;
-  }
+  padding: 0 15px;
+  font-size: 13px;
+  line-height: 1;
+}
 
   .search button {
     padding: 0 17px;
