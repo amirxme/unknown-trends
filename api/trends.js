@@ -332,16 +332,10 @@ export default async function handler(req, res) {
 
           regions: trend.regions,
 
-          history: [
-            Math.max(20, positionScore - 35),
-            Math.max(25, positionScore - 30),
-            Math.max(30, positionScore - 25),
-            Math.max(35, positionScore - 20),
-            Math.max(40, positionScore - 15),
-            Math.max(45, positionScore - 10),
-            Math.max(50, positionScore - 7),
-            Math.max(55, positionScore - 4),
-            Math.max(60, positionScore - 2),
+          signalBreakdown: [
+            coverageScore,
+            volumeScore,
+            positionScore,
             globalScore
           ],
 
