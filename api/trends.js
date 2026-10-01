@@ -25,7 +25,6 @@ const aliases = {
   "エクアドル": "ecuador",
   "에콰도르": "ecuador",
 
-  "japao": "japan",
   x: "vs",
   equador: "ecuador",
 
