@@ -611,8 +611,9 @@ footer span:first-child {
     padding-right: 5px;
   }
 
-  .trend-main h3 {
-    font-size: 15px;
+    .trend-main h3 {
+    font-size: 14px;
+    line-height: 1.15;
   }
 
   .trend-main p {
