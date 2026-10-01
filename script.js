@@ -96,19 +96,21 @@ function filterTrends() {
    SIGNAL GRAPH
 ========================= */
 
-function createSignalGraph(history) {
+function createSignalGraph(signalBreakdown) {
   const width = 700;
   const height = 180;
   const padding = 10;
 
-  const min = Math.min(...history);
-  const max = Math.max(...history);
-  const range = max - min || 1;
+  const values = signalBreakdown || [0, 0, 0, 0];
 
-  const points = history.map((value, index) => {
+  const min = 0;
+  const max = 100;
+  const range = max - min;
+
+  const points = values.map((value, index) => {
     const x =
       padding +
-      (index / (history.length - 1)) *
+      (index / (values.length - 1)) *
         (width - padding * 2);
 
     const y =
@@ -124,14 +126,14 @@ function createSignalGraph(history) {
     <div class="signal-graph">
 
       <div class="graph-head">
-        <span>SIGNAL MOVEMENT</span>
-        <span>LAST 10 PERIODS</span>
+        <span>SIGNAL COMPOSITION</span>
+        <span>0 — 100</span>
       </div>
 
       <svg
         viewBox="0 0 ${width} ${height}"
         preserveAspectRatio="none"
-        aria-label="Signal movement graph"
+        aria-label="Signal composition graph"
       >
 
         <line
@@ -166,8 +168,10 @@ function createSignalGraph(history) {
       </svg>
 
       <div class="graph-labels">
-        <span>EARLIER</span>
-        <span>NOW</span>
+        <span>COVERAGE</span>
+        <span>VOLUME</span>
+        <span>POSITION</span>
+        <span>SIGNAL</span>
       </div>
 
     </div>
