@@ -8,6 +8,9 @@ const exploreInput = document.getElementById("exploreInput");
 const exploreResults = document.getElementById("exploreResults");
 const exploreFilters = document.querySelectorAll(".explore-filter");
 const exploreCount = document.getElementById("exploreCount");
+
+let trends = [];
+
 let activePlatform = "all";
 let activeExploreFilter = "all";
 
