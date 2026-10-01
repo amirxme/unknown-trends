@@ -1165,7 +1165,10 @@ footer span:first-child {
   .explore-main p {
     font-size: 10px;
   }
-
+  .explore-platform-count {
+    margin-top: 6px;
+    font-size: 8px;
+  }
   .explore-growth strong {
     font-size: 15px;
   }
