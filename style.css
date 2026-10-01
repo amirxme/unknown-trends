@@ -1725,10 +1725,12 @@ footer span:first-child {
     line-height: 0.9;
   }
 
-  .momentum-index-status {
-    padding-top: 3px;
+    .momentum-index-status {
+    padding-top: 2px;
 
     font-size: 8px;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .momentum-index-main {
