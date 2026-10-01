@@ -13,8 +13,21 @@ const regions = [
 
 const aliases = {
   japon: "japan",
-  japón: "japan",
   japonia: "japan",
+  japao: "japan",
+
+  "日本": "japan",
+  "対": "vs",
+
+  "일본": "japan",
+  "대": "vs",
+
+  "エクアドル": "ecuador",
+  "에콰도르": "ecuador",
+
+  "japao": "japan",
+  x: "vs",
+  equador: "ecuador",
 
   alemania: "germany",
   deutschland: "germany",
@@ -29,7 +42,6 @@ const aliases = {
   brasil: "brazil",
 
   canada: "canada",
-  canadá: "canada",
 
   corea: "korea",
   sur: "south",
