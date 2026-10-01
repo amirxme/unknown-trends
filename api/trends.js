@@ -75,22 +75,35 @@ function cleanText(value) {
 }
 
 function normalizeTitle(title) {
-  const raw = title
-    .toLowerCase()
+  const original = String(title || "").trim();
+  const lowerOriginal = original.toLowerCase();
+
+  // Hard canonicalization for Ecuador vs Japan.
+  // Check the original RSS title before removing Unicode characters.
+  const hasEcuador =
+    lowerOriginal.includes("ecuador") ||
+    lowerOriginal.includes("equador") ||
+    original.includes("エクアドル") ||
+    original.includes("에콰도르");
+
+  const hasJapan =
+    lowerOriginal.includes("japan") ||
+    lowerOriginal.includes("japon") ||
+    lowerOriginal.includes("japao") ||
+    original.includes("日本") ||
+    original.includes("일본");
+
+  if (hasEcuador && hasJapan) {
+    return "ecuador japan";
+  }
+
+  const raw = lowerOriginal
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .split(/\s+/)
     .filter(Boolean)
     .join(" ");
-
-  // Canonicalize Ecuador vs Japan across languages
-  if (
-    (raw.includes("ecuador") || raw.includes("equador") || raw.includes("エクアドル") || raw.includes("에콰도르")) &&
-    (raw.includes("japan") || raw.includes("japon") || raw.includes("日本") || raw.includes("일본") || raw.includes("japao"))
-  ) {
-    return "ecuador japan";
-  }
 
   if (phraseAliases[raw]) {
     return phraseAliases[raw];
