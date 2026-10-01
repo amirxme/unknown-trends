@@ -1842,3 +1842,113 @@ footer span:first-child {
   }
 
 }
+/* =========================
+   FINAL HEADER POLISH
+========================= */
+
+.nav {
+  height: 72px;
+
+  padding: 0 4.5vw;
+
+  border-bottom: 1px solid var(--line);
+
+  background: rgba(248, 248, 246, 0.88);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.logo {
+  font-size: 16px;
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+
+  transition:
+    opacity 0.2s ease,
+    letter-spacing 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.72;
+  letter-spacing: 0.16em;
+}
+
+.nav nav {
+  gap: 28px;
+}
+
+.nav nav a {
+  font-size: 10px;
+  font-weight: 700;
+
+  color: var(--muted);
+
+  letter-spacing: 0.13em;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.nav nav a::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: -7px;
+
+  height: 1px;
+
+  background: var(--text);
+
+  transform: scaleX(0);
+  transform-origin: center;
+
+  transition:
+    transform 0.2s ease;
+}
+
+.nav nav a:hover {
+  color: var(--text);
+}
+
+.nav nav a:hover::after {
+  transform: scaleX(1);
+}
+
+
+/* =========================
+   FINAL HEADER MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+  .nav {
+    height: 66px;
+
+    padding: 0 5vw;
+  }
+
+  .logo {
+    font-size: 15px;
+    letter-spacing: 0.13em;
+  }
+
+  .nav nav {
+    gap: 14px;
+  }
+
+  .nav nav a {
+    font-size: 9px;
+    letter-spacing: 0.11em;
+  }
+
+  .nav nav a::after {
+    bottom: -6px;
+  }
+
+}
