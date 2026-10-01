@@ -112,33 +112,53 @@ main {
 ========================= */
 
 .hero {
-  min-height: calc(100vh - 76px);
+  min-height: calc(100vh - 72px);
 
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  padding: 100px 0 120px;
+  padding: 92px 0 118px;
+
+  position: relative;
 }
 
-.eyebrow {
-  margin-bottom: 22px;
+.hero::after {
+  content: "";
 
-  font-size: 10px;
+  position: absolute;
+
+  left: 0;
+  bottom: 34px;
+
+  width: 42px;
+  height: 1px;
+
+  background: var(--text);
+
+  opacity: 0.7;
+}
+
+.hero .eyebrow {
+  margin-bottom: 24px;
+
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.17em;
+
+  letter-spacing: 0.19em;
 
   color: var(--soft);
 }
 
 .hero h1 {
-  max-width: 1000px;
+  max-width: 1040px;
 
   font-size: clamp(72px, 11vw, 150px);
-  line-height: 0.84;
+  line-height: 0.82;
 
   font-weight: 500;
-  letter-spacing: -0.075em;
+
+  letter-spacing: -0.078em;
 }
 
 .hero h1 span {
@@ -146,14 +166,16 @@ main {
 }
 
 .subtitle {
-  max-width: 500px;
+  max-width: 470px;
 
-  margin-top: 42px;
+  margin-top: 38px;
 
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.55;
 
   color: var(--muted);
+
+  letter-spacing: -0.01em;
 }
 
 
