@@ -640,8 +640,37 @@ footer span:first-child {
   }
 
   .hero {
-    padding-top: 90px;
-  }
+  min-height: calc(100vh - 66px);
+
+  padding-top: 72px;
+  padding-bottom: 88px;
+}
+
+.hero::after {
+  bottom: 28px;
+
+  width: 32px;
+}
+
+.hero .eyebrow {
+  margin-bottom: 20px;
+
+  font-size: 8px;
+  letter-spacing: 0.17em;
+}
+
+.hero h1 {
+  line-height: 0.86;
+}
+
+.subtitle {
+  max-width: 340px;
+
+  margin-top: 28px;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
 
   .section-head {
     align-items: flex-start;
