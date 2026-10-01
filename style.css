@@ -645,12 +645,12 @@ footer span:first-child {
     font-size: 11px;
   }
 
-  .hero {
-  min-height: auto;
+    .hero {
+    min-height: auto;
 
-  padding-top: 72px;
-  padding-bottom: 72px;
-}
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
 
 .hero::after {
   bottom: 28px;
