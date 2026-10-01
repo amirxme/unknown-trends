@@ -239,8 +239,8 @@ function calculateDynamics(history, currentScore) {
       ? (latestTime - previousTime) / 3600000
       : 0;
 
-  // Не считаем короткие тестовые интервалы
-  // быстрее 10 минут полноценной динамикой.
+  // Short test intervals are capped at 10 minutes
+  // so velocity does not explode during testing.
   const effectiveHours = Math.max(hours, 1 / 6);
 
   const velocity =
@@ -261,15 +261,25 @@ function calculateDynamics(history, currentScore) {
         ? (previousTime - olderTime) / 3600000
         : 0;
 
-    const effectiveOlderHours =
-      Math.max(olderHours, 1 / 6);
+    /*
+      Acceleration is a stronger signal than velocity.
+      Ignore short testing intervals completely.
+      Both intervals must be at least 30 minutes long
+      before acceleration can become a real signal.
+    */
+    const minimumAccelerationInterval = 0.5;
 
-    const previousVelocity =
-      (previousScore - olderScore) /
-      effectiveOlderHours;
+    if (
+      hours >= minimumAccelerationInterval &&
+      olderHours >= minimumAccelerationInterval
+    ) {
+      const previousVelocity =
+        (previousScore - olderScore) /
+        olderHours;
 
-    acceleration =
-      velocity - previousVelocity;
+      acceleration =
+        velocity - previousVelocity;
+    }
   }
 
   const normalizedVelocity =
