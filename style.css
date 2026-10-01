@@ -1897,8 +1897,9 @@ footer span:first-child {
     padding-right: 5px;
   }
 
-  .momentum-ranking-main strong {
+    .momentum-ranking-main strong {
     font-size: 14px;
+    line-height: 1.15;
   }
 
   .momentum-ranking-main span {
