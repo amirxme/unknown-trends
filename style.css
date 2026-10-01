@@ -1902,10 +1902,12 @@ footer span:first-child {
     line-height: 1.15;
   }
 
-  .momentum-ranking-main span {
-    margin-top: 5px;
+    .momentum-ranking-main span {
+    margin-top: 4px;
 
     font-size: 7px;
+    line-height: 1.1;
+    letter-spacing: 0.1em;
   }
 
   .momentum-ranking-score {
