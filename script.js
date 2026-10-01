@@ -1083,6 +1083,26 @@ function renderExplore(
         "explore-item";
 
 
+      const momentum =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            Number(trend.momentumScore) || 0
+          )
+        );
+
+
+      const confidence =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            Number(trend.confidenceScore) || 0
+          )
+        );
+
+
       item.innerHTML = `
 
         <span class="explore-rank">
@@ -1118,6 +1138,36 @@ function renderExplore(
           <span>
             ${trend.status}
           </span>
+
+        </div>
+
+
+        <div class="explore-signal-meta">
+
+          <div>
+
+            <span>
+              MOMENTUM
+            </span>
+
+            <strong>
+              ${momentum}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              CONFIDENCE
+            </span>
+
+            <strong>
+              ${confidence}%
+            </strong>
+
+          </div>
 
         </div>
 
