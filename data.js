@@ -8,6 +8,7 @@ const trends = [
     velocity: "+31.4K / hour",
     platformCount: 3,
     signal: "HIGH",
+    history: [18, 24, 22, 31, 38, 47, 55, 68, 79, 92],
     description:
       "Growing discussion around autonomous AI systems and agent-based tools."
   },
@@ -21,6 +22,7 @@ const trends = [
     velocity: "+18.7K / hour",
     platformCount: 3,
     signal: "HIGH",
+    history: [20, 27, 25, 34, 39, 44, 51, 58, 67, 76],
     description:
       "A rapidly expanding conversation around upcoming Apple hardware."
   },
@@ -34,6 +36,7 @@ const trends = [
     velocity: "+12.3K / hour",
     platformCount: 2,
     signal: "MEDIUM",
+    history: [24, 21, 29, 27, 35, 39, 42, 48, 53, 61],
     description:
       "Increasing attention around regulation, policy and the crypto market."
   },
@@ -47,6 +50,7 @@ const trends = [
     velocity: "+9.8K / hour",
     platformCount: 2,
     signal: "MEDIUM",
+    history: [16, 19, 23, 21, 28, 31, 35, 39, 44, 49],
     description:
       "Renewed interest in streetwear culture, styling and fashion archives."
   },
@@ -60,6 +64,7 @@ const trends = [
     velocity: "+7.1K / hour",
     platformCount: 3,
     signal: "MEDIUM",
+    history: [19, 23, 21, 25, 29, 30, 34, 36, 39, 43],
     description:
       "A broad signal connecting several conversations across internet culture."
   }
