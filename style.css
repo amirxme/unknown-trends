@@ -1242,6 +1242,7 @@ footer span:first-child {
 
   transition: width 0.6s ease;
 }
+
 .momentum-status {
   display: block;
 
@@ -1253,4 +1254,132 @@ footer span:first-child {
   color: #999;
 
   letter-spacing: 0.12em;
+}
+
+
+/* =========================
+   MOMENTUM INDEX
+========================= */
+
+.momentum-index {
+  margin-bottom: 18px;
+
+  padding: 22px 0;
+
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #e5e5e3;
+
+  cursor: pointer;
+}
+
+.momentum-index-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.momentum-index .eyebrow {
+  margin: 0;
+}
+
+.momentum-index h2 {
+  margin: 8px 0 0;
+
+  font-size: 42px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.momentum-index h2 span {
+  font-size: 14px;
+  font-weight: 500;
+
+  color: #999;
+
+  letter-spacing: 0;
+}
+
+.momentum-index-status {
+  padding-top: 3px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  color: #777;
+
+  letter-spacing: 0.12em;
+}
+
+.momentum-index-main {
+  margin-top: 24px;
+}
+
+.momentum-index-main > div:first-child {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.momentum-index-main strong {
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: -0.01em;
+}
+
+.momentum-index-main span {
+  font-size: 9px;
+  font-weight: 700;
+
+  color: #999;
+
+  letter-spacing: 0.1em;
+}
+
+.momentum-index-bar {
+  width: 100%;
+  height: 4px;
+
+  margin-top: 12px;
+
+  background: #e5e5e3;
+
+  overflow: hidden;
+}
+
+.momentum-index-fill {
+  height: 100%;
+
+  background: #111;
+
+  transition: width 0.6s ease;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+  .momentum-index {
+    padding: 18px 0;
+  }
+
+  .momentum-index h2 {
+    font-size: 36px;
+  }
+
+  .momentum-index-main > div:first-child {
+    display: block;
+  }
+
+  .momentum-index-main span {
+    display: block;
+
+    margin-top: 6px;
+  }
+
 }
