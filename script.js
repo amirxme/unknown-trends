@@ -343,9 +343,16 @@ async function openTrend(trend) {
           <strong>${trend.growth}</strong>
         </span>
 
-        <span>
+                <span>
           MOMENTUM
           <strong>${trend.momentumScore}/100</strong>
+
+          <div class="momentum-meter">
+            <div
+              class="momentum-meter-fill"
+              style="width: ${Math.max(0, Math.min(100, Number(trend.momentumScore) || 0))}%"
+            ></div>
+          </div>
         </span>
 
       </div>
