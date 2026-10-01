@@ -336,7 +336,7 @@ async function openTrend(trend) {
 
       <h2>${trend.title}</h2>
 
-            <div class="detail-meta">
+      <div class="detail-meta">
 
         <span>
           SCORE
@@ -364,13 +364,24 @@ async function openTrend(trend) {
       <div class="detail-meta">
 
         <span>
-          STATUS
-          <strong>${trend.status}</strong>
+          CONFIDENCE
+          <strong>${trend.confidenceScore}%</strong>
+
+          <div class="momentum-meter">
+            <div
+              class="momentum-meter-fill"
+              style="width: ${Math.max(0, Math.min(100, Number(trend.confidenceScore) || 0))}%"
+            ></div>
+          </div>
+
+          <small class="momentum-status">
+            ${trend.historyCount} HISTORICAL SNAPSHOT${trend.historyCount === 1 ? "" : "S"}
+          </small>
         </span>
 
         <span>
-          VELOCITY
-          <strong>${trend.velocity}</strong>
+          STATUS
+          <strong>${trend.status}</strong>
         </span>
 
       </div>
@@ -378,13 +389,27 @@ async function openTrend(trend) {
       <div class="detail-meta">
 
         <span>
+          VELOCITY
+          <strong>${trend.velocity}</strong>
+        </span>
+
+        <span>
           MENTIONS
           <strong>${trend.mentions}</strong>
         </span>
 
+      </div>
+
+      <div class="detail-meta">
+
         <span>
           SIGNAL
           <strong>${trend.signal}</strong>
+        </span>
+
+        <span>
+          HISTORY
+          <strong>${trend.historyCount}</strong>
         </span>
 
       </div>
