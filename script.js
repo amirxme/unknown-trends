@@ -285,7 +285,12 @@ function renderExplore(items) {
         <p>
           ${trend.platforms.join(" · ")}
         </p>
-      </div>
+    
+        <span class="explore-platform-count">
+          ${trend.platformCount} PLATFORMS
+        </span>
+        
+           </div> 
 
       <div class="explore-growth">
         <strong>${trend.growth}</strong>
