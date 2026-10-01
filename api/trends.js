@@ -613,102 +613,107 @@ export default async function handler(req, res) {
     });
 
     const trends = rawTrends.map(
-      (trend) => {
-        const history =
-          historyMap.get(
-            trend.titleKey
-          ) || [];
+  (trend) => {
+    const history =
+      historyMap.get(
+        trend.titleKey
+      ) || [];
 
-        const dynamics =
-          calculateDynamics(
-            history,
-            trend.globalScore
-          );
+    const dynamics =
+      calculateDynamics(
+        history,
+        trend.globalScore
+      );
 
-        const status =
-          getDynamicStatus(
-            trend.globalScore,
-            dynamics
-          );
+    const status =
+      getDynamicStatus(
+        trend.globalScore,
+        dynamics
+      );
 
-        let signal = "MEDIUM";
+    const momentumScore =
+      calculateMomentumScore(
+        trend.globalScore,
+        trend.coverageScore,
+        dynamics
+      );
 
-        if (
-          trend.globalScore >= 70
-        ) {
-          signal = "HIGH";
-        }
+    let signal = "MEDIUM";
 
-        if (
-          trend.globalScore >= 85
-        ) {
-          signal = "VERY HIGH";
-        }
+    if (
+      trend.globalScore >= 70
+    ) {
+      signal = "HIGH";
+    }
 
-        return {
-          title: trend.title,
+    if (
+      trend.globalScore >= 85
+    ) {
+      signal = "VERY HIGH";
+    }
 
-          platforms: ["Google"],
+    return {
+      title: trend.title,
 
-          growth:
-            `${trend.globalScore}/100`,
+      platforms: ["Google"],
 
-          status,
+      growth:
+        `${trend.globalScore}/100`,
 
-          mentions:
-            trend.traffic ||
-            "Unknown",
+      status,
 
-          /*
-            Kept as a percentage for
-            compatibility with the UI.
-          */
-          velocity:
-            `${dynamics.velocity}%/H`,
+      mentions:
+        trend.traffic ||
+        "Unknown",
 
-          platformCount: 1,
+      velocity:
+        `${dynamics.velocity}%/H`,
 
-          signal,
+      platformCount: 1,
 
-          globalScore:
-            trend.globalScore,
+      signal,
 
-          coverageScore:
-            trend.coverageScore,
+      globalScore:
+        trend.globalScore,
 
-          volumeScore:
-            trend.volumeScore,
+      momentumScore,
 
-          positionScore:
-            trend.positionScore,
+      coverageScore:
+        trend.coverageScore,
 
-          momentum:
-            dynamics.momentum,
+      volumeScore:
+        trend.volumeScore,
 
-          velocityScore:
-            dynamics.velocity,
+      positionScore:
+        trend.positionScore,
 
-          acceleration:
-            dynamics.acceleration,
+      momentum:
+        dynamics.momentum,
 
-          historyCount:
-            dynamics.historyCount,
+      velocityScore:
+        dynamics.velocity,
 
-          regions:
-            trend.regions,
+      acceleration:
+        dynamics.acceleration,
 
-          signalBreakdown: [
-            trend.coverageScore,
-            trend.volumeScore,
-            trend.positionScore,
-            trend.globalScore
-          ],
+      historyCount:
+        dynamics.historyCount,
 
-          description:
-            `Signal calculated from global coverage, search volume and regional position across ${regions.length} tracked regions.`
-        };
-      }
-    );
+      regions:
+        trend.regions,
+
+      signalBreakdown: [
+        trend.coverageScore,
+        trend.volumeScore,
+        trend.positionScore,
+        trend.globalScore
+      ],
+
+      description:
+        `Signal calculated from global coverage, search volume and regional position across ${regions.length} tracked regions.`
+    };
+  }
+);
 
     res.status(200).json({
       success: true,
