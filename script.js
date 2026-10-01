@@ -468,13 +468,26 @@ exploreFilters.forEach((button) => {
 
 
 /* =========================
-   INITIAL RENDER
+   API
 ========================= */
 
-exploreCount.textContent = `${trends.length} SIGNALS`;
+async function loadTrends() {
+  try {
+    const response = await fetch("/api/trends");
 
-renderTrends(trends);
+    if (!response.ok) {
+      throw new Error("Failed to load trends");
+    }
 
-if (exploreResults) {
-  renderExplore(trends);
+    const data = await response.json();
+
+    trends = data.trends || [];
+
+    filterTrends();
+    filterExplore();
+  } catch (error) {
+    console.error("UNKNOWN API error:", error);
+  }
 }
+
+loadTrends();
