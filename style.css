@@ -722,11 +722,12 @@ footer span:first-child {
   font-size: 12px;
 }
 
-  .signal-count {
-  width: auto;
-  padding-bottom: 0;
-  white-space: nowrap;
-}
+    .signal-count {
+    width: auto;
+    margin-top: 16px;
+    padding-bottom: 0;
+    white-space: nowrap;
+  }
 
 }
 
