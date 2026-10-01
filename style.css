@@ -697,7 +697,10 @@ footer span:first-child {
 }
 
 .platforms {
+  display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
+  gap: 6px;
 }
 
 .signal-count {
