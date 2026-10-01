@@ -542,3 +542,61 @@ footer span:first-child {
     font-size: 8px;
   }
 }
+@media (max-width: 700px) {
+
+  .nav {
+    padding: 22px 20px;
+  }
+
+  .nav nav {
+    gap: 18px;
+  }
+
+  .nav nav a {
+    font-size: 11px;
+  }
+
+  .hero {
+    padding-top: 90px;
+  }
+
+  .section-head {
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .live-meta {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .updated {
+    white-space: nowrap;
+    font-size: 9px;
+  }
+
+  .signal-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .platforms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .platform {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .signal-count {
+    width: 100%;
+    padding-bottom: 10px;
+  }
+
+}
