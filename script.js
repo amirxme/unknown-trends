@@ -7,7 +7,7 @@ const platformButtons = document.querySelectorAll(".platform");
 const exploreInput = document.getElementById("exploreInput");
 const exploreResults = document.getElementById("exploreResults");
 const exploreFilters = document.querySelectorAll(".explore-filter");
-
+const exploreCount = document.getElementById("exploreCount");
 let activePlatform = "all";
 let activeExploreFilter = "all";
 
