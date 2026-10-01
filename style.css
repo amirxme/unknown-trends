@@ -1741,12 +1741,14 @@ footer span:first-child {
     display: block;
   }
 
-  .momentum-index-main span {
+    .momentum-index-main span {
     display: block;
 
-    margin-top: 7px;
+    margin-top: 6px;
 
     font-size: 8px;
+    line-height: 1.2;
+    letter-spacing: 0.1em;
   }
 
   .momentum-index-bar {
