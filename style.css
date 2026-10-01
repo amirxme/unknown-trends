@@ -616,8 +616,10 @@ footer span:first-child {
     line-height: 1.15;
   }
 
-  .trend-main p {
-    font-size: 9px;
+    .trend-main p {
+    font-size: 8px;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
   }
 
   .trend strong {
