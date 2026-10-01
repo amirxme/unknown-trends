@@ -345,80 +345,106 @@ function calculateMomentumScore(
     historyCount
   } = dynamics;
 
-  const previousScore =
-    globalScore - momentum;
-
-  const relativeMomentum =
-    previousScore > 0
-      ? (momentum / previousScore) * 100
-      : 0;
-
   /*
-    Current signal
-    Represents the strength of the trend right now.
+    1. CURRENT STRENGTH
+
+    Current Google Trends score.
+    A strong trend should start with a
+    reasonable base, but current strength
+    must not dominate the entire score.
   */
   const currentComponent =
-    globalScore * 0.25;
+    globalScore * 0.20;
 
   /*
-    Coverage
-    More regions = stronger confirmation.
-  */
-  const coverageComponent =
-    coverageScore * 0.15;
+    2. VELOCITY
 
-  /*
-    Velocity
-    Measures how quickly the score is changing.
+    Measures how quickly the trend is moving.
+
+    0%/H = neutral
+    positive = rising
+    negative = falling
   */
   const velocitySignal =
     Math.max(
       0,
       Math.min(
         100,
-        50 + velocity * 2
+        50 + velocity * 2.5
       )
     );
 
   const velocityComponent =
-    velocitySignal * 0.25;
+    velocitySignal * 0.30;
 
   /*
-    Acceleration
-    Measures whether the trend itself is gaining speed.
+    3. ACCELERATION
+
+    Measures whether the trend is
+    gaining speed.
+
+    This is the most important part for
+    detecting trends that are starting to
+    explode.
   */
   const accelerationSignal =
     Math.max(
       0,
       Math.min(
         100,
-        50 + acceleration * 4
+        50 + acceleration * 5
       )
     );
 
   const accelerationComponent =
-    accelerationSignal * 0.20;
+    accelerationSignal * 0.25;
 
   /*
-    Recent momentum
-    Measures the percentage change from
-    the previous snapshot.
+    4. RECENT MOMENTUM
+
+    Measures the actual score change
+    compared with the previous snapshot.
+
+    Positive movement increases the score.
+    Negative movement decreases it.
   */
   const momentumSignal =
     Math.max(
       0,
       Math.min(
         100,
-        50 + relativeMomentum * 3
+        50 + momentum * 5
       )
     );
 
   const momentumComponent =
-    momentumSignal * 0.10;
+    momentumSignal * 0.15;
 
   /*
-    Historical confidence
-    More snapshots = more reliable dynamics.
+    5. COVERAGE
+
+    A trend appearing in multiple regions
+    is stronger than a trend appearing in
+    only one region.
+
+    Coverage is intentionally kept small
+    so global trends do not automatically
+    dominate purely because of reach.
+  */
+  const coverageComponent =
+    coverageScore * 0.05;
+
+  /*
+    6. HISTORY CONFIDENCE
+
+    More snapshots make the dynamic signal
+    more reliable.
+
+    No history:
+    confidence = 0
+
+    Four snapshots:
+    confidence = 100
   */
   const historyConfidence =
     Math.min(
@@ -429,13 +455,79 @@ function calculateMomentumScore(
   const historyComponent =
     historyConfidence * 0.05;
 
-  return Math.round(
+  /*
+    7. RAW SCORE
+  */
+  let score =
     currentComponent +
-    coverageComponent +
     velocityComponent +
     accelerationComponent +
     momentumComponent +
-    historyComponent
+    coverageComponent +
+    historyComponent;
+
+  /*
+    8. EARLY TREND BOOST
+
+    If a trend has strong positive velocity
+    but is still relatively small, give it
+    additional momentum.
+
+    This helps discover trends BEFORE they
+    become large.
+  */
+  if (
+    historyCount >= 2 &&
+    velocity > 10 &&
+    globalScore < 60
+  ) {
+    score += 8;
+  }
+
+  /*
+    9. ACCELERATION BOOST
+
+    A trend that is simultaneously moving
+    quickly and accelerating is a stronger
+    breakout candidate.
+  */
+  if (
+    historyCount >= 3 &&
+    velocity > 10 &&
+    acceleration > 5
+  ) {
+    score += 10;
+  }
+
+  /*
+    10. COOLING PENALTY
+
+    Strong negative movement should reduce
+    the momentum score even if the current
+    Google Trends score remains high.
+  */
+  if (velocity < -5) {
+    score -= 8;
+  }
+
+  if (acceleration < -5) {
+    score -= 5;
+  }
+
+  /*
+    11. FINAL NORMALIZATION
+
+    Keep the public score strictly between
+    0 and 100.
+  */
+  return Math.round(
+    Math.max(
+      0,
+      Math.min(
+        100,
+        score
+      )
+    )
   );
 }
 
