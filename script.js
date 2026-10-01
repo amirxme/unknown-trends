@@ -1,9 +1,20 @@
 const searchInput = document.getElementById("searchInput");
 const searchButton = document.getElementById("searchButton");
 const trendList = document.getElementById("trendList");
+
 const platformButtons = document.querySelectorAll(".platform");
 
+const exploreInput = document.getElementById("exploreInput");
+const exploreResults = document.getElementById("exploreResults");
+const exploreFilters = document.querySelectorAll(".explore-filter");
+
 let activePlatform = "all";
+let activeExploreFilter = "all";
+
+
+/* =========================
+   TRENDING NOW
+========================= */
 
 function renderTrends(items) {
   trendList.innerHTML = "";
@@ -51,6 +62,7 @@ function renderTrends(items) {
   });
 }
 
+
 function filterTrends() {
   const query = searchInput.value.trim().toLowerCase();
 
@@ -75,6 +87,11 @@ function filterTrends() {
 
   renderTrends(filtered);
 }
+
+
+/* =========================
+   SIGNAL GRAPH
+========================= */
 
 function createSignalGraph(history) {
   const width = 700;
@@ -154,6 +171,11 @@ function createSignalGraph(history) {
   `;
 }
 
+
+/* =========================
+   TREND DETAIL
+========================= */
+
 function openTrend(trend) {
   trendList.innerHTML = `
     <article class="trend-detail">
@@ -228,6 +250,184 @@ function openTrend(trend) {
     });
 }
 
+
+/* =========================
+   EXPLORE
+========================= */
+
+function renderExplore(items) {
+  exploreResults.innerHTML = "";
+
+  if (items.length === 0) {
+    exploreResults.innerHTML = `
+      <div class="explore-empty">
+        <strong>No signals found.</strong>
+        <span>Try another search or platform.</span>
+      </div>
+    `;
+
+    return;
+  }
+
+  items.forEach((trend, index) => {
+    const item = document.createElement("article");
+
+    item.className = "explore-item";
+
+    item.innerHTML = `
+      <span class="explore-rank">
+        ${String(index + 1).padStart(2, "0")}
+      </span>
+
+      <div class="explore-main">
+        <h3>${trend.title}</h3>
+
+        <p>
+          ${trend.platforms.join(" · ")}
+        </p>
+      </div>
+
+      <div class="explore-growth">
+        <strong>${trend.growth}</strong>
+        <span>${trend.status}</span>
+      </div>
+    `;
+
+    item.addEventListener("click", () => {
+      openExploreTrend(trend);
+    });
+
+    exploreResults.appendChild(item);
+  });
+}
+
+
+function filterExplore() {
+  const query = exploreInput.value.trim().toLowerCase();
+
+  const filtered = trends.filter((trend) => {
+
+    const matchesFilter =
+      activeExploreFilter === "all" ||
+      trend.platforms.some(
+        (platform) =>
+          platform.toLowerCase() ===
+          activeExploreFilter.toLowerCase()
+      );
+
+    const matchesSearch =
+      !query ||
+      trend.title.toLowerCase().includes(query) ||
+      trend.description.toLowerCase().includes(query) ||
+      trend.platforms.some(
+        (platform) =>
+          platform.toLowerCase().includes(query)
+      );
+
+    return matchesFilter && matchesSearch;
+  });
+
+  renderExplore(filtered);
+}
+
+
+function openExploreTrend(trend) {
+  const originalResults = exploreResults.innerHTML;
+
+  exploreResults.innerHTML = `
+    <article class="explore-detail">
+
+      <button class="explore-back" id="exploreBack">
+        ← BACK TO EXPLORE
+      </button>
+
+      <p class="eyebrow">SIGNAL</p>
+
+      <h3>${trend.title}</h3>
+
+      <div class="explore-detail-meta">
+
+        <div>
+          <span>GROWTH</span>
+          <strong>${trend.growth}</strong>
+        </div>
+
+        <div>
+          <span>STATUS</span>
+          <strong>${trend.status}</strong>
+        </div>
+
+        <div>
+          <span>MENTIONS</span>
+          <strong>${trend.mentions}</strong>
+        </div>
+
+        <div>
+          <span>VELOCITY</span>
+          <strong>${trend.velocity}</strong>
+        </div>
+
+      </div>
+
+      <p class="explore-detail-platforms">
+        ${trend.platforms.join(" · ")}
+      </p>
+
+      <p class="explore-detail-description">
+        ${trend.description}
+      </p>
+
+      ${createSignalGraph(trend.history)}
+
+    </article>
+  `;
+
+  document
+    .getElementById("exploreBack")
+    .addEventListener("click", () => {
+      exploreResults.innerHTML = originalResults;
+
+      document
+        .querySelectorAll(".explore-item")
+        .forEach((item, index) => {
+
+          item.addEventListener("click", () => {
+            openExploreTrend(
+              trends.filter((trend) => {
+                const query =
+                  exploreInput.value.trim().toLowerCase();
+
+                const matchesFilter =
+                  activeExploreFilter === "all" ||
+                  trend.platforms.some(
+                    (platform) =>
+                      platform.toLowerCase() ===
+                      activeExploreFilter.toLowerCase()
+                  );
+
+                const matchesSearch =
+                  !query ||
+                  trend.title.toLowerCase().includes(query) ||
+                  trend.description.toLowerCase().includes(query) ||
+                  trend.platforms.some(
+                    (platform) =>
+                      platform.toLowerCase().includes(query)
+                  );
+
+                return matchesFilter && matchesSearch;
+              })[index]
+            );
+          });
+
+        });
+    });
+}
+
+
+/* =========================
+   EVENTS
+========================= */
+
 searchButton.addEventListener("click", filterTrends);
 
 searchInput.addEventListener("keydown", (event) => {
@@ -236,7 +436,9 @@ searchInput.addEventListener("keydown", (event) => {
   }
 });
 
+
 platformButtons.forEach((button) => {
+
   button.addEventListener("click", () => {
 
     platformButtons.forEach((item) => {
@@ -249,6 +451,44 @@ platformButtons.forEach((button) => {
 
     filterTrends();
   });
+
 });
 
+
+if (exploreInput) {
+
+  exploreInput.addEventListener("input", () => {
+    filterExplore();
+  });
+
+}
+
+
+exploreFilters.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    exploreFilters.forEach((item) => {
+      item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    activeExploreFilter =
+      button.dataset.filter;
+
+    filterExplore();
+  });
+
+});
+
+
+/* =========================
+   INITIAL RENDER
+========================= */
+
 renderTrends(trends);
+
+if (exploreResults) {
+  renderExplore(trends);
+}
