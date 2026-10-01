@@ -198,7 +198,7 @@ function openTrend(trend) {
       <div class="detail-meta">
 
         <span>
-          GROWTH
+          SCORE
           <strong>${trend.growth}</strong>
         </span>
 
