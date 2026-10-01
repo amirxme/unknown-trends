@@ -1277,6 +1277,40 @@ async function openExploreTrend(
   }
 
 
+  const globalScore =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(trend.globalScore) || 0
+      )
+    );
+
+
+  const momentum =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(trend.momentumScore) || 0
+      )
+    );
+
+
+  const confidence =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(trend.confidenceScore) || 0
+      )
+    );
+
+
+  const acceleration =
+    Number(trend.acceleration) || 0;
+
+
   exploreResults.innerHTML = `
 
     <article class="explore-detail">
@@ -1300,6 +1334,58 @@ async function openExploreTrend(
 
 
       <div class="explore-detail-meta">
+
+        <div>
+
+          <span>
+            GLOBAL SCORE
+          </span>
+
+          <strong>
+            ${globalScore}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            MOMENTUM
+          </span>
+
+          <strong>
+            ${momentum}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            CONFIDENCE
+          </span>
+
+          <strong>
+            ${confidence}%
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            ACCELERATION
+          </span>
+
+          <strong>
+            ${acceleration}
+          </strong>
+
+        </div>
+
 
         <div>
 
