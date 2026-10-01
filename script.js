@@ -336,7 +336,7 @@ async function openTrend(trend) {
 
       <h2>${trend.title}</h2>
 
-      <div class="detail-meta">
+            <div class="detail-meta">
 
         <span>
           SCORE
@@ -344,8 +344,8 @@ async function openTrend(trend) {
         </span>
 
         <span>
-          STATUS
-          <strong>${trend.status}</strong>
+          MOMENTUM
+          <strong>${trend.momentumScore}/100</strong>
         </span>
 
       </div>
@@ -353,8 +353,8 @@ async function openTrend(trend) {
       <div class="detail-meta">
 
         <span>
-          MENTIONS
-          <strong>${trend.mentions}</strong>
+          STATUS
+          <strong>${trend.status}</strong>
         </span>
 
         <span>
@@ -367,8 +367,8 @@ async function openTrend(trend) {
       <div class="detail-meta">
 
         <span>
-          PLATFORMS
-          <strong>${trend.platformCount}</strong>
+          MENTIONS
+          <strong>${trend.mentions}</strong>
         </span>
 
         <span>
