@@ -1704,10 +1704,10 @@ footer span:first-child {
 
 @media (max-width: 700px) {
 
-  .momentum-index {
-    margin-bottom: 22px;
+    .momentum-index {
+    margin-bottom: 20px;
 
-    padding: 20px 0 22px;
+    padding: 20px 0 21px;
   }
 
   .momentum-index:hover {
