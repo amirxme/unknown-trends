@@ -1,3 +1,8 @@
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const trendList = document.getElementById("trendList");
+const platformButtons = document.querySelectorAll(".platform");
+
 let activePlatform = "all";
 
 function renderTrends(items) {
@@ -87,11 +92,13 @@ function openTrend(trend) {
       <div class="detail-meta">
 
         <span>
-          GROWTH <strong>${trend.growth}</strong>
+          GROWTH
+          <strong>${trend.growth}</strong>
         </span>
 
         <span>
-          STATUS <strong>${trend.status}</strong>
+          STATUS
+          <strong>${trend.status}</strong>
         </span>
 
       </div>
