@@ -1,5 +1,3 @@
-import { sql, ensureTrendSnapshotsTable } from "../lib/db.js";
-
 const regions = [
   { code: "US", name: "United States" },
   { code: "GB", name: "United Kingdom" },
@@ -17,27 +15,39 @@ const aliases = {
   japon: "japan",
   japonia: "japan",
   japao: "japan",
+
   "日本": "japan",
   "対": "vs",
+
   "일본": "japan",
   "대": "vs",
+
   "エクアドル": "ecuador",
   "에콰도르": "ecuador",
+
   x: "vs",
   equador: "ecuador",
+
   alemania: "germany",
   deutschland: "germany",
+
   francia: "france",
+
   reino: "kingdom",
   unido: "united",
   uk: "united",
   england: "united",
+
   brasil: "brazil",
+
   canada: "canada",
+
   corea: "korea",
   sur: "south",
+
   estados: "united",
   unidos: "united",
+
   ecuador: "ecuador",
   equateur: "ecuador"
 };
@@ -45,10 +55,13 @@ const aliases = {
 const phraseAliases = {
   "ecuador vs japon": "ecuador japan",
   "japan vs ecuador": "ecuador japan",
+
   "日本 対 エクアドル": "ecuador japan",
   "エクアドル 対 日本": "ecuador japan",
+
   "일본 대 에콰도르": "ecuador japan",
   "에콰도르 대 일본": "ecuador japan",
+
   "japao x equador": "ecuador japan",
   "equador x japao": "ecuador japan"
 };
@@ -292,7 +305,6 @@ export default async function handler(req, res) {
 
         return {
           title: trend.title,
-          titleKey: normalizeTitle(trend.title),
 
           platforms: ["Google"],
 
@@ -331,41 +343,6 @@ export default async function handler(req, res) {
       })
       .sort((a, b) => b.globalScore - a.globalScore)
       .slice(0, 20);
-
-    // Initialize Neon storage.
-    await ensureTrendSnapshotsTable();
-
-    // Save current snapshot for every trend.
-    await Promise.all(
-      trends.map((trend) =>
-        sql`
-          INSERT INTO trend_snapshots (
-            title_key,
-            title,
-            global_score,
-            coverage_score,
-            volume_score,
-            position_score,
-            mentions,
-            regions,
-            signal,
-            status
-          )
-          VALUES (
-            ${trend.titleKey},
-            ${trend.title},
-            ${trend.globalScore},
-            ${trend.coverageScore},
-            ${trend.volumeScore},
-            ${trend.positionScore},
-            ${trend.mentions},
-            ${JSON.stringify(trend.regions)},
-            ${trend.signal},
-            ${trend.status}
-          )
-        `
-      )
-    );
 
     res.status(200).json({
       success: true,
