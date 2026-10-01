@@ -707,9 +707,9 @@ footer span:first-child {
 }
 
   .platform {
-    padding: 9px 12px;
-    font-size: 13px;
-  }
+  padding: 7px 10px;
+  font-size: 12px;
+}
 
   .signal-count {
   width: auto;
