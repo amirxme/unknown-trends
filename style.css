@@ -542,6 +542,8 @@ footer span:first-child {
     font-size: 8px;
   }
 }
+
+
 @media (max-width: 700px) {
 
   .nav {
@@ -600,6 +602,8 @@ footer span:first-child {
   }
 
 }
+
+
 .trend {
   cursor: pointer;
 }
@@ -674,6 +678,7 @@ footer span:first-child {
   letter-spacing: -0.025em;
 }
 
+
 @media (max-width: 700px) {
 
   .trend-detail {
@@ -711,6 +716,8 @@ footer span:first-child {
   }
 
 }
+
+
 /* =========================
    SIGNAL GRAPH
 ========================= */
@@ -765,6 +772,7 @@ footer span:first-child {
   color: #999;
 }
 
+
 @media (max-width: 700px) {
 
   .signal-graph {
@@ -790,6 +798,8 @@ footer span:first-child {
   }
 
 }
+
+
 /* =========================
    EXPLORE
 ========================= */
@@ -998,6 +1008,18 @@ footer span:first-child {
 }
 
 
+/* PLATFORM COUNT */
+
+.explore-platform-count {
+  display: block;
+  margin-top: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+}
+
+
 /* EMPTY */
 
 .explore-empty {
@@ -1165,10 +1187,12 @@ footer span:first-child {
   .explore-main p {
     font-size: 10px;
   }
+
   .explore-platform-count {
     margin-top: 6px;
     font-size: 8px;
   }
+
   .explore-growth strong {
     font-size: 15px;
   }
@@ -1199,12 +1223,4 @@ footer span:first-child {
     margin-bottom: 32px;
   }
 
-}
-.explore-platform-count {
-  display: block;
-  margin-top: 8px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--soft);
 }
