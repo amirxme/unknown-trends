@@ -693,10 +693,15 @@ footer span:first-child {
 }
 
   .signal-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
+  display: block;
+}
+
+.platforms {
+  justify-content: flex-start;
+}
+
+.signal-count {
+  margin-top: 16px;
 }
 
   .platforms {
