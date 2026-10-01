@@ -685,12 +685,13 @@ footer span:first-child {
   gap: 14px;
 }
 
-  .updated {
-  white-space: nowrap;
-  font-size: 8px;
-  color: var(--soft);
-  letter-spacing: 0.08em;
-}
+    .updated {
+    white-space: nowrap;
+    font-size: 8px;
+    color: var(--soft);
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
 
   .signal-bar {
   display: block;
