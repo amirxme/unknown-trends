@@ -591,8 +591,9 @@ footer span:first-child {
 }
 
   .section-head h2 {
-    font-size: 32px;
-  }
+  font-size: 31px;
+  line-height: 0.98;
+}
 
   .trend {
     min-height: 100px;
