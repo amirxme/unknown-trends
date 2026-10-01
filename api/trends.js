@@ -341,30 +341,24 @@ function calculateMomentumScore(
   const {
     momentum,
     velocity,
-    acceleration,
-    historyCount
+    acceleration
   } = dynamics;
 
   /*
-    1. CURRENT STRENGTH
+    MOMENTUM SCORE
 
-    Current Google Trends score.
-    A strong trend should start with a
-    reasonable base, but current strength
-    must not dominate the entire score.
+    Measures how strongly a trend is moving
+    right now.
+
+    This score intentionally does NOT include
+    history confidence. A new trend can still
+    have strong momentum if its current signal
+    is strong.
   */
+
   const currentComponent =
-    globalScore * 0.20;
+    globalScore * 0.15;
 
-  /*
-    2. VELOCITY
-
-    Measures how quickly the trend is moving.
-
-    0%/H = neutral
-    positive = rising
-    negative = falling
-  */
   const velocitySignal =
     Math.max(
       0,
@@ -375,18 +369,8 @@ function calculateMomentumScore(
     );
 
   const velocityComponent =
-    velocitySignal * 0.30;
+    velocitySignal * 0.35;
 
-  /*
-    3. ACCELERATION
-
-    Measures whether the trend is
-    gaining speed.
-
-    This is the most important part for
-    detecting trends that are starting to
-    explode.
-  */
   const accelerationSignal =
     Math.max(
       0,
@@ -397,17 +381,8 @@ function calculateMomentumScore(
     );
 
   const accelerationComponent =
-    accelerationSignal * 0.25;
+    accelerationSignal * 0.30;
 
-  /*
-    4. RECENT MOMENTUM
-
-    Measures the actual score change
-    compared with the previous snapshot.
-
-    Positive movement increases the score.
-    Negative movement decreases it.
-  */
   const momentumSignal =
     Math.max(
       0,
@@ -420,64 +395,23 @@ function calculateMomentumScore(
   const momentumComponent =
     momentumSignal * 0.15;
 
-  /*
-    5. COVERAGE
-
-    A trend appearing in multiple regions
-    is stronger than a trend appearing in
-    only one region.
-
-    Coverage is intentionally kept small
-    so global trends do not automatically
-    dominate purely because of reach.
-  */
   const coverageComponent =
     coverageScore * 0.05;
 
-  /*
-    6. HISTORY CONFIDENCE
-
-    More snapshots make the dynamic signal
-    more reliable.
-
-    No history:
-    confidence = 0
-
-    Four snapshots:
-    confidence = 100
-  */
-  const historyConfidence =
-    Math.min(
-      100,
-      (historyCount / 4) * 100
-    );
-
-  const historyComponent =
-    historyConfidence * 0.05;
-
-  /*
-    7. RAW SCORE
-  */
   let score =
     currentComponent +
     velocityComponent +
     accelerationComponent +
     momentumComponent +
-    coverageComponent +
-    historyComponent;
+    coverageComponent;
 
   /*
-    8. EARLY TREND BOOST
+    EARLY TREND BOOST
 
-    If a trend has strong positive velocity
-    but is still relatively small, give it
-    additional momentum.
-
-    This helps discover trends BEFORE they
-    become large.
+    Strong movement from a relatively small
+    trend receives additional momentum.
   */
   if (
-    historyCount >= 2 &&
     velocity > 10 &&
     globalScore < 60
   ) {
@@ -485,14 +419,12 @@ function calculateMomentumScore(
   }
 
   /*
-    9. ACCELERATION BOOST
+    ACCELERATION BOOST
 
-    A trend that is simultaneously moving
-    quickly and accelerating is a stronger
-    breakout candidate.
+    Strong velocity combined with acceleration
+    indicates a potential breakout.
   */
   if (
-    historyCount >= 3 &&
     velocity > 10 &&
     acceleration > 5
   ) {
@@ -500,11 +432,7 @@ function calculateMomentumScore(
   }
 
   /*
-    10. COOLING PENALTY
-
-    Strong negative movement should reduce
-    the momentum score even if the current
-    Google Trends score remains high.
+    COOLING PENALTY
   */
   if (velocity < -5) {
     score -= 8;
@@ -515,10 +443,7 @@ function calculateMomentumScore(
   }
 
   /*
-    11. FINAL NORMALIZATION
-
-    Keep the public score strictly between
-    0 and 100.
+    FINAL NORMALIZATION
   */
   return Math.round(
     Math.max(
@@ -528,6 +453,38 @@ function calculateMomentumScore(
         score
       )
     )
+  );
+}
+
+
+function calculateConfidenceScore(
+  historyCount
+) {
+  /*
+    CONFIDENCE SCORE
+
+    Measures how much historical data exists
+    behind the momentum signal.
+
+    0 snapshots  = 10%
+    1 snapshot   = 25%
+    2 snapshots  = 50%
+    3 snapshots  = 75%
+    4+ snapshots = 100%
+
+    A minimum 10% is intentional:
+    a completely new trend is not treated
+    as having zero information.
+  */
+
+  const confidence =
+    Math.min(
+      100,
+      10 + (historyCount * 25)
+    );
+
+  return Math.round(
+    confidence
   );
 }
 
