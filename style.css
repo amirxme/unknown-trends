@@ -622,8 +622,10 @@ footer span:first-child {
     letter-spacing: 0.04em;
   }
 
-  .trend strong {
+    .trend strong {
     font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .about {
