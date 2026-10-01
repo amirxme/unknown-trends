@@ -712,6 +712,11 @@ export default async function handler(req, res) {
         dynamics
       );
 
+    const confidenceScore =
+      calculateConfidenceScore(
+        dynamics.historyCount
+      );
+
     let signal = "MEDIUM";
 
     if (
@@ -751,6 +756,8 @@ export default async function handler(req, res) {
         trend.globalScore,
 
       momentumScore,
+
+      confidenceScore,
 
       coverageScore:
         trend.coverageScore,
