@@ -577,8 +577,9 @@ footer span:first-child {
 }
 
   .search button {
-    padding: 0 17px;
-  }
+  padding: 0 16px;
+  min-width: 52px;
+}
 
   .trends {
     padding: 80px 0 100px;
