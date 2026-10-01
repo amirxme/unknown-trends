@@ -399,7 +399,7 @@ function openExploreTrend(trend) {
         ${trend.description}
       </p>
 
-      ${createSignalGraph(trend.history)}
+      ${createSignalGraph(trend.signalBreakdown)}
 
     </article>
   `;
