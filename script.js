@@ -1169,9 +1169,9 @@ async function openTrend(
   }
 
 
-  const history =
+    const history =
     await loadHistory(
-      trend.title
+      trend.titleKey
     );
 
 
@@ -1686,9 +1686,9 @@ async function openExploreTrend(
   }
 
 
-  const history =
+    const history =
     await loadHistory(
-      trend.title
+      trend.titleKey
     );
 
 
