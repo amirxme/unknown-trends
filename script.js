@@ -374,9 +374,9 @@ function filterTrends() {
     );
 
 
-  if (signalCount) {
+    if (signalCount) {
     signalCount.textContent =
-      filtered.length;
+      trends.length;
   }
 
 
