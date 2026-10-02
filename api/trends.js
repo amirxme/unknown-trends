@@ -34,6 +34,43 @@ function cleanText(value) {
   );
 }
 
+function normalizeTitleKey(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function formatCompactNumber(value) {
+  const safe = Number(value) || 0;
+
+  if (safe >= 1000000) {
+    const number = safe / 1000000;
+    return `${number >= 10 ? number.toFixed(0) : number.toFixed(1).replace(/\.0$/, "")}M`;
+  }
+
+  if (safe >= 1000) {
+    const number = safe / 1000;
+    return `${number >= 10 ? number.toFixed(0) : number.toFixed(1).replace(/\.0$/, "")}K`;
+  }
+
+  return String(Math.round(safe));
+}
+
+function formatSignedPercent(value) {
+  const rounded = Math.round(Number(value) || 0);
+  return `${rounded >= 0 ? "+" : ""}${rounded}%`;
+}
+
+function formatSignedPoints(value) {
+  const rounded = Math.round(Number(value) || 0);
+  return `${rounded >= 0 ? "+" : ""}${rounded} pts`;
+}
+
 function parseRssItems(xml, region) {
   const items = [];
   const itemMatches = xml.match(/<item>[\s\S]*?<\/item>/gi) || [];
@@ -64,7 +101,7 @@ function parseRssItems(xml, region) {
 
     items.push({
       title,
-      titleKey: title.toLowerCase().trim(),
+      titleKey: normalizeTitleKey(title),
       traffic: Number.isFinite(trafficNumber) ? trafficNumber : 0,
       region: region.code,
       regionName: region.name,
@@ -220,7 +257,6 @@ function getStatus(globalScore, momentum) {
 
 function buildDescription({
   title,
-  globalScore,
   momentum,
   regionsCount
 }) {
@@ -317,15 +353,10 @@ export default async function handler(req, res) {
         });
 
         trend.traffic.push(item.traffic);
+        trend.positions.push(trend.positions.length + 1);
 
-        trend.positions.push(
-          trend.positions.length + 1
-        );
-
-        if (item.description) {
-          trend.descriptions.push(
-            item.description
-          );
+        if (item.title) {
+          trend.descriptions.push(item.title);
         }
       }
     }
@@ -412,11 +443,7 @@ export default async function handler(req, res) {
             0,
             Math.min(
               100,
-              100 -
-                Math.abs(
-                  dynamics.acceleration
-                ) *
-                  2
+              100 - Math.abs(dynamics.acceleration) * 2
             )
           );
 
@@ -454,12 +481,20 @@ export default async function handler(req, res) {
         const description =
           buildDescription({
             title: trend.title,
-            globalScore,
-            momentum:
-              dynamics.momentum,
-            regionsCount:
-              trend.regions.length
+            momentum: dynamics.momentum,
+            regionsCount: trend.regions.length
           });
+
+        const growth = formatSignedPercent(
+          Math.round(
+            (globalScore - (previousScore ?? 0)) * 1.25 +
+              dynamics.momentum * 2
+          )
+        );
+
+        const mentions = formatCompactNumber(
+          Math.max(...trend.traffic, 0)
+        );
 
         return {
           title: trend.title,
@@ -469,29 +504,34 @@ export default async function handler(req, res) {
           momentumScore,
           confidenceScore,
           emergingScore,
+          growth,
+          status,
+          mentions,
+          velocity: formatSignedPoints(dynamics.momentum),
+          platforms: ["Google"],
+          platformCount: 1,
+          signal: globalScore >= 80 ? "HIGH" : globalScore >= 60 ? "MEDIUM" : "LOW",
+          historyCount: history.length,
+          history: history.map((row) => ({
+            captured_at: row.captured_at,
+            global_score: Number(row.global_score)
+          })),
 
           coverageScore,
           volumeScore,
           positionScore,
 
           momentum: dynamics.momentum,
-          velocity: dynamics.velocity,
-          acceleration:
-            dynamics.acceleration,
-
-          historyCount:
-            history.length,
+          velocityRaw: dynamics.velocity,
+          acceleration: dynamics.acceleration,
 
           regions: trend.regions,
-
-          signalBreakdown: {
-            coverage: coverageScore,
-            volume: volumeScore,
-            position: positionScore,
-            global: globalScore
-          },
-
-          status,
+          signalBreakdown: [
+            coverageScore,
+            volumeScore,
+            positionScore,
+            globalScore
+          ],
           description
         };
       })
@@ -525,9 +565,9 @@ export default async function handler(req, res) {
               ${trend.coverageScore},
               ${trend.volumeScore},
               ${trend.positionScore},
-              ${String(trend.regions.length)},
+              ${trend.mentions},
               ${JSON.stringify(trend.regions)},
-              ${trend.description},
+              ${trend.signal},
               ${trend.status}
             )
           `;
