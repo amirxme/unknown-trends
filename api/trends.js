@@ -137,16 +137,38 @@ function displayTitle(title) {
 }
 
 function parseTraffic(value) {
-  if (!value) return 0;
+  const text = String(value || "")
+    .trim()
+    .toUpperCase();
 
-  const number = Number(
-    value
-      .replace(/,/g, "")
-      .replace(/\+/g, "")
-      .replace(/\s+/g, "")
+  if (!text) return 0;
+
+  const match = text.match(
+    /([\d,.]+)\s*([KMB])?/
   );
 
-  return Number.isFinite(number) ? number : 0;
+  if (!match) return 0;
+
+  const number = parseFloat(
+    match[1].replace(/,/g, "")
+  );
+
+  if (!Number.isFinite(number)) {
+    return 0;
+  }
+
+  const multiplier =
+    match[2] === "K"
+      ? 1000
+      : match[2] === "M"
+        ? 1000000
+        : match[2] === "B"
+          ? 1000000000
+          : 1;
+
+  return Math.round(
+    number * multiplier
+  );
 }
 
 function trafficScore(value) {
