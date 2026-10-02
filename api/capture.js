@@ -247,11 +247,19 @@ export default async function handler(req, res) {
       REGIONS.map((region) => fetchRegion(region))
     );
 
+    const failedRegions = results.filter(
+      (result) => result.status === "rejected"
+    );
+
+    if (failedRegions.length > 0) {
+      throw new Error(
+        `Google Trends failed for ${failedRegions.length} of ${REGIONS.length} regions`
+      );
+    }
+
     const trendMap = new Map();
 
     for (const result of results) {
-      if (result.status !== "fulfilled") continue;
-
       for (const item of result.value) {
         if (!item.titleKey) continue;
 
@@ -272,10 +280,20 @@ export default async function handler(req, res) {
           trend.regions.push(item.region);
         }
 
-        trend.bestRank = Math.min(trend.bestRank, item.rank);
-        trend.maxTraffic = Math.max(trend.maxTraffic, item.trafficNumber);
+        trend.bestRank = Math.min(
+          trend.bestRank,
+          item.rank
+        );
 
-        if (item.trafficNumber > parseTraffic(trend.mentions)) {
+        trend.maxTraffic = Math.max(
+          trend.maxTraffic,
+          item.trafficNumber
+        );
+
+        if (
+          item.trafficNumber >
+          parseTraffic(trend.mentions)
+        ) {
           trend.mentions = item.traffic;
         }
       }
