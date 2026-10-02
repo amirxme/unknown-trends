@@ -2160,3 +2160,86 @@ footer span:first-child {
   }
 
 }
+
+
+/* =========================
+   EMERGING SIGNALS
+========================= */
+
+.emerging-section {
+  margin: 78px 0 54px;
+
+  padding: 34px 0 0;
+
+  border-top: 1px solid var(--text);
+}
+
+.emerging-section .section-head {
+  margin-bottom: 24px;
+}
+
+.emerging-section .section-head h2 {
+  font-size: clamp(28px, 3.5vw, 42px);
+}
+
+.emerging-section .updated {
+  padding-bottom: 5px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  color: var(--soft);
+
+  letter-spacing: 0.13em;
+}
+
+.emerging-section .trend-list {
+  border-top: 1px solid var(--line);
+}
+
+.emerging-section .trend {
+  min-height: 96px;
+}
+
+.emerging-section .trend strong {
+  font-size: 18px;
+}
+
+.emerging-section .trend-main p {
+  color: var(--muted);
+}
+
+.emerging-section .trend:hover {
+  background: var(--surface);
+}
+
+
+@media (max-width: 700px) {
+
+  .emerging-section {
+    margin: 58px 0 40px;
+
+    padding-top: 26px;
+  }
+
+  .emerging-section .section-head {
+    margin-bottom: 18px;
+  }
+
+  .emerging-section .section-head h2 {
+    font-size: 29px;
+  }
+
+  .emerging-section .updated {
+    font-size: 7px;
+  }
+
+  .emerging-section .trend {
+    min-height: 82px;
+  }
+
+  .emerging-section .trend strong {
+    font-size: 12px;
+  }
+
+}
