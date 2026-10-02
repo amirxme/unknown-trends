@@ -54,6 +54,11 @@ function normalizeTrend(rawTrend = {}) {
     titleKey: String(trend.titleKey ?? trend.title ?? "").trim(),
     platforms: normalizedPlatforms,
     platformCount: Number(trend.platformCount) || normalizedPlatforms.length || 1,
+    regions: Array.isArray(trend.regions)
+      ? trend.regions.filter(Boolean).map((region) => typeof region === "string"
+        ? { code: region, name: region }
+        : { code: String(region.code ?? ""), name: String(region.name ?? region.code ?? "") })
+      : [],
     growth: trend.growth != null ? String(trend.growth) : null,
     status: String(trend.status ?? "STABLE").toUpperCase(),
     mentions: trend.mentions != null ? String(trend.mentions) : "0",
