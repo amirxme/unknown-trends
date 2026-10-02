@@ -174,7 +174,13 @@ function trafficScore(traffic) {
 }
 
 function rankScore(rank) {
-  return Math.max(10, 100 - (rank - 1) * 5);
+  if (rank <= 1) return 100;
+  if (rank <= 3) return 90;
+  if (rank <= 5) return 80;
+  if (rank <= 10) return 65;
+  if (rank <= 15) return 50;
+
+  return 35;
 }
 
 async function fetchRegion(region) {
