@@ -936,45 +936,81 @@ async function openTrend(
       </h2>
 
 
-      <div class="detail-meta">
+        <div class="detail-meta">
 
-        <span>
+    <span>
 
-          SCORE
+      SCORE
 
-          <strong>
-            ${trend.growth}
-          </strong>
+      <strong>
+        ${trend.growth}
+      </strong>
 
-        </span>
-
-
-        <span>
-
-          MOMENTUM
-
-          <strong>
-            ${momentum}/100
-          </strong>
+    </span>
 
 
-          <div class="momentum-meter">
+    <span>
 
-            <div
-              class="momentum-meter-fill"
-              style="width: ${momentum}%"
-            ></div>
+      MOMENTUM
 
-          </div>
+      <strong>
+        ${momentum}/100
+      </strong>
 
 
-          <small class="momentum-status">
-            ${trend.status}
-          </small>
+      <div class="momentum-meter">
 
-        </span>
+        <div
+          class="momentum-meter-fill"
+          style="width: ${momentum}%"
+        ></div>
 
       </div>
+
+
+      <small class="momentum-status">
+        ${trend.status}
+      </small>
+
+    </span>
+
+  </div>
+
+
+  <div class="detail-meta">
+
+    <span>
+
+      EMERGING SCORE
+
+      <strong>
+        ${Math.max(
+          0,
+          Math.min(
+            100,
+            Number(trend.emergingScore) || 0
+          )
+        )}/100
+      </strong>
+
+    </span>
+
+
+    <span>
+
+      WHY EMERGING
+
+      <strong>
+        ${trend.velocity}
+      </strong>
+
+      <small class="momentum-status">
+        VELOCITY · ACCELERATION · MOMENTUM · EARLY SIGNAL
+      </small>
+
+    </span>
+
+  </div>
 
 
       <div class="detail-meta">
