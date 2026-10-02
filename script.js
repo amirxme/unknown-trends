@@ -437,7 +437,7 @@ function renderExplore(items) {
     elements.exploreResults.innerHTML = `
       <div class="explore-empty">
         <strong>No signals found.</strong>
-        <span>Try another search or platform.</span>
+        <span>Try another search or status filter.</span>
       </div>
     `;
     return;
@@ -446,6 +446,8 @@ function renderExplore(items) {
   items.map(normalizeTrend).forEach((trend, index) => {
     const item = document.createElement("article");
     item.className = "explore-item";
+    item.setAttribute("role", "button");
+    item.setAttribute("tabindex", "0");
     const momentum = trend.momentumScore == null ? null : clampNumber(trend.momentumScore, 0, 100);
     const confidence = trend.confidenceScore == null ? null : clampNumber(trend.confidenceScore, 0, 100);
 
@@ -453,8 +455,7 @@ function renderExplore(items) {
       <span class="explore-rank">${String(index + 1).padStart(2, "0")}</span>
       <div class="explore-main">
         <h3>${escapeHtml(trend.title)}</h3>
-        <p>${escapeHtml((trend.platforms || []).join(" · "))}</p>
-        <span class="explore-platform-count">${trend.platformCount} PLATFORMS</span>
+        <p>${escapeHtml((trend.platforms || []).join(" · "))} · ${trend.regions.length} REGIONS</p>
       </div>
       <div class="explore-growth">
         <strong>${escapeHtml(displayValue(trend.growth))}</strong>
@@ -473,6 +474,12 @@ function renderExplore(items) {
     `;
 
     item.addEventListener("click", () => openExploreTrend(trend));
+    item.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openExploreTrend(trend);
+      }
+    });
     elements.exploreResults.appendChild(item);
   });
 }
@@ -485,11 +492,7 @@ function filterExplore() {
   const filtered = state.trends
     .map(normalizeTrend)
     .filter((trend) => {
-      const matchesFilter = state.activeExploreFilter === "all" || trend.platforms.some((platform) => {
-        const value = String(platform).toLowerCase();
-        const active = String(state.activeExploreFilter).toLowerCase();
-        return value === active || value.includes(active);
-      });
+      const matchesFilter = state.activeExploreFilter === "all" || trend.status === state.activeExploreFilter;
 
       const matchesSearch = !query ||
         trend.title.toLowerCase().includes(query) ||
@@ -518,21 +521,30 @@ async function openExploreTrend(trend) {
       <p class="eyebrow">SIGNAL</p>
       <h3>${escapeHtml(safeTrend.title)}</h3>
 
-      <div class="explore-detail-meta">
+      <div class="explore-detail-meta explore-score-grid">
         <div><span>GLOBAL SCORE</span><strong>${globalScore}</strong></div>
         <div><span>MOMENTUM</span><strong>${momentum == null ? "—" : momentum}</strong></div>
         <div><span>CONFIDENCE</span><strong>${confidence == null ? "—" : `${confidence}%`}</strong></div>
-        <div><span>ACCELERATION</span><strong>${acceleration == null ? "—" : acceleration}</strong></div>
         <div><span>GROWTH</span><strong>${escapeHtml(displayValue(safeTrend.growth))}</strong></div>
+      </div>
+
+      <div class="explore-detail-meta explore-dynamics-grid">
+        <div><span>VELOCITY</span><strong>${escapeHtml(displayValue(safeTrend.velocity))}</strong></div>
+        <div><span>ACCELERATION</span><strong>${acceleration == null ? "—" : acceleration}</strong></div>
         <div><span>STATUS</span><strong>${escapeHtml(safeTrend.status)}</strong></div>
         <div><span>MENTIONS</span><strong>${escapeHtml(safeTrend.mentions)}</strong></div>
-        <div><span>VELOCITY</span><strong>${escapeHtml(displayValue(safeTrend.velocity))}</strong></div>
-        <div><span>PLATFORMS</span><strong>${safeTrend.platformCount}</strong></div>
         <div><span>SIGNAL</span><strong>${escapeHtml(safeTrend.signal)}</strong></div>
       </div>
 
-      <p class="explore-detail-platforms">${escapeHtml((safeTrend.platforms || []).join(" · "))}</p>
-      <p class="explore-detail-description">${escapeHtml(safeTrend.description)}</p>
+      <div class="explore-detail-block">
+        <span class="explore-detail-label">SOURCE COVERAGE</span>
+        <p class="explore-detail-platforms">${escapeHtml((safeTrend.platforms || []).join(" · "))} · ${safeTrend.regions.length} tracked regions</p>
+        <div class="region-list">${safeTrend.regions.map((region) => `<span>${escapeHtml(region.code || region.name)}</span>`).join("")}</div>
+      </div>
+      <div class="explore-detail-block">
+        <span class="explore-detail-label">WHY THIS SIGNAL IS MOVING</span>
+        <p class="explore-detail-description">${escapeHtml(safeTrend.description)}</p>
+      </div>
       ${createSignalGraph(safeTrend.signalBreakdown)}
 
       <div id="exploreHistory">

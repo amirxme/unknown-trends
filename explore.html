@@ -23,8 +23,12 @@
         <div>
           <p class="eyebrow">EXPLORE</p>
           <h1>Find a signal.</h1>
+          <p class="explore-intro">Search the current global signal set and inspect why a topic is moving.</p>
         </div>
-        <span class="explore-count" id="exploreCount">0 SIGNALS</span>
+        <div class="explore-meta">
+          <span class="explore-count" id="exploreCount">LOADING</span>
+          <span class="explore-source">GOOGLE TRENDS · 10 REGIONS</span>
+        </div>
       </div>
 
       <div class="explore-search">
@@ -33,11 +37,15 @@
       </div>
 
       <div class="explore-filters">
-        <button class="explore-filter active" type="button" data-filter="all">ALL</button>
-        <button class="explore-filter" type="button" data-filter="Google">GOOGLE TRENDS</button>
+        <button class="explore-filter active" type="button" data-filter="all">ALL SIGNALS</button>
+        <button class="explore-filter" type="button" data-filter="RISING">RISING</button>
+        <button class="explore-filter" type="button" data-filter="NEW">NEW</button>
+        <button class="explore-filter" type="button" data-filter="COOLING">COOLING</button>
       </div>
 
-      <div id="exploreResults" class="explore-results"></div>
+      <div id="exploreResults" class="explore-results" aria-live="polite">
+        <div class="explore-empty"><strong>Loading live signals…</strong><span>Fetching the latest global trend data.</span></div>
+      </div>
     </section>
   </main>
 
