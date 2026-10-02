@@ -572,14 +572,22 @@ function calculateEmergingScore(
     EMERGING SCORE
 
     A trend must have historical evidence of
-    movement before it can receive a meaningful
-    emerging score.
+    positive movement before it can receive
+    a meaningful emerging score.
 
-    New trends without enough history are not
-    treated as emerging automatically.
+    New or stable trends are not treated
+    as emerging automatically.
   */
 
   if (historyCount < 2) {
+    return 0;
+  }
+
+  if (
+    momentum <= 0 &&
+    velocity <= 0 &&
+    acceleration <= 0
+  ) {
     return 0;
   }
 
