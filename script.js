@@ -365,7 +365,19 @@ function filterTrends() {
     });
 
 
-  renderTrends(filtered);
+    renderTrends(filtered);
+
+
+  const signalCount =
+    document.getElementById(
+      "signalCount"
+    );
+
+
+  if (signalCount) {
+    signalCount.textContent =
+      filtered.length;
+  }
 
 
   const emergingList =
