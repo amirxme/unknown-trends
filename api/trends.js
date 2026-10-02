@@ -970,10 +970,11 @@ export default async function handler(req, res) {
     }
   )
   .sort(
-    (a, b) =>
-      b.momentumScore -
-      a.momentumScore
-  );
+  (a, b) =>
+    b.momentumScore -
+    a.momentumScore
+  )
+  .slice(0, 20);
 
     res.status(200).json({
       success: true,
