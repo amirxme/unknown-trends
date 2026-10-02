@@ -836,6 +836,61 @@ function createHistoryGraph(
    LOAD HISTORY
 ========================= */
 
+async function loadHistory(
+  titleKey
+) {
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/history?title=${encodeURIComponent(
+          titleKey
+        )}`
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Failed to load history"
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data ||
+      !Array.isArray(
+        data.history
+      )
+    ) {
+
+      return [];
+
+    }
+
+
+    return data.history;
+
+  } catch (error) {
+
+    console.error(
+      "UNKNOWN history API error:",
+      error
+    );
+
+
+    return [];
+
+  }
+
+}
+
 
 /* =========================
    TREND DETAIL
