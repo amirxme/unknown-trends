@@ -543,6 +543,83 @@ function calculateConfidenceScore(
   );
 }
 
+
+/*
+  EMERGING SCORE
+
+  Measures whether a trend looks like an
+  early-moving signal rather than an already
+  established trend.
+
+  Strong velocity and acceleration increase
+  the score.
+
+  Lower current Global Score also increases
+  the early-signal component.
+*/
+function calculateEmergingScore(
+  globalScore,
+  dynamics
+) {
+  const {
+    momentum,
+    velocity,
+    acceleration
+  } = dynamics;
+
+  const velocitySignal =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        50 + velocity * 3
+      )
+    );
+
+  const accelerationSignal =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        50 + acceleration * 6
+      )
+    );
+
+  const momentumSignal =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        50 + momentum * 5
+      )
+    );
+
+  const earlySignal =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        100 - globalScore
+      )
+    );
+
+  const score =
+    velocitySignal * 0.35 +
+    accelerationSignal * 0.30 +
+    momentumSignal * 0.20 +
+    earlySignal * 0.15;
+
+  return Math.round(
+    Math.max(
+      0,
+      Math.min(
+        100,
+        score
+      )
+    )
+  );
+}
+
 export default async function handler(req, res) {
   try {
     const results = await Promise.all(
