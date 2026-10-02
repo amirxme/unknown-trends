@@ -366,6 +366,131 @@ function filterTrends() {
 
 
   renderTrends(filtered);
+
+
+  const emergingList =
+    document.getElementById(
+      "emergingList"
+    );
+
+
+  if (!emergingList) {
+    return;
+  }
+
+
+  const emergingItems =
+    [...filtered]
+      .sort(
+        (a, b) =>
+          (Number(b.emergingScore) || 0) -
+          (Number(a.emergingScore) || 0)
+      )
+      .filter(
+        (trend) =>
+          Number(trend.emergingScore) > 0
+      )
+      .slice(0, 5);
+
+
+  emergingList.innerHTML = "";
+
+
+  if (emergingItems.length === 0) {
+
+    emergingList.innerHTML = `
+      <div class="trend">
+
+        <div></div>
+
+        <div class="trend-main">
+
+          <h3>
+            No emerging signals yet
+          </h3>
+
+          <p>
+            The system is waiting for early movement.
+          </p>
+
+        </div>
+
+        <strong>—</strong>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  emergingItems.forEach(
+    (trend, index) => {
+
+      const article =
+        document.createElement(
+          "article"
+        );
+
+
+      article.className =
+        "trend";
+
+
+      const emergingScore =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            Number(trend.emergingScore) || 0
+          )
+        );
+
+
+      article.innerHTML = `
+
+        <span class="rank">
+          ${String(index + 1).padStart(2, "0")}
+        </span>
+
+
+        <div class="trend-main">
+
+          <h3>
+            ${trend.title}
+          </h3>
+
+          <p>
+            ${trend.status}
+            ·
+            ${trend.velocity}
+          </p>
+
+        </div>
+
+
+        <strong>
+          ${emergingScore}
+        </strong>
+
+      `;
+
+
+      article.addEventListener(
+        "click",
+        () => {
+          openTrend(trend);
+        }
+      );
+
+
+      emergingList.appendChild(
+        article
+      );
+
+    }
+  );
+
 }
 
 
