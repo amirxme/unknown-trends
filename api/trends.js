@@ -1044,20 +1044,59 @@ export default async function handler(req, res) {
       trends
     });
 
-  } catch (error) {
+    } catch (error) {
+
     console.error(
-      "UNKNOWN Global Trends API error:",
+      "UNKNOWN API error:",
       error
     );
 
-    res.status(500).json({
-      success: false,
 
-      source:
-        "Google Trends Global",
+    const errorMessage = `
+      <div class="trend">
 
-      error:
-        "Failed to load global trends"
-    });
+        <div></div>
+
+        <div class="trend-main">
+
+          <h3>
+            DATA UNAVAILABLE
+          </h3>
+
+          <p>
+            Unable to load live trend signals.
+            Please try again later.
+          </p>
+
+        </div>
+
+        <strong>—</strong>
+
+      </div>
+    `;
+
+
+    if (trendList) {
+      trendList.innerHTML =
+        errorMessage;
+    }
+
+
+    if (exploreResults) {
+      exploreResults.innerHTML = `
+        <div class="explore-empty">
+
+          <strong>
+            DATA UNAVAILABLE
+          </strong>
+
+          <span>
+            Unable to load live trend signals.
+            Please try again later.
+          </span>
+
+        </div>
+      `;
+    }
+
   }
-}
