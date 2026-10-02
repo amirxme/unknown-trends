@@ -789,12 +789,14 @@ export default async function handler(req, res) {
       }
 
       return {
-        title: trend.title,
+  title: trend.title,
 
-        platforms: ["Google"],
+  titleKey: trend.titleKey,
 
-        growth:
-          `${trend.globalScore}/100`,
+  platforms: ["Google"],
+
+  growth:
+    `${trend.globalScore}/100`,
 
         status,
 
