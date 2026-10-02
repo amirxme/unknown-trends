@@ -564,8 +564,24 @@ function calculateEmergingScore(
   const {
     momentum,
     velocity,
-    acceleration
+    acceleration,
+    historyCount
   } = dynamics;
+
+  /*
+    EMERGING SCORE
+
+    A trend must have historical evidence of
+    movement before it can receive a meaningful
+    emerging score.
+
+    New trends without enough history are not
+    treated as emerging automatically.
+  */
+
+  if (historyCount < 2) {
+    return 0;
+  }
 
   const velocitySignal =
     Math.max(
