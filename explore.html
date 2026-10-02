@@ -3,117 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>UNKNOWN — Explore</title>
-
-  <meta
-    name="description"
-    content="Explore social trends and signals across the internet."
-  >
-
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Explore social trends and signals across the internet.">
+  <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
-
   <header class="nav">
-
-    <a href="/" class="logo">UNKNOWN</a>
-
+    <a href="./" class="logo">UNKNOWN</a>
     <nav>
-      <a href="/">TRENDS</a>
-      <a href="/explore.html">EXPLORE</a>
-      <a href="/about.html">ABOUT</a>
+      <a href="./">TRENDS</a>
+      <a href="./explore.html">EXPLORE</a>
+      <a href="./about.html">ABOUT</a>
     </nav>
-
   </header>
 
-
   <main>
-
     <section class="explore">
-
       <div class="explore-head">
-
         <div>
-
-          <p class="eyebrow">
-            EXPLORE
-          </p>
-
-          <h1>
-            Find a signal.
-          </h1>
-
+          <p class="eyebrow">EXPLORE</p>
+          <h1>Find a signal.</h1>
         </div>
-
-        <span
-          class="explore-count"
-          id="exploreCount"
-        >
-          0 SIGNALS
-        </span>
-
+        <span class="explore-count" id="exploreCount">0 SIGNALS</span>
       </div>
-
 
       <div class="explore-search">
-
-        <input
-          id="exploreInput"
-          type="search"
-          placeholder="Search signals..."
-          autocomplete="off"
-        >
-
-        <span>⌕</span>
-
+        <input id="exploreInput" type="search" placeholder="Search signals..." autocomplete="off" aria-label="Search signals">
+        <span aria-hidden="true">⌕</span>
       </div>
 
-
       <div class="explore-filters">
+        <button class="explore-filter active" type="button" data-filter="all">ALL</button>
+        <button class="explore-filter" type="button" data-filter="Google">GOOGLE TRENDS</button>
+      </div>
 
-  <button
-    class="explore-filter active"
-    data-filter="all"
-  >
-    ALL
-  </button>
-
-  <button
-    class="explore-filter"
-    data-filter="Google"
-  >
-    GOOGLE TRENDS
-  </button>
-
-</div>
-
-
-      <div
-        id="exploreResults"
-        class="explore-results"
-      ></div>
-
+      <div id="exploreResults" class="explore-results"></div>
     </section>
-
   </main>
 
-
   <footer>
-
-    <span>
-      UNKNOWN
-    </span>
-
-    <span>
-      Social Trend Intelligence
-    </span>
-
+    <span>UNKNOWN</span>
+    <span>Social Trend Intelligence</span>
   </footer>
 
+  <noscript>
+    <div style="padding: 24px; font-family: sans-serif; color: #111;">JavaScript is required to explore signals.</div>
+  </noscript>
 
-  <script src="script.js"></script>
-
+  <script src="./data.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>

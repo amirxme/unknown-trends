@@ -3,169 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>UNKNOWN — Social Trend Intelligence</title>
-
-  <meta
-    name="description"
-    content="Discover what is moving across the internet."
-  >
-
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Discover what is moving across the internet.">
+  <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
-
   <header class="nav">
-
-    <a href="/" class="logo">UNKNOWN</a>
-
+    <a href="./" class="logo">UNKNOWN</a>
     <nav>
-      <a href="/">TRENDS</a>
-      <a href="/explore.html">EXPLORE</a>
-      <a href="/about.html">ABOUT</a>
+      <a href="./">TRENDS</a>
+      <a href="./explore.html">EXPLORE</a>
+      <a href="./about.html">ABOUT</a>
     </nav>
-
   </header>
 
-
   <main>
-
     <section class="hero">
-
       <p class="eyebrow">SOCIAL TREND INTELLIGENCE</p>
-
       <h1>
         See what's<br>
         <span>moving.</span>
       </h1>
-
       <p class="subtitle">
-        Discover emerging trends, topics and signals
-        across the internet.
+        Discover emerging trends, topics and signals across the internet.
       </p>
 
       <div class="search">
-
-        <input
-          id="searchInput"
-          type="search"
-          placeholder="Search trends, topics, memes..."
-          autocomplete="off"
-        >
-
-        <button id="searchButton">
-          SEARCH
-        </button>
-
+        <input id="searchInput" type="search" placeholder="Search trends, topics, memes..." autocomplete="off" aria-label="Search trends">
+        <button id="searchButton" type="button">SEARCH</button>
       </div>
-
     </section>
 
-
     <section id="trends" class="trends">
-
       <div class="section-head">
-
         <div>
           <p class="eyebrow">LATEST SIGNALS</p>
           <h2>Trending now</h2>
         </div>
 
         <div class="live-meta">
-
-  <span class="status">
-    <i></i>
-    UPDATED
-  </span>
-
-  <span class="updated">
-  GOOGLE TRENDS · GLOBAL
-  </span>
-
-</div>
-
+          <span class="status"><i></i>UPDATED</span>
+          <span class="updated">GOOGLE TRENDS · GLOBAL</span>
+        </div>
       </div>
 
-
       <div class="signal-bar">
+        <div class="platforms">
+          <button class="platform active" type="button" data-platform="all">ALL</button>
+          <button class="platform" type="button" data-platform="Google">GOOGLE TRENDS</button>
+        </div>
+      </div>
 
-  <div class="platforms">
+      <div class="signal-count">
+        TRACKING <strong id="signalCount">0</strong> ACTIVE SIGNALS
+      </div>
 
-    <button
-      class="platform active"
-      data-platform="all"
-    >
-      ALL
-    </button>
-
-    <button
-      class="platform"
-      data-platform="Google"
-    >
-      GOOGLE TRENDS
-    </button>
-
-  </div>
-
-  </div>
-
-  
-  <div class="signal-count">
-    TRACKING <strong id="signalCount">0</strong> ACTIVE SIGNALS
-  </div>
-
-
-                  <div class="emerging-section">
-
+      <div class="emerging-section">
         <div class="section-head">
-
           <div>
             <p class="eyebrow">EARLY SIGNALS</p>
             <h2>Emerging signals</h2>
           </div>
-
-          <span class="updated">
-            EMERGING SIGNALS
-          </span>
-
+          <span class="updated">EMERGING SIGNALS</span>
         </div>
-
-        <div
-          id="emergingList"
-          class="trend-list"
-        >
-        </div>
-
+        <div id="emergingList" class="trend-list"></div>
       </div>
 
-
-                  <div
-        id="trendList"
-        class="trend-list"
-      >
-      </div>
-
+      <div id="trendList" class="trend-list"></div>
     </section>
-
-
-
   </main>
 
-
   <footer>
-
     <span>UNKNOWN</span>
-
-    <span>
-      Global Trend Intelligence
-    </span>
-
+    <span>Global Trend Intelligence</span>
   </footer>
 
+  <noscript>
+    <style>
+      .search, .trend-list { display: block; }
+    </style>
+    <div style="padding: 24px; font-family: sans-serif; color: #111;">JavaScript is required to view live trends.</div>
+  </noscript>
 
-  
-  <script src="script.js"></script>
-
+  <script src="./data.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>

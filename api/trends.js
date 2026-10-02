@@ -12,11 +12,11 @@ const regions = [
 ];
 
 function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return String(value ?? "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function decodeHtml(value) {
-  return value
+  return String(value ?? "")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
@@ -27,7 +27,7 @@ function decodeHtml(value) {
 
 function cleanText(value) {
   return decodeHtml(
-    String(value || "")
+    String(value ?? "")
       .replace(/<[^>]*>/g, "")
       .replace(/\s+/g, " ")
       .trim()
@@ -35,7 +35,7 @@ function cleanText(value) {
 }
 
 function normalizeTitleKey(value) {
-  return String(value || "")
+  return String(value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
@@ -77,19 +77,14 @@ function parseRssItems(xml, region) {
 
   for (const itemXml of itemMatches) {
     const titleMatch = itemXml.match(/<title>([\s\S]*?)<\/title>/i);
-    const trafficMatch = itemXml.match(
-      /<ht:approx_traffic>([\s\S]*?)<\/ht:approx_traffic>/i
-    );
+    const trafficMatch = itemXml.match(/<ht:approx_traffic>([\s\S]*?)<\/ht:approx_traffic>/i);
     const pubDateMatch = itemXml.match(/<pubDate>([\s\S]*?)<\/pubDate>/i);
 
     const title = cleanText(titleMatch?.[1]);
     if (!title) continue;
 
     const trafficText = cleanText(trafficMatch?.[1] || "0");
-    const trafficNumber = Number.parseInt(
-      trafficText.replace(/[^0-9]/g, ""),
-      10
-    );
+    const trafficNumber = Number.parseInt(trafficText.replace(/[^0-9]/g, ""), 10);
 
     items.push({
       title,
@@ -114,10 +109,7 @@ function calculateVolumeScore(trafficValues) {
   const maxTraffic = Math.max(...trafficValues);
   if (!maxTraffic) return 0;
 
-  const average =
-    trafficValues.reduce((sum, value) => sum + value, 0) /
-    trafficValues.length;
-
+  const average = trafficValues.reduce((sum, value) => sum + value, 0) / trafficValues.length;
   return Math.min(100, Math.round((average / maxTraffic) * 100));
 }
 
@@ -134,17 +126,14 @@ function calculatePositionScore(positions) {
     return 30;
   });
 
-  return Math.round(
-    scores.reduce((sum, value) => sum + value, 0) /
-      scores.length
-  );
+  return Math.round(scores.reduce((sum, value) => sum + value, 0) / scores.length);
 }
 
 function calculateGlobalScore({ coverageScore, volumeScore, positionScore }) {
   return Math.round(
     coverageScore * 0.5 +
-      volumeScore * 0.3 +
-      positionScore * 0.2
+    volumeScore * 0.3 +
+    positionScore * 0.2
   );
 }
 
@@ -258,19 +247,14 @@ export default async function handler(req, res) {
             titleKey: key,
             regions: [],
             traffic: [],
-            positions: [],
-            descriptions: []
+            positions: []
           });
         }
 
         const trend = trendMap.get(key);
         trend.regions.push({ code: item.region, name: item.regionName });
         trend.traffic.push(item.traffic);
-        trend.positions.push(trend.positions.length + 1);
-
-        if (item.title) {
-          trend.descriptions.push(item.title);
-        }
+        trend.positions.push(Math.min(100, trend.positions.length + 1));
       }
     }
 
@@ -304,23 +288,10 @@ export default async function handler(req, res) {
         const globalScore = calculateGlobalScore({ coverageScore, volumeScore, positionScore });
 
         const dynamics = calculateDynamics(globalScore, previousScore, olderScore);
-        const signalStability = Math.max(
-          0,
-          Math.min(100, 100 - Math.abs(dynamics.acceleration) * 2)
-        );
+        const signalStability = Math.max(0, Math.min(100, 100 - Math.abs(dynamics.acceleration) * 2));
         const momentumScore = calculateMomentumScore(globalScore, previousScore);
         const confidenceScore = calculateConfidenceScore(history.length, signalStability);
-        const emergingScore = Math.max(
-          0,
-          Math.min(
-            100,
-            Math.round(
-              globalScore * 0.5 +
-                momentumScore * 0.3 +
-                confidenceScore * 0.2
-            )
-          )
-        );
+        const emergingScore = Math.max(0, Math.min(100, Math.round(globalScore * 0.5 + momentumScore * 0.3 + confidenceScore * 0.2)));
 
         const status = getStatus(globalScore, dynamics.momentum);
         const description = buildDescription({

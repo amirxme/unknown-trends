@@ -1,6 +1,7 @@
-const trends = [
+window.unknownTrendsFallback = [
   {
     title: "AI agents",
+    titleKey: "ai agents",
     platforms: ["X", "Reddit", "YouTube"],
     growth: "+428%",
     status: "ACCELERATING",
@@ -9,12 +10,17 @@ const trends = [
     platformCount: 3,
     signal: "HIGH",
     history: [18, 24, 22, 31, 38, 47, 55, 68, 79, 92],
-    description:
-      "Growing discussion around autonomous AI systems and agent-based tools."
+    description: "Growing discussion around autonomous AI systems and agent-based tools.",
+    momentumScore: 89,
+    confidenceScore: 91,
+    emergingScore: 82,
+    globalScore: 88,
+    acceleration: 12,
+    signalBreakdown: { coverage: 92, volume: 88, position: 85, global: 89 }
   },
-
   {
     title: "New iPhone rumors",
+    titleKey: "new iphone rumors",
     platforms: ["X", "TikTok", "Reddit"],
     growth: "+316%",
     status: "RISING",
@@ -23,12 +29,17 @@ const trends = [
     platformCount: 3,
     signal: "HIGH",
     history: [20, 27, 25, 34, 39, 44, 51, 58, 67, 76],
-    description:
-      "A rapidly expanding conversation around upcoming Apple hardware."
+    description: "A rapidly expanding conversation around upcoming Apple hardware.",
+    momentumScore: 81,
+    confidenceScore: 84,
+    emergingScore: 74,
+    globalScore: 80,
+    acceleration: 9,
+    signalBreakdown: { coverage: 85, volume: 82, position: 79, global: 80 }
   },
-
   {
     title: "Crypto regulation",
+    titleKey: "crypto regulation",
     platforms: ["X", "Reddit"],
     growth: "+274%",
     status: "RISING",
@@ -37,12 +48,17 @@ const trends = [
     platformCount: 2,
     signal: "MEDIUM",
     history: [24, 21, 29, 27, 35, 39, 42, 48, 53, 61],
-    description:
-      "Increasing attention around regulation, policy and the crypto market."
+    description: "Increasing attention around regulation, policy and the crypto market.",
+    momentumScore: 72,
+    confidenceScore: 77,
+    emergingScore: 69,
+    globalScore: 73,
+    acceleration: 7,
+    signalBreakdown: { coverage: 72, volume: 76, position: 69, global: 73 }
   },
-
   {
     title: "Streetwear revival",
+    titleKey: "streetwear revival",
     platforms: ["TikTok", "X"],
     growth: "+221%",
     status: "EMERGING",
@@ -51,12 +67,17 @@ const trends = [
     platformCount: 2,
     signal: "MEDIUM",
     history: [16, 19, 23, 21, 28, 31, 35, 39, 44, 49],
-    description:
-      "Renewed interest in streetwear culture, styling and fashion archives."
+    description: "Renewed interest in streetwear culture, styling and fashion archives.",
+    momentumScore: 66,
+    confidenceScore: 70,
+    emergingScore: 63,
+    globalScore: 67,
+    acceleration: 5,
+    signalBreakdown: { coverage: 67, volume: 70, position: 62, global: 67 }
   },
-
   {
     title: "Internet culture",
+    titleKey: "internet culture",
     platforms: ["TikTok", "X", "Reddit"],
     growth: "+187%",
     status: "ACTIVE",
@@ -65,7 +86,12 @@ const trends = [
     platformCount: 3,
     signal: "MEDIUM",
     history: [19, 23, 21, 25, 29, 30, 34, 36, 39, 43],
-    description:
-      "A broad signal connecting several conversations across internet culture."
+    description: "A broad signal connecting several conversations across internet culture.",
+    momentumScore: 61,
+    confidenceScore: 68,
+    emergingScore: 56,
+    globalScore: 62,
+    acceleration: 4,
+    signalBreakdown: { coverage: 64, volume: 68, position: 58, global: 62 }
   }
 ];

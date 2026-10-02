@@ -1,58 +1,71 @@
-const searchInput =
-  document.getElementById("searchInput");
+const state = {
+  trends: [],
+  activePlatform: "all",
+  activeExploreFilter: "all"
+};
 
-const searchButton =
-  document.getElementById("searchButton");
+const elements = {
+  searchInput: document.getElementById("searchInput"),
+  searchButton: document.getElementById("searchButton"),
+  trendList: document.getElementById("trendList"),
+  platformButtons: [...document.querySelectorAll(".platform")],
+  exploreInput: document.getElementById("exploreInput"),
+  exploreResults: document.getElementById("exploreResults"),
+  exploreFilters: [...document.querySelectorAll(".explore-filter")],
+  exploreCount: document.getElementById("exploreCount"),
+  signalCount: document.getElementById("signalCount")
+};
 
-const trendList =
-  document.getElementById("trendList");
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-const platformButtons =
-  document.querySelectorAll(".platform");
+function clampNumber(value, min = 0, max = 100) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return min;
+  return Math.min(max, Math.max(min, number));
+}
 
-const exploreInput =
-  document.getElementById("exploreInput");
+function normalizeTrend(rawTrend = {}) {
+  const trend = rawTrend && typeof rawTrend === "object" ? rawTrend : {};
+  const platforms = Array.isArray(trend.platforms)
+    ? trend.platforms.filter(Boolean).map((platform) => String(platform).trim()).filter(Boolean)
+    : [];
 
-const exploreResults =
-  document.getElementById("exploreResults");
+  const normalizedPlatforms = platforms.length ? platforms : ["Google Trends"];
 
-const exploreFilters =
-  document.querySelectorAll(".explore-filter");
-
-const exploreCount =
-  document.getElementById("exploreCount");
-
-let trends = [];
-
-let activePlatform = "all";
-let activeExploreFilter = "all";
-
-function normalizeTrend(trend = {}) {
-  const normalized = { ...trend };
-
-  normalized.title = normalized.title || "Unknown trend";
-  normalized.titleKey = normalized.titleKey || normalized.title || "";
-  normalized.platforms = Array.isArray(normalized.platforms) && normalized.platforms.length
-    ? normalized.platforms
-    : ["Google Trends"];
-  normalized.platformCount = Number(normalized.platformCount) || normalized.platforms.length || 1;
-  normalized.growth = normalized.growth ?? "+0%";
-  normalized.status = normalized.status || "STABLE";
-  normalized.mentions = normalized.mentions ?? "0";
-  normalized.velocity = normalized.velocity ?? "+0 pts";
-  normalized.signal = normalized.signal || "LOW";
-  normalized.historyCount = Number(normalized.historyCount) || (Array.isArray(normalized.history) ? normalized.history.length : 0);
-  normalized.momentumScore = Number(normalized.momentumScore) || 0;
-  normalized.confidenceScore = Number(normalized.confidenceScore) || 0;
-  normalized.emergingScore = Number(normalized.emergingScore) || 0;
-  normalized.globalScore = Number(normalized.globalScore) || 0;
-  normalized.acceleration = Number(normalized.acceleration) || 0;
-  normalized.description = normalized.description || "No description available.";
-  normalized.signalBreakdown = normalized.signalBreakdown && typeof normalized.signalBreakdown === "object"
-    ? normalized.signalBreakdown
-    : { coverage: 0, volume: 0, position: 0, global: 0 };
-
-  return normalized;
+  return {
+    title: String(trend.title ?? "Unknown trend").trim() || "Unknown trend",
+    titleKey: String(trend.titleKey ?? trend.title ?? "").trim(),
+    platforms: normalizedPlatforms,
+    platformCount: Number(trend.platformCount) || normalizedPlatforms.length || 1,
+    growth: trend.growth != null ? String(trend.growth) : "+0%",
+    status: String(trend.status ?? "STABLE").toUpperCase(),
+    mentions: trend.mentions != null ? String(trend.mentions) : "0",
+    velocity: trend.velocity != null ? String(trend.velocity) : "+0 pts",
+    signal: String(trend.signal ?? "LOW").toUpperCase(),
+    history: Array.isArray(trend.history) ? trend.history : [],
+    historyCount: Number(trend.historyCount) || (Array.isArray(trend.history) ? trend.history.length : 0),
+    momentumScore: clampNumber(trend.momentumScore, 0, 100),
+    confidenceScore: clampNumber(trend.confidenceScore, 0, 100),
+    emergingScore: clampNumber(trend.emergingScore, 0, 100),
+    globalScore: clampNumber(trend.globalScore, 0, 100),
+    acceleration: Number(trend.acceleration) || 0,
+    description: String(trend.description ?? "No description available.").trim() || "No description available.",
+    signalBreakdown: trend.signalBreakdown && typeof trend.signalBreakdown === "object"
+      ? {
+          coverage: clampNumber(trend.signalBreakdown.coverage, 0, 100),
+          volume: clampNumber(trend.signalBreakdown.volume, 0, 100),
+          position: clampNumber(trend.signalBreakdown.position, 0, 100),
+          global: clampNumber(trend.signalBreakdown.global, 0, 100)
+        }
+      : { coverage: 0, volume: 0, position: 0, global: 0 }
+  };
 }
 
 function getSignalBreakdownValues(signalBreakdown) {
@@ -62,181 +75,124 @@ function getSignalBreakdownValues(signalBreakdown) {
 
   if (signalBreakdown && typeof signalBreakdown === "object") {
     return [
-      signalBreakdown.coverage ?? 0,
-      signalBreakdown.volume ?? 0,
-      signalBreakdown.position ?? 0,
-      signalBreakdown.global ?? 0
+      Number(signalBreakdown.coverage) || 0,
+      Number(signalBreakdown.volume) || 0,
+      Number(signalBreakdown.position) || 0,
+      Number(signalBreakdown.global) || 0
     ];
   }
 
   return [0, 0, 0, 0];
 }
 
-/* =========================
-   TRENDING NOW
-========================= */
+function buildEmptyTrendState(message, subtitle) {
+  return `
+    <div class="trend">
+      <div></div>
+      <div class="trend-main">
+        <h3>${escapeHtml(message)}</h3>
+        <p>${escapeHtml(subtitle)}</p>
+      </div>
+      <strong>—</strong>
+    </div>
+  `;
+}
 
 function renderTrends(items) {
+  if (!elements.trendList) return;
 
-  if (!trendList) {
+  elements.trendList.innerHTML = "";
+
+  if (!Array.isArray(items) || items.length === 0) {
+    elements.trendList.innerHTML = buildEmptyTrendState("No signals found", "Try another search or platform.");
     return;
   }
 
-  trendList.innerHTML = "";
+  const normalizedItems = items.map(normalizeTrend);
+  const topTrend = normalizedItems[0];
+  const momentum = clampNumber(topTrend.momentumScore, 0, 100);
+  const momentumLabel = momentum >= 70 ? "HIGH MOMENTUM" : momentum >= 50 ? "RISING MOMENTUM" : "LOW MOMENTUM";
 
-  if (items.length === 0) {
-
-    trendList.innerHTML = `
-      <div class="trend">
-
-        <div></div>
-
-        <div class="trend-main">
-
-          <h3>
-            No signals found
-          </h3>
-
-          <p>
-            Try another search or platform.
-          </p>
-
-        </div>
-
-        <strong>—</strong>
-
-      </div>
-    `;
-
-    return;
-  }
-
-  const topTrend = normalizeTrend(items[0]);
-
-  const momentum =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        Number(topTrend.momentumScore) || 0
-      )
-    );
-
-  const momentumLabel =
-    momentum >= 70
-      ? "HIGH MOMENTUM"
-      : momentum >= 50
-        ? "RISING MOMENTUM"
-        : "LOW MOMENTUM";
-
-  const momentumIndex =
-    document.createElement("section");
-
-  momentumIndex.className =
-    "momentum-index";
-
+  const momentumIndex = document.createElement("section");
+  momentumIndex.className = "momentum-index";
   momentumIndex.innerHTML = `
     <div class="momentum-index-head">
       <div>
         <p class="eyebrow">MOMENTUM INDEX</p>
         <h2>${momentum}<span>/100</span></h2>
       </div>
-      <span class="momentum-index-status">${momentumLabel}</span>
+      <span class="momentum-index-status">${escapeHtml(momentumLabel)}</span>
     </div>
     <div class="momentum-index-main">
       <div>
-        <strong>${topTrend.title}</strong>
-        <span>${topTrend.status} · ${topTrend.velocity}</span>
+        <strong>${escapeHtml(topTrend.title)}</strong>
+        <span>${escapeHtml(topTrend.status)} · ${escapeHtml(topTrend.velocity)}</span>
       </div>
       <div class="momentum-index-bar">
         <div class="momentum-index-fill" style="width: ${momentum}%"></div>
       </div>
     </div>
   `;
+  momentumIndex.addEventListener("click", () => openTrend(topTrend));
+  elements.trendList.appendChild(momentumIndex);
 
-  momentumIndex.addEventListener(
-    "click",
-    () => {
-      openTrend(topTrend);
-    }
-  );
-
-  trendList.appendChild(momentumIndex);
-
-  const ranking =
-    document.createElement("section");
-
-  ranking.className =
-    "momentum-ranking";
-
+  const ranking = document.createElement("section");
+  ranking.className = "momentum-ranking";
   ranking.innerHTML = `
     <div class="momentum-ranking-head">
       <p class="eyebrow">MOMENTUM RANKING</p>
-      <span>TOP ${Math.min(5, items.length)}</span>
+      <span>TOP ${Math.min(5, normalizedItems.length)}</span>
     </div>
   `;
 
-  items
-    .slice(0, 5)
-    .map(normalizeTrend)
-    .forEach((trend, index) => {
-      const row = document.createElement("article");
-      row.className = "momentum-ranking-row";
+  normalizedItems.slice(0, 5).forEach((trend, index) => {
+    const row = document.createElement("article");
+    row.className = "momentum-ranking-row";
+    const score = clampNumber(trend.momentumScore, 0, 100);
+    row.innerHTML = `
+      <span class="momentum-ranking-rank">${String(index + 1).padStart(2, "0")}</span>
+      <div class="momentum-ranking-main">
+        <strong>${escapeHtml(trend.title)}</strong>
+        <span>${escapeHtml(trend.status)} · ${escapeHtml(trend.velocity)}</span>
+      </div>
+      <strong class="momentum-ranking-score">${score}</strong>
+    `;
+    row.addEventListener("click", () => openTrend(trend));
+    ranking.appendChild(row);
+  });
 
-      const score = Math.max(0, Math.min(100, Number(trend.momentumScore) || 0));
+  elements.trendList.appendChild(ranking);
 
-      row.innerHTML = `
-        <span class="momentum-ranking-rank">${String(index + 1).padStart(2, "0")}</span>
-        <div class="momentum-ranking-main">
-          <strong>${trend.title}</strong>
-          <span>${trend.status} · ${trend.velocity}</span>
-        </div>
-        <strong class="momentum-ranking-score">${score}</strong>
-      `;
-
-      row.addEventListener("click", () => { openTrend(trend); });
-      ranking.appendChild(row);
-    });
-
-  trendList.appendChild(ranking);
-
-  items.map(normalizeTrend).forEach((trend, index) => {
+  normalizedItems.forEach((trend, index) => {
     const article = document.createElement("article");
     article.className = "trend";
-
     article.innerHTML = `
       <span class="rank">${String(index + 1).padStart(2, "0")}</span>
       <div class="trend-main">
-        <h3>${trend.title}</h3>
-        <p>${(trend.platforms || []).join(" · ")}</p>
+        <h3>${escapeHtml(trend.title)}</h3>
+        <p>${escapeHtml((trend.platforms || []).join(" · "))}</p>
       </div>
-      <strong>${trend.growth}</strong>
+      <strong>${escapeHtml(trend.growth)}</strong>
     `;
-
-    article.addEventListener("click", () => { openTrend(trend); });
-    trendList.appendChild(article);
+    article.addEventListener("click", () => openTrend(trend));
+    elements.trendList.appendChild(article);
   });
 }
 
 function filterTrends() {
-  if (!trendList) {
-    return;
-  }
+  if (!elements.trendList) return;
 
-  const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
-
-  const filtered = trends
+  const query = elements.searchInput ? elements.searchInput.value.trim().toLowerCase() : "";
+  const filtered = state.trends
     .map(normalizeTrend)
     .filter((trend) => {
-      const matchesPlatform =
-        activePlatform === "all" ||
-        trend.platforms.some((platform) => {
-          const value = platform.toLowerCase();
-          return value === activePlatform.toLowerCase() || value.includes(activePlatform.toLowerCase());
-        });
+      const matchesPlatform = state.activePlatform === "all" || trend.platforms.some((platform) => {
+        const value = String(platform).toLowerCase();
+        const active = String(state.activePlatform).toLowerCase();
+        return value === active || value.includes(active);
+      });
 
-      const matchesSearch =
-        !query ||
+      const matchesSearch = !query ||
         trend.title.toLowerCase().includes(query) ||
         trend.platforms.some((platform) => platform.toLowerCase().includes(query)) ||
         (trend.description || "").toLowerCase().includes(query);
@@ -246,15 +202,12 @@ function filterTrends() {
 
   renderTrends(filtered);
 
-  const signalCount = document.getElementById("signalCount");
-  if (signalCount) {
-    signalCount.textContent = String(trends.length);
+  if (elements.signalCount) {
+    elements.signalCount.textContent = String(state.trends.length);
   }
 
   const emergingList = document.getElementById("emergingList");
-  if (!emergingList) {
-    return;
-  }
+  if (!emergingList) return;
 
   const emergingItems = [...filtered]
     .sort((a, b) => (Number(b.emergingScore) || 0) - (Number(a.emergingScore) || 0))
@@ -264,59 +217,37 @@ function filterTrends() {
   emergingList.innerHTML = "";
 
   if (emergingItems.length === 0) {
-    emergingList.innerHTML = `
-      <div class="trend">
-        <div></div>
-        <div class="trend-main">
-          <h3>No emerging signals yet</h3>
-          <p>The system is waiting for early movement.</p>
-        </div>
-        <strong>—</strong>
-      </div>
-    `;
+    emergingList.innerHTML = buildEmptyTrendState("No emerging signals yet", "The system is waiting for early movement.");
     return;
   }
 
   emergingItems.forEach((trend, index) => {
     const article = document.createElement("article");
     article.className = "trend";
-
-    const emergingScore = Math.max(0, Math.min(100, Number(trend.emergingScore) || 0));
-
+    const emergingScore = clampNumber(trend.emergingScore, 0, 100);
     article.innerHTML = `
       <span class="rank">${String(index + 1).padStart(2, "0")}</span>
       <div class="trend-main">
-        <h3>${trend.title}</h3>
-        <p>${trend.status} · ${trend.velocity}</p>
+        <h3>${escapeHtml(trend.title)}</h3>
+        <p>${escapeHtml(`${trend.status} · ${trend.velocity}`)}</p>
       </div>
       <strong>${emergingScore}</strong>
     `;
-
-    article.addEventListener("click", () => { openTrend(trend); });
+    article.addEventListener("click", () => openTrend(trend));
     emergingList.appendChild(article);
   });
 }
-
-/* =========================
-   SIGNAL GRAPH
-========================= */
 
 function createSignalGraph(signalBreakdown) {
   const width = 700;
   const height = 180;
   const padding = 10;
-
   const values = getSignalBreakdownValues(signalBreakdown);
-  const min = 0;
-  const max = 100;
-  const range = max - min;
-
   const points = values.map((value, index) => {
     const x = values.length === 1
       ? width / 2
       : padding + (index / (values.length - 1)) * (width - padding * 2);
-
-    const y = height - padding - ((value - min) / range) * (height - padding * 2);
+    const y = height - padding - ((clampNumber(value, 0, 100) / 100) * (height - padding * 2));
     return `${x},${y}`;
   });
 
@@ -336,18 +267,14 @@ function createSignalGraph(signalBreakdown) {
         <span>COVERAGE</span>
         <span>VOLUME</span>
         <span>POSITION</span>
-        <span>SIGNAL</span>
+        <span>GLOBAL</span>
       </div>
     </div>
   `;
 }
 
-/* =========================
-   HISTORICAL SIGNAL GRAPH
-========================= */
-
 function createHistoryGraph(history) {
-  if (!history || history.length === 0) {
+  if (!Array.isArray(history) || history.length === 0) {
     return `
       <div class="signal-graph">
         <div class="graph-head">
@@ -362,30 +289,28 @@ function createHistoryGraph(history) {
   const width = 700;
   const height = 180;
   const padding = 10;
-
-  const values = history.map((item) => Number(item.global_score) || 0);
+  const values = history.map((item) => clampNumber(item.global_score || item.globalScore || 0, 0, 100));
   const points = values.map((value, index) => {
-    const x = values.length === 1
-      ? width / 2
-      : padding + (index / (values.length - 1)) * (width - padding * 2);
-    const y = height - padding - (value / 100) * (height - padding * 2);
+    const x = values.length === 1 ? width / 2 : padding + (index / (values.length - 1)) * (width - padding * 2);
+    const y = height - padding - ((value / 100) * (height - padding * 2));
     return `${x},${y}`;
   });
 
-  const first = values[0];
-  const last = values[values.length - 1];
+  const first = values[0] ?? 0;
+  const last = values[values.length - 1] ?? 0;
   const change = last - first;
   const changeLabel = change > 0 ? `+${change}` : `${change}`;
 
-  const timestamps = history.map((item) =>
-    new Date(item.captured_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-  );
+  const timestamps = history.map((item) => {
+    const date = new Date(item.captured_at || item.capturedAt || Date.now());
+    return Number.isNaN(date.getTime()) ? "" : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  });
 
   return `
     <div class="signal-graph">
       <div class="graph-head">
         <span>HISTORICAL SIGNAL</span>
-        <span>${changeLabel} SCORE</span>
+        <span>${escapeHtml(changeLabel)} SCORE</span>
       </div>
       <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="Historical signal graph">
         <line x1="0" y1="25%" x2="${width}" y2="25%" class="graph-grid" />
@@ -394,88 +319,74 @@ function createHistoryGraph(history) {
         <polyline points="${points.join(" ")}" class="graph-line" />
       </svg>
       <div class="graph-labels">
-        <span>${timestamps[0] || ""}</span>
-        <span>${timestamps[Math.floor(timestamps.length / 2)] || ""}</span>
-        <span>${timestamps[timestamps.length - 1] || ""}</span>
+        <span>${escapeHtml(timestamps[0] || "")}</span>
+        <span>${escapeHtml(timestamps[Math.floor(timestamps.length / 2)] || "")}</span>
+        <span>${escapeHtml(timestamps[timestamps.length - 1] || "")}</span>
       </div>
     </div>
   `;
 }
 
-/* =========================
-   LOAD HISTORY
-========================= */
-
 async function loadHistory(titleKey) {
+  const safeTitle = titleKey || "";
+  if (!safeTitle) return [];
+
   try {
-    const response = await fetch(`/api/history?title=${encodeURIComponent(titleKey)}`);
-    if (!response.ok) {
-      throw new Error("Failed to load history");
-    }
-
-    const data = await response.json();
-    if (!data || !Array.isArray(data.history)) {
-      return [];
-    }
-
-    return data.history;
+    const response = await fetch(`/api/history?title=${encodeURIComponent(safeTitle)}`);
+    if (!response.ok) throw new Error("History request failed");
+    const payload = await response.json();
+    return Array.isArray(payload?.history) ? payload.history : [];
   } catch (error) {
     console.error("UNKNOWN history API error:", error);
     return [];
   }
 }
 
-/* =========================
-   TREND DETAIL
-========================= */
-
 async function openTrend(trend) {
-  if (!trendList) {
-    return;
-  }
+  if (!elements.trendList) return;
 
   const safeTrend = normalizeTrend(trend);
-  const confidence = Math.max(0, Math.min(100, Number(safeTrend.confidenceScore) || 0));
-  const momentum = Math.max(0, Math.min(100, Number(safeTrend.momentumScore) || 0));
+  const confidence = clampNumber(safeTrend.confidenceScore, 0, 100);
+  const momentum = clampNumber(safeTrend.momentumScore, 0, 100);
 
   let confidenceLabel = "LOW CONFIDENCE";
   if (confidence >= 75) confidenceLabel = "HIGH CONFIDENCE";
   else if (confidence >= 50) confidenceLabel = "MEDIUM CONFIDENCE";
 
-  trendList.innerHTML = `
+  elements.trendList.innerHTML = `
     <article class="trend-detail">
-      <button class="back-button" id="backButton">← BACK TO TRENDS</button>
+      <button class="back-button" id="backButton" type="button">← BACK TO TRENDS</button>
       <p class="eyebrow">SIGNAL</p>
-      <h2>${safeTrend.title}</h2>
+      <h2>${escapeHtml(safeTrend.title)}</h2>
 
       <div class="detail-meta">
-        <span>GROWTH<strong>${safeTrend.growth}</strong></span>
+        <span>GROWTH<strong>${escapeHtml(safeTrend.growth)}</strong></span>
         <span>MOMENTUM<strong>${momentum}/100</strong>
           <div class="momentum-meter"><div class="momentum-meter-fill" style="width: ${momentum}%"></div></div>
-          <small class="momentum-status">${safeTrend.status}</small>
+          <small class="momentum-status">${escapeHtml(safeTrend.status)}</small>
         </span>
       </div>
 
       <div class="detail-meta">
-        <span>EMERGING SCORE<strong>${Math.max(0, Math.min(100, Number(safeTrend.emergingScore) || 0))}/100</strong></span>
-        <span>WHY EMERGING<strong>${safeTrend.velocity}</strong><small class="momentum-status">VELOCITY · ACCELERATION · MOMENTUM · EARLY SIGNAL</small></span>
+        <span>EMERGING SCORE<strong>${clampNumber(safeTrend.emergingScore, 0, 100)}/100</strong></span>
+        <span>WHY EMERGING<strong>${escapeHtml(safeTrend.velocity)}</strong><small class="momentum-status">VELOCITY · ACCELERATION · MOMENTUM · EARLY SIGNAL</small></span>
       </div>
 
       <div class="detail-meta">
         <span>CONFIDENCE<strong>${confidence}%</strong>
           <div class="momentum-meter"><div class="momentum-meter-fill" style="width: ${confidence}%"></div></div>
-          <small class="momentum-status">${confidenceLabel} · ${safeTrend.historyCount} HISTORICAL SNAPSHOT${safeTrend.historyCount === 1 ? "" : "S"}</small>
+          <small class="momentum-status">${escapeHtml(confidenceLabel)} · ${safeTrend.historyCount} HISTORICAL SNAPSHOT${safeTrend.historyCount === 1 ? "" : "S"}</small>
         </span>
-        <span>STATUS<strong>${safeTrend.status}</strong></span>
+        <span>STATUS<strong>${escapeHtml(safeTrend.status)}</strong></span>
       </div>
 
       <div class="detail-meta">
-        <span>VELOCITY<strong>${safeTrend.velocity}</strong></span>
-        <span>MENTIONS<strong>${safeTrend.mentions}</strong></span>
+        <span>VELOCITY<strong>${escapeHtml(safeTrend.velocity)}</strong></span>
+        <span>MENTIONS<strong>${escapeHtml(safeTrend.mentions)}</strong></span>
       </div>
 
       <div class="detail-meta">
-        <span>SIGNAL<strong>${safeTrend.signal}</strong></span>
+        <span>SIGNAL<strong>${escapeHtml(safeTrend.signal)}</strong></span>
         <span>HISTORY<strong>${safeTrend.historyCount}</strong></span>
       </div>
 
@@ -490,14 +401,14 @@ async function openTrend(trend) {
         </div>
       </div>
 
-      <p class="detail-platforms">${(safeTrend.platforms || []).join(" · ")}</p>
-      <p class="detail-description">${safeTrend.description}</p>
+      <p class="detail-platforms">${escapeHtml((safeTrend.platforms || []).join(" · "))}</p>
+      <p class="detail-description">${escapeHtml(safeTrend.description)}</p>
     </article>
   `;
 
   const backButton = document.getElementById("backButton");
   if (backButton) {
-    backButton.addEventListener("click", () => { filterTrends(); });
+    backButton.addEventListener("click", () => filterTrends());
   }
 
   const history = await loadHistory(safeTrend.titleKey);
@@ -507,19 +418,13 @@ async function openTrend(trend) {
   }
 }
 
-/* =========================
-   EXPLORE
-========================= */
-
 function renderExplore(items) {
-  if (!exploreResults) {
-    return;
-  }
+  if (!elements.exploreResults) return;
 
-  exploreResults.innerHTML = "";
+  elements.exploreResults.innerHTML = "";
 
-  if (items.length === 0) {
-    exploreResults.innerHTML = `
+  if (!Array.isArray(items) || items.length === 0) {
+    elements.exploreResults.innerHTML = `
       <div class="explore-empty">
         <strong>No signals found.</strong>
         <span>Try another search or platform.</span>
@@ -531,20 +436,19 @@ function renderExplore(items) {
   items.map(normalizeTrend).forEach((trend, index) => {
     const item = document.createElement("article");
     item.className = "explore-item";
-
-    const momentum = Math.max(0, Math.min(100, Number(trend.momentumScore) || 0));
-    const confidence = Math.max(0, Math.min(100, Number(trend.confidenceScore) || 0));
+    const momentum = clampNumber(trend.momentumScore, 0, 100);
+    const confidence = clampNumber(trend.confidenceScore, 0, 100);
 
     item.innerHTML = `
       <span class="explore-rank">${String(index + 1).padStart(2, "0")}</span>
       <div class="explore-main">
-        <h3>${trend.title}</h3>
-        <p>${(trend.platforms || []).join(" · ")}</p>
+        <h3>${escapeHtml(trend.title)}</h3>
+        <p>${escapeHtml((trend.platforms || []).join(" · "))}</p>
         <span class="explore-platform-count">${trend.platformCount} PLATFORMS</span>
       </div>
       <div class="explore-growth">
-        <strong>${trend.growth}</strong>
-        <span>${trend.status}</span>
+        <strong>${escapeHtml(trend.growth)}</strong>
+        <span>${escapeHtml(trend.status)}</span>
       </div>
       <div class="explore-signal-meta">
         <div>
@@ -558,34 +462,26 @@ function renderExplore(items) {
       </div>
     `;
 
-    item.addEventListener("click", () => { openExploreTrend(trend); });
-    exploreResults.appendChild(item);
+    item.addEventListener("click", () => openExploreTrend(trend));
+    elements.exploreResults.appendChild(item);
   });
 }
 
-/* =========================
-   FILTER EXPLORE
-========================= */
-
 function filterExplore() {
-  if (!exploreInput || !exploreResults || !exploreCount) {
-    return;
-  }
+  if (!elements.exploreInput || !elements.exploreResults || !elements.exploreCount) return;
 
-  const query = exploreInput.value.trim().toLowerCase();
+  const query = elements.exploreInput.value.trim().toLowerCase();
 
-  const filtered = trends
+  const filtered = state.trends
     .map(normalizeTrend)
     .filter((trend) => {
-      const matchesFilter =
-        activeExploreFilter === "all" ||
-        trend.platforms.some((platform) => {
-          const value = platform.toLowerCase();
-          return value === activeExploreFilter.toLowerCase() || value.includes(activeExploreFilter.toLowerCase());
-        });
+      const matchesFilter = state.activeExploreFilter === "all" || trend.platforms.some((platform) => {
+        const value = String(platform).toLowerCase();
+        const active = String(state.activeExploreFilter).toLowerCase();
+        return value === active || value.includes(active);
+      });
 
-      const matchesSearch =
-        !query ||
+      const matchesSearch = !query ||
         trend.title.toLowerCase().includes(query) ||
         (trend.description || "").toLowerCase().includes(query) ||
         trend.platforms.some((platform) => platform.toLowerCase().includes(query));
@@ -593,47 +489,40 @@ function filterExplore() {
       return matchesFilter && matchesSearch;
     });
 
-  exploreCount.textContent = `${filtered.length} SIGNALS`;
+  elements.exploreCount.textContent = `${filtered.length} SIGNALS`;
   renderExplore(filtered);
 }
 
-/* =========================
-   EXPLORE DETAIL
-========================= */
-
 async function openExploreTrend(trend) {
-  if (!exploreResults) {
-    return;
-  }
+  if (!elements.exploreResults) return;
 
   const safeTrend = normalizeTrend(trend);
-  const globalScore = Math.max(0, Math.min(100, Number(safeTrend.globalScore) || 0));
-  const momentum = Math.max(0, Math.min(100, Number(safeTrend.momentumScore) || 0));
-  const confidence = Math.max(0, Math.min(100, Number(safeTrend.confidenceScore) || 0));
+  const globalScore = clampNumber(safeTrend.globalScore, 0, 100);
+  const momentum = clampNumber(safeTrend.momentumScore, 0, 100);
+  const confidence = clampNumber(safeTrend.confidenceScore, 0, 100);
   const acceleration = Number(safeTrend.acceleration) || 0;
 
-  exploreResults.innerHTML = `
+  elements.exploreResults.innerHTML = `
     <article class="explore-detail">
-      <button class="explore-back" id="exploreBack">← BACK TO EXPLORE</button>
+      <button class="explore-back" id="exploreBack" type="button">← BACK TO EXPLORE</button>
       <p class="eyebrow">SIGNAL</p>
-      <h3>${safeTrend.title}</h3>
+      <h3>${escapeHtml(safeTrend.title)}</h3>
 
       <div class="explore-detail-meta">
         <div><span>GLOBAL SCORE</span><strong>${globalScore}</strong></div>
         <div><span>MOMENTUM</span><strong>${momentum}</strong></div>
         <div><span>CONFIDENCE</span><strong>${confidence}%</strong></div>
         <div><span>ACCELERATION</span><strong>${acceleration}</strong></div>
-        <div><span>GROWTH</span><strong>${safeTrend.growth}</strong></div>
-        <div><span>STATUS</span><strong>${safeTrend.status}</strong></div>
-        <div><span>MENTIONS</span><strong>${safeTrend.mentions}</strong></div>
-        <div><span>VELOCITY</span><strong>${safeTrend.velocity}</strong></div>
+        <div><span>GROWTH</span><strong>${escapeHtml(safeTrend.growth)}</strong></div>
+        <div><span>STATUS</span><strong>${escapeHtml(safeTrend.status)}</strong></div>
+        <div><span>MENTIONS</span><strong>${escapeHtml(safeTrend.mentions)}</strong></div>
+        <div><span>VELOCITY</span><strong>${escapeHtml(safeTrend.velocity)}</strong></div>
         <div><span>PLATFORMS</span><strong>${safeTrend.platformCount}</strong></div>
-        <div><span>SIGNAL</span><strong>${safeTrend.signal}</strong></div>
+        <div><span>SIGNAL</span><strong>${escapeHtml(safeTrend.signal)}</strong></div>
       </div>
 
-      <p class="explore-detail-platforms">${(safeTrend.platforms || []).join(" · ")}</p>
-      <p class="explore-detail-description">${safeTrend.description}</p>
-
+      <p class="explore-detail-platforms">${escapeHtml((safeTrend.platforms || []).join(" · "))}</p>
+      <p class="explore-detail-description">${escapeHtml(safeTrend.description)}</p>
       ${createSignalGraph(safeTrend.signalBreakdown)}
 
       <div id="exploreHistory">
@@ -649,7 +538,7 @@ async function openExploreTrend(trend) {
 
   const backButton = document.getElementById("exploreBack");
   if (backButton) {
-    backButton.addEventListener("click", () => { filterExplore(); });
+    backButton.addEventListener("click", () => filterExplore());
   }
 
   const history = await loadHistory(safeTrend.titleKey);
@@ -659,96 +548,85 @@ async function openExploreTrend(trend) {
   }
 }
 
-/* =========================
-   EVENTS — TRENDS
-========================= */
-
-if (searchButton) {
-  searchButton.addEventListener("click", filterTrends);
+if (elements.searchButton) {
+  elements.searchButton.addEventListener("click", filterTrends);
 }
 
-if (searchInput) {
-  searchInput.addEventListener("keydown", (event) => {
+if (elements.searchInput) {
+  elements.searchInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       filterTrends();
     }
   });
 }
 
-platformButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    platformButtons.forEach((item) => item.classList.remove("active"));
-    button.classList.add("active");
-    activePlatform = button.dataset.platform;
-    filterTrends();
-  });
-});
-
-/* =========================
-   EVENTS — EXPLORE
-========================= */
-
-if (exploreInput) {
-  exploreInput.addEventListener("input", () => {
-    filterExplore();
+if (elements.platformButtons.length) {
+  elements.platformButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      elements.platformButtons.forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      state.activePlatform = button.dataset.platform || "all";
+      filterTrends();
+    });
   });
 }
 
-exploreFilters.forEach((button) => {
-  button.addEventListener("click", () => {
-    exploreFilters.forEach((item) => item.classList.remove("active"));
-    button.classList.add("active");
-    activeExploreFilter = button.dataset.filter;
-    filterExplore();
-  });
-});
+if (elements.exploreInput) {
+  elements.exploreInput.addEventListener("input", filterExplore);
+}
 
-/* =========================
-   API
-========================= */
+if (elements.exploreFilters.length) {
+  elements.exploreFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+      elements.exploreFilters.forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      state.activeExploreFilter = button.dataset.filter || "all";
+      filterExplore();
+    });
+  });
+}
 
 async function loadTrends() {
   try {
     const response = await fetch("/api/trends");
-    if (!response.ok) {
-      throw new Error("Failed to load trends");
-    }
+    if (!response.ok) throw new Error("Failed to load trends");
 
-    const data = await response.json();
-    trends = (data.trends || []).map(normalizeTrend);
+    const payload = await response.json();
+    const trendList = Array.isArray(payload?.trends) ? payload.trends : [];
+    state.trends = trendList.map(normalizeTrend);
 
-    if (trendList) {
-      filterTrends();
-    }
-
-    if (exploreResults) {
-      filterExplore();
-    }
+    if (elements.trendList) filterTrends();
+    if (elements.exploreResults) filterExplore();
   } catch (error) {
     console.error("UNKNOWN API error:", error);
 
-    const errorMessage = `
-      <div class="trend">
-        <div></div>
-        <div class="trend-main">
-          <h3>DATA UNAVAILABLE</h3>
-          <p>Unable to load live trend signals. Please try again later.</p>
-        </div>
-        <strong>—</strong>
-      </div>
-    `;
+    const fallbackData = Array.isArray(window.unknownTrendsFallback) ? window.unknownTrendsFallback : [];
+    state.trends = fallbackData.map(normalizeTrend);
 
-    if (trendList) {
-      trendList.innerHTML = errorMessage;
+    if (elements.trendList) {
+      elements.trendList.innerHTML = `
+        <div class="trend">
+          <div></div>
+          <div class="trend-main">
+            <h3>DATA UNAVAILABLE</h3>
+            <p>Unable to load live trend signals. Please try again later.</p>
+          </div>
+          <strong>—</strong>
+        </div>
+      `;
     }
 
-    if (exploreResults) {
-      exploreResults.innerHTML = `
+    if (elements.exploreResults) {
+      elements.exploreResults.innerHTML = `
         <div class="explore-empty">
           <strong>DATA UNAVAILABLE</strong>
           <span>Unable to load live trend signals. Please try again later.</span>
         </div>
       `;
+    }
+
+    if (elements.exploreCount) {
+      elements.exploreCount.textContent = `${state.trends.length} SIGNALS`;
     }
   }
 }
