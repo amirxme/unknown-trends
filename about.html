@@ -3,175 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>UNKNOWN — About</title>
-
-  <meta
-    name="description"
-    content="Understand how UNKNOWN measures social trend signals."
-  >
-
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Understand how UNKNOWN measures social trend signals.">
+  <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
-
   <header class="nav">
-
-    <a href="/" class="logo">UNKNOWN</a>
-
+    <a href="./" class="logo">UNKNOWN</a>
     <nav>
-      <a href="/">TRENDS</a>
-      <a href="/explore.html">EXPLORE</a>
-      <a href="/about.html">ABOUT</a>
+      <a href="./">TRENDS</a>
+      <a href="./explore.html">EXPLORE</a>
+      <a class="active" href="./about.html" aria-current="page">ABOUT</a>
     </nav>
-
   </header>
 
-
   <main>
-
     <section class="about">
-
-      <div class="about-head">
-
-        <div>
-
-          <p class="eyebrow">
-            ABOUT
-          </p>
-
-          <h1>
-            Understand<br>
-            the signal.
-          </h1>
-
+      <div class="about-hero">
+        <div class="about-hero-copy">
+          <p class="eyebrow about-kicker"><span></span> ABOUT UNKNOWN</p>
+          <h1>Understand<br><em>the signal.</em></h1>
+          <p class="about-lede">UNKNOWN turns live search activity into a clearer view of what is moving, where it is appearing, and how much evidence supports the signal.</p>
         </div>
-
+        <div class="about-proof" aria-label="UNKNOWN at a glance">
+          <div><strong>10</strong><span>REGIONS TRACKED</span></div>
+          <div><strong>3</strong><span>SCORE DIMENSIONS</span></div>
+          <div><strong>LIVE</strong><span>GOOGLE TRENDS SOURCE</span></div>
+        </div>
       </div>
 
+      <div class="about-divider"><span>HOW IT WORKS</span><span>01—05</span></div>
 
       <div class="about-content">
-
-        <section class="about-block">
-
-          <p class="about-label">
-            WHAT UNKNOWN DOES
-          </p>
-
-          <h2>
-            We track what people are starting to search for.
-          </h2>
-
-          <p>
-            UNKNOWN monitors search activity across multiple regions
-            and turns raw trend data into comparable signals.
-            The goal is simple: identify what is moving before
-            it becomes obvious.
-          </p>
-
+        <section class="about-block about-block-primary">
+          <div class="about-block-index">01</div>
+          <div class="about-block-copy">
+            <p class="about-label">WHAT UNKNOWN DOES</p>
+            <h2>We track what people are starting to search for.</h2>
+            <p>UNKNOWN monitors search activity across multiple regions and turns raw trend data into comparable signals. The goal is simple: identify what is moving before it becomes obvious.</p>
+          </div>
+          <div class="about-signal-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
         </section>
 
-
         <section class="about-block">
-
-          <p class="about-label">
-            GLOBAL SCORE
-          </p>
-
-          <h2>
-            One signal. Multiple dimensions.
-          </h2>
-
-          <p>
-            Global Score combines three components:
-            coverage, volume and position.
-            Together they describe how widely a topic is appearing,
-            how significant its search activity is, and how strongly
-            it is positioned within regional trend lists.
-          </p>
-
+          <div class="about-block-index">02</div>
+          <div class="about-block-copy">
+            <p class="about-label">GLOBAL SCORE</p>
+            <h2>One signal. Multiple dimensions.</h2>
+            <p>Global Score combines coverage, volume and position. Together they describe how widely a topic is appearing, how significant its search activity is, and how strongly it is positioned within regional trend lists.</p>
+          </div>
+          <div class="score-bars" aria-label="Global Score weights">
+            <div><span>Coverage</span><strong>50%</strong><i style="width: 50%"></i></div>
+            <div><span>Volume</span><strong>30%</strong><i style="width: 30%"></i></div>
+            <div><span>Position</span><strong>20%</strong><i style="width: 20%"></i></div>
+          </div>
         </section>
 
-
         <section class="about-block">
-
-          <p class="about-label">
-            MOMENTUM
-          </p>
-
-          <h2>
-            Movement matters more than a snapshot.
-          </h2>
-
-          <p>
-            Momentum compares current signals with historical snapshots.
-            Velocity measures the rate of change, while acceleration
-            shows whether that movement itself is increasing or slowing.
-          </p>
-
+          <div class="about-block-index">03</div>
+          <div class="about-block-copy">
+            <p class="about-label">MOMENTUM</p>
+            <h2>Movement matters more than a snapshot.</h2>
+            <p>Momentum compares current signals with historical snapshots. Velocity measures the rate of change, while acceleration shows whether that movement itself is increasing or slowing.</p>
+          </div>
+          <div class="about-mini-data"><strong>NOW</strong><span>vs. HISTORY</span><strong>→</strong><span>CHANGE</span></div>
         </section>
 
-
         <section class="about-block">
-
-          <p class="about-label">
-            CONFIDENCE
-          </p>
-
-          <h2>
-            More history. More context.
-          </h2>
-
-          <p>
-            Confidence reflects how much supporting data is available
-            for a signal, including historical observations and
-            regional coverage. It is an indicator of data strength,
-            not a guarantee of future movement.
-          </p>
-
+          <div class="about-block-index">04</div>
+          <div class="about-block-copy">
+            <p class="about-label">CONFIDENCE</p>
+            <h2>More history. More context.</h2>
+            <p>Confidence reflects how much supporting data is available for a signal, including historical observations and regional coverage. It is an indicator of data strength, not a guarantee of future movement.</p>
+          </div>
+          <div class="about-confidence"><span>DATA STRENGTH</span><div><i></i><i></i><i></i><i></i><i></i></div><small>HISTORY + COVERAGE</small></div>
         </section>
 
-
-        <section class="about-block">
-
-          <p class="about-label">
-            DATA
-          </p>
-
-          <h2>
-            Built from live search trends.
-          </h2>
-
-          <p>
-            UNKNOWN currently uses Google Trends data across tracked
-            regions. Snapshots are stored over time so that changes
-            can be measured instead of relying on a single moment.
-          </p>
-
+        <section class="about-block about-block-last">
+          <div class="about-block-index">05</div>
+          <div class="about-block-copy">
+            <p class="about-label">DATA</p>
+            <h2>Built from live search trends.</h2>
+            <p>UNKNOWN currently uses Google Trends data across tracked regions. Snapshots are stored over time so that changes can be measured instead of relying on a single moment.</p>
+          </div>
+          <div class="about-source"><span class="about-source-dot"></span><strong>GOOGLE TRENDS</strong><small>LIVE SOURCE</small></div>
         </section>
-
       </div>
-
     </section>
-
   </main>
 
-
   <footer>
-
-    <span>
-      UNKNOWN
-    </span>
-
-    <span>
-      Social Trend Intelligence
-    </span>
-
+    <span>UNKNOWN</span>
+    <span>Social Trend Intelligence</span>
   </footer>
-
-
-  <script src="script.js"></script>
-
 </body>
 </html>
