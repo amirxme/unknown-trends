@@ -136,6 +136,8 @@ function renderTrends(items) {
 
   const momentumIndex = document.createElement("section");
   momentumIndex.className = "momentum-index";
+  momentumIndex.setAttribute("role", "button");
+  momentumIndex.setAttribute("tabindex", "0");
   momentumIndex.innerHTML = `
     <div class="momentum-index-head">
       <div>
@@ -155,6 +157,12 @@ function renderTrends(items) {
     </div>
   `;
   momentumIndex.addEventListener("click", () => openTrend(topTrend));
+  momentumIndex.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openTrend(topTrend);
+    }
+  });
   elements.trendList.appendChild(momentumIndex);
 
   const ranking = document.createElement("section");
@@ -169,6 +177,8 @@ function renderTrends(items) {
   normalizedItems.slice(0, 5).forEach((trend, index) => {
     const row = document.createElement("article");
     row.className = "momentum-ranking-row";
+    row.setAttribute("role", "button");
+    row.setAttribute("tabindex", "0");
     const score = clampNumber(trend.momentumScore, 0, 100);
     row.innerHTML = `
       <span class="momentum-ranking-rank">${String(index + 1).padStart(2, "0")}</span>
@@ -179,6 +189,12 @@ function renderTrends(items) {
       <strong class="momentum-ranking-score">${score}</strong>
     `;
     row.addEventListener("click", () => openTrend(trend));
+    row.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openTrend(trend);
+      }
+    });
     ranking.appendChild(row);
   });
 
@@ -655,6 +671,7 @@ if (elements.platformButtons.length) {
       elements.platformButtons.forEach((item) => item.classList.remove("active"));
       button.classList.add("active");
       state.activePlatform = button.dataset.platform || "all";
+      elements.platformButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
       filterTrends();
     });
   });
@@ -670,6 +687,7 @@ if (elements.exploreFilters.length) {
       elements.exploreFilters.forEach((item) => item.classList.remove("active"));
       button.classList.add("active");
       state.activeExploreFilter = button.dataset.filter || "all";
+      elements.exploreFilters.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
       filterExplore();
     });
   });

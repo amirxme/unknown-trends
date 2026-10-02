@@ -37,10 +37,11 @@
       </div>
 
       <div class="explore-filters">
-        <button class="explore-filter active" type="button" data-filter="all">ALL SIGNALS</button>
-        <button class="explore-filter" type="button" data-filter="RISING">RISING</button>
-        <button class="explore-filter" type="button" data-filter="NEW">NEW</button>
-        <button class="explore-filter" type="button" data-filter="COOLING">COOLING</button>
+        <button class="explore-filter active" type="button" data-filter="all" aria-pressed="true">ALL SIGNALS</button>
+        <button class="explore-filter" type="button" data-filter="RISING" aria-pressed="false">RISING</button>
+        <button class="explore-filter" type="button" data-filter="NEW" aria-pressed="false">NEW</button>
+        <button class="explore-filter" type="button" data-filter="COOLING" aria-pressed="false">COOLING</button>
+        <button class="explore-filter" type="button" data-filter="BREAKOUT" aria-pressed="false">BREAKOUT</button>
       </div>
 
       <div id="exploreResults" class="explore-results" aria-live="polite" aria-busy="true">

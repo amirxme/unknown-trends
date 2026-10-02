@@ -1,0 +1,7 @@
+{
+  "routes": [
+    {"path": "/", "title": "UNKNOWN — Social Trend Intelligence"},
+    {"path": "/explore.html", "title": "UNKNOWN — Explore"},
+    {"path": "/about.html", "title": "UNKNOWN — About"}
+  ]
+}

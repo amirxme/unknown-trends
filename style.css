@@ -2358,3 +2358,223 @@ footer span:first-child {
     height: 29px;
   }
 }
+
+/* Product clarity pass: one accent, quiet controls, compact mobile composition */
+:root {
+  --brand-blue: #6578b7;
+  --brand-blue-soft: #f1f4fb;
+  --brand-blue-line: #c9d2e9;
+}
+
+/* All product accents resolve to one recognizable blue. */
+.hero-kicker span,
+.section-dot,
+.about-kicker span,
+.explore-kicker span,
+.about-source-dot {
+  background: var(--brand-blue) !important;
+  box-shadow: 0 0 0 5px rgba(101, 120, 183, 0.12) !important;
+}
+
+.hero h1 em,
+.about-hero h1 em,
+.hero-stats div:first-child strong,
+.about-proof div:last-child strong,
+.trend-growth strong,
+.explore-growth strong,
+.momentum-ranking-score,
+footer span:first-child {
+  color: var(--brand-blue) !important;
+}
+
+/* Filter controls are tabs, not filled blocks. */
+.platform,
+.explore-filter {
+  border: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  background: transparent !important;
+  color: var(--muted) !important;
+  border-radius: 0 !important;
+  padding: 9px 10px 8px !important;
+}
+
+.platform:hover,
+.explore-filter:hover {
+  border-bottom-color: var(--brand-blue-line) !important;
+  color: var(--brand-blue) !important;
+  background: transparent !important;
+}
+
+.platform.active,
+.explore-filter.active {
+  border-bottom-color: var(--brand-blue) !important;
+  background: transparent !important;
+  color: var(--brand-blue) !important;
+}
+
+.platform.active:hover,
+.explore-filter.active:hover {
+  background: transparent !important;
+  border-bottom-color: var(--brand-blue) !important;
+}
+
+/* One quiet status language instead of five competing colors. */
+.trend-status,
+.explore-status,
+.trend-status-rising,
+.trend-status-cooling,
+.trend-status-new,
+.trend-status-emerging,
+.trend-status-breakout,
+.trend-status-stable,
+.explore-status-rising,
+.explore-status-cooling,
+.explore-status-new,
+.explore-status-breakout,
+.explore-status-stable {
+  border-color: var(--brand-blue-line) !important;
+  color: var(--brand-blue) !important;
+  background: var(--brand-blue-soft) !important;
+}
+
+.about-block:nth-child(1) .about-block-index,
+.about-block:nth-child(1) .about-label,
+.about-block:nth-child(2) .about-block-index,
+.about-block:nth-child(2) .about-label,
+.about-block:nth-child(3) .about-block-index,
+.about-block:nth-child(3) .about-label,
+.about-block:nth-child(4) .about-block-index,
+.about-block:nth-child(4) .about-label,
+.about-block:nth-child(5) .about-block-index,
+.about-block:nth-child(5) .about-label,
+.score-bars i,
+.score-bars div:nth-child(2) i,
+.score-bars div:nth-child(3) i,
+.about-signal-mark span:nth-child(1),
+.about-signal-mark span:nth-child(2),
+.about-signal-mark span:nth-child(3),
+.about-signal-mark span:nth-child(4),
+.about-signal-mark span:nth-child(5) {
+  color: var(--brand-blue) !important;
+  background: var(--brand-blue) !important;
+}
+
+.momentum-index,
+.momentum-ranking,
+.emerging-section,
+.explore-meta,
+.about-proof,
+.hero-stats,
+.signal-graph {
+  border-color: var(--brand-blue-line) !important;
+}
+
+.emerging-section,
+.momentum-index,
+.signal-graph {
+  background: var(--brand-blue-soft) !important;
+}
+
+.momentum-index-fill,
+.momentum-meter-fill,
+.graph-line {
+  background: var(--brand-blue) !important;
+  stroke: var(--brand-blue) !important;
+}
+
+.search:focus-within,
+.explore-search:focus-within input {
+  border-color: var(--brand-blue) !important;
+  box-shadow: 0 8px 24px rgba(101, 120, 183, 0.12) !important;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline-color: var(--brand-blue) !important;
+}
+
+/* Compact mobile hierarchy: no artificial full-screen hero or empty middle. */
+@media (max-width: 700px) {
+  .hero {
+    min-height: auto !important;
+    padding: 46px 0 54px !important;
+  }
+
+  .hero h1 {
+    font-size: clamp(58px, 18vw, 88px) !important;
+  }
+
+  .subtitle {
+    margin-top: 24px !important;
+  }
+
+  .search {
+    margin-top: 26px !important;
+  }
+
+  .hero-stats {
+    margin-top: 24px !important;
+  }
+
+  .trends,
+  .explore {
+    padding-top: 44px !important;
+    padding-bottom: 72px !important;
+  }
+
+  .trends .section-head,
+  .explore-head {
+    margin-bottom: 22px !important;
+  }
+
+  .trends .live-meta {
+    margin-top: 14px !important;
+  }
+
+  .signal-bar,
+  .explore-filters {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .signal-bar::-webkit-scrollbar,
+  .explore-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .platforms,
+  .explore-filters {
+    flex-wrap: nowrap !important;
+    min-width: max-content;
+  }
+
+  .platform,
+  .explore-filter {
+    flex: 0 0 auto;
+    padding-inline: 8px !important;
+  }
+
+  .signal-count {
+    margin: 14px 0 22px !important;
+  }
+
+  .emerging-section {
+    margin-bottom: 28px !important;
+  }
+
+  .explore-head h1 {
+    font-size: clamp(44px, 14vw, 70px) !important;
+  }
+
+  .explore-meta {
+    display: inline-grid !important;
+    margin-top: 18px !important;
+  }
+
+  .explore-search {
+    margin-bottom: 10px !important;
+  }
+}
