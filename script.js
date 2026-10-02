@@ -42,6 +42,11 @@ function displayValue(value, fallback = "—") {
   return value === null || value === undefined || value === "" ? fallback : String(value);
 }
 
+function regionLabel(count) {
+  const value = Number(count) || 0;
+  return `${value} ${value === 1 ? "REGION" : "REGIONS"}`;
+}
+
 function normalizeTrend(rawTrend = {}) {
   const trend = rawTrend && typeof rawTrend === "object" ? rawTrend : {};
   const platforms = Array.isArray(trend.platforms)
@@ -194,7 +199,7 @@ function renderTrends(items) {
       <div class="trend-card-main">
         <div class="trend-main">
           <h3>${escapeHtml(trend.title)}</h3>
-          <p>${escapeHtml((trend.platforms || []).join(" · "))} <span>·</span> ${trend.regions.length} REGIONS</p>
+          <p>${escapeHtml((trend.platforms || []).join(" · "))} <span>·</span> ${regionLabel(trend.regions.length)}</p>
         </div>
         <div class="trend-growth">
           <strong>${escapeHtml(displayValue(trend.growth))}</strong>
@@ -239,7 +244,7 @@ function filterTrends() {
   renderTrends(filtered);
 
   if (elements.signalCount) {
-    elements.signalCount.textContent = String(state.trends.length);
+    elements.signalCount.textContent = String(filtered.length);
   }
   if (elements.heroSignalCount) {
     elements.heroSignalCount.textContent = String(state.trends.length);
@@ -263,6 +268,8 @@ function filterTrends() {
   emergingItems.forEach((trend, index) => {
     const article = document.createElement("article");
     article.className = "trend";
+    article.setAttribute("role", "button");
+    article.setAttribute("tabindex", "0");
     const emergingScore = clampNumber(trend.emergingScore, 0, 100);
     article.innerHTML = `
       <div class="trend-card-top">
@@ -286,6 +293,12 @@ function filterTrends() {
       </div>
     `;
     article.addEventListener("click", () => openTrend(trend));
+    article.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openTrend(trend);
+      }
+    });
     emergingList.appendChild(article);
   });
 }
@@ -473,6 +486,7 @@ async function openTrend(trend) {
 function renderExplore(items) {
   if (!elements.exploreResults) return;
 
+  elements.exploreResults.setAttribute("aria-busy", "false");
   elements.exploreResults.innerHTML = "";
 
   if (!Array.isArray(items) || items.length === 0) {
@@ -502,7 +516,7 @@ function renderExplore(items) {
       <div class="explore-card-main">
         <div class="explore-main">
           <h3>${escapeHtml(trend.title)}</h3>
-          <p>${escapeHtml((trend.platforms || []).join(" · "))} <span>·</span> ${trend.regions.length} REGIONS</p>
+          <p>${escapeHtml((trend.platforms || []).join(" · "))} <span>·</span> ${regionLabel(trend.regions.length)}</p>
         </div>
         <div class="explore-growth">
           <strong>${escapeHtml(displayValue(trend.growth))}</strong>
@@ -627,6 +641,7 @@ if (elements.searchButton) {
 }
 
 if (elements.searchInput) {
+  elements.searchInput.addEventListener("input", filterTrends);
   elements.searchInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       filterTrends();
