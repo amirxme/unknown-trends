@@ -836,22 +836,22 @@ function createHistoryGraph(
    LOAD HISTORY
 ========================= */
 
-async function loadHistory(
-  title
-) {
+async function loadTrends() {
 
   try {
 
     const response =
       await fetch(
-        `/api/history?title=${encodeURIComponent(title)}`
+        "/api/trends"
       );
 
 
     if (!response.ok) {
+
       throw new Error(
-        "Failed to load history"
+        "Failed to load trends"
       );
+
     }
 
 
@@ -859,16 +859,76 @@ async function loadHistory(
       await response.json();
 
 
-    return data.history || [];
+    trends =
+      data.trends || [];
 
-      } catch (error) {
+
+    if (trendList) {
+      filterTrends();
+    }
+
+
+    if (exploreResults) {
+      filterExplore();
+    }
+
+
+  } catch (error) {
 
     console.error(
-      "UNKNOWN history API error:",
+      "UNKNOWN API error:",
       error
     );
 
-    return [];
+
+    const errorMessage = `
+      <div class="trend">
+
+        <div></div>
+
+        <div class="trend-main">
+
+          <h3>
+            DATA UNAVAILABLE
+          </h3>
+
+          <p>
+            Unable to load live trend signals.
+            Please try again later.
+          </p>
+
+        </div>
+
+        <strong>—</strong>
+
+      </div>
+    `;
+
+
+    if (trendList) {
+      trendList.innerHTML =
+        errorMessage;
+    }
+
+
+    if (exploreResults) {
+
+      exploreResults.innerHTML = `
+        <div class="explore-empty">
+
+          <strong>
+            DATA UNAVAILABLE
+          </strong>
+
+          <span>
+            Unable to load live trend signals.
+            Please try again later.
+          </span>
+
+        </div>
+      `;
+
+    }
 
   }
 
