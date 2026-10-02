@@ -192,12 +192,12 @@ function rankScore(rank) {
   total score change from the previous snapshot
 */
 function calculateDynamics(history, currentScore) {
-  if (!history || history.length < 2) {
+    if (!history || history.length < 1) {
     return {
       momentum: 0,
       velocity: 0,
       acceleration: 0,
-      historyCount: history?.length || 0
+      historyCount: 0
     };
   }
 
