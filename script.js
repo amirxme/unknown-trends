@@ -861,15 +861,60 @@ async function loadHistory(
 
     return data.history || [];
 
-  } catch (error) {
+    } catch (error) {
 
     console.error(
-      "UNKNOWN history error:",
+      "UNKNOWN API error:",
       error
     );
 
 
-    return [];
+    const errorMessage = `
+      <div class="trend">
+
+        <div></div>
+
+        <div class="trend-main">
+
+          <h3>
+            DATA UNAVAILABLE
+          </h3>
+
+          <p>
+            Unable to load live trend signals.
+            Please try again later.
+          </p>
+
+        </div>
+
+        <strong>—</strong>
+
+      </div>
+    `;
+
+
+    if (trendList) {
+      trendList.innerHTML =
+        errorMessage;
+    }
+
+
+    if (exploreResults) {
+      exploreResults.innerHTML = `
+        <div class="explore-empty">
+
+          <strong>
+            DATA UNAVAILABLE
+          </strong>
+
+          <span>
+            Unable to load live trend signals.
+            Please try again later.
+          </span>
+
+        </div>
+      `;
+    }
 
   }
 
