@@ -1,5 +1,16 @@
 import { sql } from "../lib/db.js";
 
+function normalizeTitleKey(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export default async function handler(req, res) {
   try {
     const title = req.query?.title;
@@ -10,6 +21,17 @@ export default async function handler(req, res) {
         error: "Missing title"
       });
     }
+
+    if (!sql) {
+      return res.status(200).json({
+        success: true,
+        title,
+        count: 0,
+        history: []
+      });
+    }
+
+    const normalizedTitle = normalizeTitleKey(title);
 
     const rows = await sql`
       SELECT
@@ -22,7 +44,7 @@ export default async function handler(req, res) {
         signal,
         status
       FROM trend_snapshots
-      WHERE title_key = LOWER(TRIM(${title}))
+      WHERE title_key = ${normalizedTitle}
       ORDER BY captured_at ASC
       LIMIT 100
     `;
