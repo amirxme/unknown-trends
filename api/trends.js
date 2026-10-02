@@ -81,23 +81,15 @@ function parseRssItems(xml, region) {
       /<ht:approx_traffic>([\s\S]*?)<\/ht:approx_traffic>/i
     );
     const pubDateMatch = itemXml.match(/<pubDate>([\s\S]*?)<\/pubDate>/i);
-    const descriptionMatch = itemXml.match(
-      /<description>([\s\S]*?)<\/description>/i
-    );
 
     const title = cleanText(titleMatch?.[1]);
-
-    if (!title) {
-      continue;
-    }
+    if (!title) continue;
 
     const trafficText = cleanText(trafficMatch?.[1] || "0");
-    const trafficNumber = parseInt(
+    const trafficNumber = Number.parseInt(
       trafficText.replace(/[^0-9]/g, ""),
       10
     );
-
-    const description = cleanText(descriptionMatch?.[1]);
 
     items.push({
       title,
@@ -117,30 +109,20 @@ function calculateCoverage(regionsCount) {
 }
 
 function calculateVolumeScore(trafficValues) {
-  if (!trafficValues.length) {
-    return 0;
-  }
+  if (!trafficValues.length) return 0;
 
   const maxTraffic = Math.max(...trafficValues);
-
-  if (!maxTraffic) {
-    return 0;
-  }
+  if (!maxTraffic) return 0;
 
   const average =
     trafficValues.reduce((sum, value) => sum + value, 0) /
     trafficValues.length;
 
-  return Math.min(
-    100,
-    Math.round((average / maxTraffic) * 100)
-  );
+  return Math.min(100, Math.round((average / maxTraffic) * 100));
 }
 
 function calculatePositionScore(positions) {
-  if (!positions.length) {
-    return 0;
-  }
+  if (!positions.length) return 0;
 
   const scores = positions.map((position) => {
     if (position === 1) return 100;
@@ -149,7 +131,6 @@ function calculatePositionScore(positions) {
     if (position === 4) return 70;
     if (position === 5) return 60;
     if (position <= 10) return 50;
-
     return 30;
   });
 
@@ -159,11 +140,7 @@ function calculatePositionScore(positions) {
   );
 }
 
-function calculateGlobalScore({
-  coverageScore,
-  volumeScore,
-  positionScore
-}) {
+function calculateGlobalScore({ coverageScore, volumeScore, positionScore }) {
   return Math.round(
     coverageScore * 0.5 +
       volumeScore * 0.3 +
@@ -177,40 +154,18 @@ function calculateMomentumScore(globalScore, previousScore) {
   }
 
   const change = globalScore - previousScore;
-
-  return Math.max(
-    0,
-    Math.min(
-      100,
-      Math.round(50 + change * 3)
-    )
-  );
+  return Math.max(0, Math.min(100, Math.round(50 + change * 3)));
 }
 
 function calculateConfidenceScore(historyCount, signalStability) {
-  const historyScore = Math.min(
-    100,
-    historyCount * 20
-  );
-
-  const stabilityScore = Math.max(
-    0,
-    Math.min(100, signalStability)
-  );
-
-  return Math.round(
-    historyScore * 0.5 +
-      stabilityScore * 0.5
-  );
+  const historyScore = Math.min(100, historyCount * 20);
+  const stabilityScore = Math.max(0, Math.min(100, signalStability));
+  return Math.round(historyScore * 0.5 + stabilityScore * 0.5);
 }
 
 function calculateDynamics(currentScore, previousScore, olderScore) {
   if (previousScore === null || previousScore === undefined) {
-    return {
-      momentum: 0,
-      velocity: 0,
-      acceleration: 0
-    };
+    return { momentum: 0, velocity: 0, acceleration: 0 };
   }
 
   const momentum = currentScore - previousScore;
@@ -218,76 +173,49 @@ function calculateDynamics(currentScore, previousScore, olderScore) {
   let velocity = momentum;
   let acceleration = 0;
 
-  if (
-    olderScore !== null &&
-    olderScore !== undefined
-  ) {
+  if (olderScore !== null && olderScore !== undefined) {
     const previousVelocity = previousScore - olderScore;
-
     velocity = previousVelocity;
     acceleration = momentum - previousVelocity;
   }
 
-  return {
-    momentum,
-    velocity,
-    acceleration
-  };
+  return { momentum, velocity, acceleration };
 }
 
 function getStatus(globalScore, momentum) {
-  if (globalScore >= 80 && momentum > 0) {
-    return "BREAKOUT";
-  }
-
-  if (globalScore >= 65 && momentum > 0) {
-    return "RISING";
-  }
-
-  if (momentum > 0) {
-    return "EMERGING";
-  }
-
-  if (momentum < 0) {
-    return "COOLING";
-  }
-
+  if (globalScore >= 80 && momentum > 0) return "BREAKOUT";
+  if (globalScore >= 65 && momentum > 0) return "RISING";
+  if (momentum > 0) return "EMERGING";
+  if (momentum < 0) return "COOLING";
   return "STABLE";
 }
 
-function buildDescription({
-  title,
-  momentum,
-  regionsCount
-}) {
+function buildDescription({ title, momentum, regionsCount }) {
   if (momentum > 10) {
     return `${title} is gaining momentum across ${regionsCount} tracked regions.`;
   }
-
   if (momentum > 0) {
     return `${title} is showing early upward movement across ${regionsCount} tracked regions.`;
   }
-
   if (momentum < -10) {
     return `${title} is losing momentum across the tracked regions.`;
   }
-
   return `${title} is currently being observed across ${regionsCount} tracked regions.`;
+}
+
+function toSignal(globalScore) {
+  if (globalScore >= 80) return "HIGH";
+  if (globalScore >= 60) return "MEDIUM";
+  return "LOW";
 }
 
 async function loadDatabase() {
   try {
     const db = await import("../lib/db.js");
-
     await db.ensureTrendSnapshotsTable();
-
     return db.sql;
   } catch (error) {
-    console.error(
-      "UNKNOWN database unavailable:",
-      error
-    );
-
+    console.error("UNKNOWN database unavailable:", error);
     return null;
   }
 }
@@ -299,32 +227,21 @@ export default async function handler(req, res) {
     const regionResults = await Promise.all(
       regions.map(async (region) => {
         try {
-          const url =
-            `https://trends.google.com/trending/rss` +
-            `?geo=${encodeURIComponent(region.gl)}`;
-
+          const url = `https://trends.google.com/trending/rss?geo=${encodeURIComponent(region.gl)}`;
           const response = await fetch(url, {
             headers: {
-              "User-Agent":
-                "Mozilla/5.0 (compatible; UNKNOWN-Trends/1.0)"
+              "User-Agent": "Mozilla/5.0 (compatible; UNKNOWN-Trends/1.0)"
             }
           });
 
           if (!response.ok) {
-            throw new Error(
-              `Google Trends returned ${response.status}`
-            );
+            throw new Error(`Google Trends returned ${response.status}`);
           }
 
           const xml = await response.text();
-
           return parseRssItems(xml, region);
         } catch (error) {
-          console.error(
-            `Google Trends ${region.code} error:`,
-            error
-          );
-
+          console.error(`Google Trends ${region.code} error:`, error);
           return [];
         }
       })
@@ -334,10 +251,11 @@ export default async function handler(req, res) {
 
     for (const regionItems of regionResults) {
       for (const item of regionItems) {
-        if (!trendMap.has(item.titleKey)) {
-          trendMap.set(item.titleKey, {
+        const key = normalizeTitleKey(item.titleKey || item.title);
+        if (!trendMap.has(key)) {
+          trendMap.set(key, {
             title: item.title,
-            titleKey: item.titleKey,
+            titleKey: key,
             regions: [],
             traffic: [],
             positions: [],
@@ -345,13 +263,8 @@ export default async function handler(req, res) {
           });
         }
 
-        const trend = trendMap.get(item.titleKey);
-
-        trend.regions.push({
-          code: item.region,
-          name: item.regionName
-        });
-
+        const trend = trendMap.get(key);
+        trend.regions.push({ code: item.region, name: item.regionName });
         trend.traffic.push(item.traffic);
         trend.positions.push(trend.positions.length + 1);
 
@@ -361,185 +274,100 @@ export default async function handler(req, res) {
       }
     }
 
-    const trends = Array.from(
-      trendMap.values()
-    );
-
-    const titleKeys = trends.map(
-      (trend) => trend.titleKey
-    );
+    const trends = Array.from(trendMap.values());
+    const titleKeys = trends.map((trend) => trend.titleKey);
 
     let historyRows = [];
-
     if (sql && titleKeys.length > 0) {
       try {
         historyRows = await sql`
-          SELECT
-            title_key,
-            captured_at,
-            global_score
+          SELECT title_key, captured_at, global_score
           FROM trend_snapshots
           WHERE title_key = ANY(${titleKeys})
           ORDER BY captured_at DESC
         `;
       } catch (error) {
-        console.error(
-          "UNKNOWN history query error:",
-          error
-        );
-
+        console.error("UNKNOWN history query error:", error);
         historyRows = [];
       }
     }
 
     const finalTrends = trends
       .map((trend) => {
-        const history = historyRows.filter(
-          (row) =>
-            row.title_key === trend.titleKey
+        const history = historyRows.filter((row) => row.title_key === trend.titleKey);
+        const previousScore = history.length > 0 ? Number(history[0].global_score) : null;
+        const olderScore = history.length > 1 ? Number(history[1].global_score) : null;
+
+        const coverageScore = calculateCoverage(trend.regions.length);
+        const volumeScore = calculateVolumeScore(trend.traffic);
+        const positionScore = calculatePositionScore(trend.positions);
+        const globalScore = calculateGlobalScore({ coverageScore, volumeScore, positionScore });
+
+        const dynamics = calculateDynamics(globalScore, previousScore, olderScore);
+        const signalStability = Math.max(
+          0,
+          Math.min(100, 100 - Math.abs(dynamics.acceleration) * 2)
         );
-
-        const previousScore =
-          history.length > 0
-            ? Number(history[0].global_score)
-            : null;
-
-        const olderScore =
-          history.length > 1
-            ? Number(history[1].global_score)
-            : null;
-
-        const coverageScore =
-          calculateCoverage(
-            trend.regions.length
-          );
-
-        const volumeScore =
-          calculateVolumeScore(
-            trend.traffic
-          );
-
-        const positionScore =
-          calculatePositionScore(
-            trend.positions
-          );
-
-        const globalScore =
-          calculateGlobalScore({
-            coverageScore,
-            volumeScore,
-            positionScore
-          });
-
-        const dynamics =
-          calculateDynamics(
-            globalScore,
-            previousScore,
-            olderScore
-          );
-
-        const signalStability =
-          Math.max(
-            0,
-            Math.min(
-              100,
-              100 - Math.abs(dynamics.acceleration) * 2
+        const momentumScore = calculateMomentumScore(globalScore, previousScore);
+        const confidenceScore = calculateConfidenceScore(history.length, signalStability);
+        const emergingScore = Math.max(
+          0,
+          Math.min(
+            100,
+            Math.round(
+              globalScore * 0.5 +
+                momentumScore * 0.3 +
+                confidenceScore * 0.2
             )
-          );
-
-        const momentumScore =
-          calculateMomentumScore(
-            globalScore,
-            previousScore
-          );
-
-        const confidenceScore =
-          calculateConfidenceScore(
-            history.length,
-            signalStability
-          );
-
-        const emergingScore =
-          Math.max(
-            0,
-            Math.min(
-              100,
-              Math.round(
-                globalScore * 0.5 +
-                  momentumScore * 0.3 +
-                  confidenceScore * 0.2
-              )
-            )
-          );
-
-        const status =
-          getStatus(
-            globalScore,
-            dynamics.momentum
-          );
-
-        const description =
-          buildDescription({
-            title: trend.title,
-            momentum: dynamics.momentum,
-            regionsCount: trend.regions.length
-          });
-
-        const growth = formatSignedPercent(
-          Math.round(
-            (globalScore - (previousScore ?? 0)) * 1.25 +
-              dynamics.momentum * 2
           )
         );
 
-        const mentions = formatCompactNumber(
-          Math.max(...trend.traffic, 0)
+        const status = getStatus(globalScore, dynamics.momentum);
+        const description = buildDescription({
+          title: trend.title,
+          momentum: dynamics.momentum,
+          regionsCount: trend.regions.length
+        });
+
+        const growth = formatSignedPercent(
+          Math.round((globalScore - (previousScore ?? 0)) * 1.25 + dynamics.momentum * 1.4)
         );
 
         return {
           title: trend.title,
           titleKey: trend.titleKey,
-
-          globalScore,
-          momentumScore,
-          confidenceScore,
-          emergingScore,
           growth,
           status,
-          mentions,
+          mentions: formatCompactNumber(Math.max(...trend.traffic, 0)),
           velocity: formatSignedPoints(dynamics.momentum),
-          platforms: ["Google"],
+          platforms: ["Google Trends"],
           platformCount: 1,
-          signal: globalScore >= 80 ? "HIGH" : globalScore >= 60 ? "MEDIUM" : "LOW",
+          signal: toSignal(globalScore),
           historyCount: history.length,
           history: history.map((row) => ({
             captured_at: row.captured_at,
             global_score: Number(row.global_score)
           })),
-
+          globalScore,
+          momentumScore,
+          confidenceScore,
+          emergingScore,
           coverageScore,
           volumeScore,
           positionScore,
-
           momentum: dynamics.momentum,
-          velocityRaw: dynamics.velocity,
           acceleration: dynamics.acceleration,
-
-          regions: trend.regions,
-          signalBreakdown: [
-            coverageScore,
-            volumeScore,
-            positionScore,
-            globalScore
-          ],
-          description
+          signalBreakdown: {
+            coverage: coverageScore,
+            volume: volumeScore,
+            position: positionScore,
+            global: globalScore
+          },
+          description,
+          regions: trend.regions
         };
       })
-      .sort(
-        (a, b) =>
-          b.globalScore -
-          a.globalScore
-      )
+      .sort((a, b) => b.globalScore - a.globalScore)
       .slice(0, 20);
 
     if (sql && finalTrends.length > 0) {
@@ -573,44 +401,21 @@ export default async function handler(req, res) {
           `;
         }
       } catch (error) {
-        console.error(
-          "UNKNOWN snapshot save error:",
-          error
-        );
+        console.error("UNKNOWN snapshot save error:", error);
       }
     }
 
     return res.status(200).json({
       success: true,
       source: "Google Trends Global",
-
-      scoring: {
-        coverage: "50%",
-        volume: "30%",
-        position: "20%"
-      },
-
-      regionsTracked:
-        regions.length,
-
-      updatedAt:
-        new Date().toISOString(),
-
-      count:
-        finalTrends.length,
-
-      trends:
-        finalTrends
+      scoring: { coverage: "50%", volume: "30%", position: "20%" },
+      regionsTracked: regions.length,
+      updatedAt: new Date().toISOString(),
+      count: finalTrends.length,
+      trends: finalTrends
     });
   } catch (error) {
-    console.error(
-      "UNKNOWN API error:",
-      error
-    );
-
-    return res.status(500).json({
-      success: false,
-      error: "DATA UNAVAILABLE"
-    });
+    console.error("UNKNOWN API error:", error);
+    return res.status(500).json({ success: false, error: "DATA UNAVAILABLE" });
   }
 }
