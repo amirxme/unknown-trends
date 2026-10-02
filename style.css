@@ -2330,3 +2330,31 @@ footer {
 footer span:first-child {
   color: var(--accent-violet);
 }
+
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-lockup img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-lockup span {
+  display: inline-block;
+}
+
+@media (max-width: 700px) {
+  .brand-lockup {
+    gap: 6px;
+  }
+
+  .brand-lockup img {
+    width: 22px;
+    height: 22px;
+  }
+}
