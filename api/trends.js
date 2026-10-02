@@ -307,12 +307,12 @@ function getDynamicStatus(score, dynamics) {
     historyCount
   } = dynamics;
 
-  if (historyCount < 2) {
+    if (historyCount < 2) {
     if (score >= 85) return "VERY HIGH";
     if (score >= 70) return "HIGH";
     if (score >= 55) return "RISING";
 
-    return "EMERGING";
+    return "NEW";
   }
 
   if (
