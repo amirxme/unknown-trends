@@ -455,18 +455,28 @@ function renderExplore(items) {
     item.setAttribute("tabindex", "0");
     const momentum = trend.momentumScore == null ? null : clampNumber(trend.momentumScore, 0, 100);
     const confidence = trend.confidenceScore == null ? null : clampNumber(trend.confidenceScore, 0, 100);
+    const statusClass = trend.status.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
     item.innerHTML = `
-      <span class="explore-rank">${String(index + 1).padStart(2, "0")}</span>
-      <div class="explore-main">
-        <h3>${escapeHtml(trend.title)}</h3>
-        <p>${escapeHtml((trend.platforms || []).join(" · "))} · ${trend.regions.length} REGIONS</p>
+      <div class="explore-card-top">
+        <span class="explore-rank">${String(index + 1).padStart(2, "0")}</span>
+        <span class="explore-status explore-status-${statusClass}">${escapeHtml(trend.status)}</span>
       </div>
-      <div class="explore-growth">
-        <strong>${escapeHtml(displayValue(trend.growth))}</strong>
-        <span>${escapeHtml(trend.status)}</span>
+      <div class="explore-card-main">
+        <div class="explore-main">
+          <h3>${escapeHtml(trend.title)}</h3>
+          <p>${escapeHtml((trend.platforms || []).join(" · "))} <span>·</span> ${trend.regions.length} REGIONS</p>
+        </div>
+        <div class="explore-growth">
+          <strong>${escapeHtml(displayValue(trend.growth))}</strong>
+          <span>GROWTH</span>
+        </div>
       </div>
-      <div class="explore-signal-meta">
+      <div class="explore-card-metrics">
+        <div>
+          <span>GLOBAL SCORE</span>
+          <strong>${trend.globalScore}</strong>
+        </div>
         <div>
           <span>MOMENTUM</span>
           <strong>${momentum == null ? "—" : momentum}</strong>
