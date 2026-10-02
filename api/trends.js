@@ -845,10 +845,16 @@ export default async function handler(req, res) {
           dynamics
         );
 
-      const confidenceScore =
+            const confidenceScore =
         calculateConfidenceScore(
           dynamics.historyCount,
           history
+        );
+
+      const emergingScore =
+        calculateEmergingScore(
+          trend.globalScore,
+          dynamics
         );
 
       let signal = "MEDIUM";
