@@ -11,7 +11,7 @@
   <header class="nav">
     <a href="./" class="logo">UNKNOWN</a>
     <nav>
-      <a href="./">TRENDS</a>
+      <a class="active" href="./" aria-current="page">TRENDS</a>
       <a href="./explore.html">EXPLORE</a>
       <a href="./about.html">ABOUT</a>
     </nav>
@@ -19,26 +19,28 @@
 
   <main>
     <section class="hero">
-      <p class="eyebrow">SOCIAL TREND INTELLIGENCE</p>
-      <h1>
-        See what's<br>
-        <span>moving.</span>
-      </h1>
-      <p class="subtitle">
-        Discover emerging trends, topics and signals across the internet.
-      </p>
+      <div class="hero-copy">
+        <p class="eyebrow hero-kicker"><span></span> SOCIAL TREND INTELLIGENCE</p>
+        <h1>See what's<br><em>moving.</em></h1>
+        <p class="subtitle">Discover emerging trends, topics and signals across ten tracked regions.</p>
 
-      <div class="search">
-        <input id="searchInput" type="search" placeholder="Search trends, topics, memes..." autocomplete="off" aria-label="Search trends">
-        <button id="searchButton" type="button">SEARCH</button>
+        <div class="search">
+          <input id="searchInput" type="search" placeholder="Search trends, topics, memes..." autocomplete="off" aria-label="Search trends">
+          <button id="searchButton" type="button">SEARCH</button>
+        </div>
+      </div>
+      <div class="hero-stats" aria-label="Live source summary">
+        <div><strong>LIVE</strong><span>GOOGLE TRENDS</span></div>
+        <div><strong>10</strong><span>REGIONS TRACKED</span></div>
+        <div><strong id="heroSignalCount">—</strong><span>ACTIVE SIGNALS</span></div>
       </div>
     </section>
 
     <section id="trends" class="trends">
       <div class="section-head">
         <div>
-          <p class="eyebrow">LATEST SIGNALS</p>
-          <h2>Trending now</h2>
+          <p class="eyebrow"><span class="section-dot"></span> LATEST SIGNALS</p>
+          <h2>Trending now.</h2>
         </div>
 
         <div class="live-meta">
@@ -49,8 +51,11 @@
 
       <div class="signal-bar">
         <div class="platforms">
-          <button class="platform active" type="button" data-platform="all">ALL</button>
-          <button class="platform" type="button" data-platform="Google">GOOGLE TRENDS</button>
+          <button class="platform active" type="button" data-platform="all">ALL SIGNALS</button>
+          <button class="platform" type="button" data-platform="RISING">RISING</button>
+          <button class="platform" type="button" data-platform="NEW">NEW</button>
+          <button class="platform" type="button" data-platform="COOLING">COOLING</button>
+          <button class="platform" type="button" data-platform="BREAKOUT">BREAKOUT</button>
         </div>
       </div>
 

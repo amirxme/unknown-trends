@@ -13,7 +13,8 @@ const elements = {
   exploreResults: document.getElementById("exploreResults"),
   exploreFilters: [...document.querySelectorAll(".explore-filter")],
   exploreCount: document.getElementById("exploreCount"),
-  signalCount: document.getElementById("signalCount")
+  signalCount: document.getElementById("signalCount"),
+  heroSignalCount: document.getElementById("heroSignalCount")
 };
 
 function escapeHtml(value) {
@@ -102,7 +103,7 @@ function getSignalBreakdownValues(signalBreakdown) {
 
 function buildEmptyTrendState(message, subtitle) {
   return `
-    <div class="trend">
+    <div class="trend trend-empty">
       <div></div>
       <div class="trend-main">
         <h3>${escapeHtml(message)}</h3>
@@ -181,15 +182,38 @@ function renderTrends(items) {
   normalizedItems.forEach((trend, index) => {
     const article = document.createElement("article");
     article.className = "trend";
+    article.setAttribute("role", "button");
+    article.setAttribute("tabindex", "0");
+    const statusClass = trend.status.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const momentumScore = trend.momentumScore == null ? null : clampNumber(trend.momentumScore, 0, 100);
     article.innerHTML = `
-      <span class="rank">${String(index + 1).padStart(2, "0")}</span>
-      <div class="trend-main">
-        <h3>${escapeHtml(trend.title)}</h3>
-        <p>${escapeHtml((trend.platforms || []).join(" · "))}</p>
+      <div class="trend-card-top">
+        <span class="rank">${String(index + 1).padStart(2, "0")}</span>
+        <span class="trend-status trend-status-${statusClass}">${escapeHtml(trend.status)}</span>
       </div>
-      <strong>${escapeHtml(displayValue(trend.growth))}</strong>
+      <div class="trend-card-main">
+        <div class="trend-main">
+          <h3>${escapeHtml(trend.title)}</h3>
+          <p>${escapeHtml((trend.platforms || []).join(" · "))} <span>·</span> ${trend.regions.length} REGIONS</p>
+        </div>
+        <div class="trend-growth">
+          <strong>${escapeHtml(displayValue(trend.growth))}</strong>
+          <span>GROWTH</span>
+        </div>
+      </div>
+      <div class="trend-card-metrics">
+        <div><span>GLOBAL</span><strong>${trend.globalScore}</strong></div>
+        <div><span>MOMENTUM</span><strong>${momentumScore == null ? "—" : momentumScore}</strong></div>
+        <div><span>CONFIDENCE</span><strong>${trend.confidenceScore == null ? "—" : `${clampNumber(trend.confidenceScore, 0, 100)}%`}</strong></div>
+      </div>
     `;
     article.addEventListener("click", () => openTrend(trend));
+    article.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openTrend(trend);
+      }
+    });
     elements.trendList.appendChild(article);
   });
 }
@@ -201,11 +225,8 @@ function filterTrends() {
   const filtered = state.trends
     .map(normalizeTrend)
     .filter((trend) => {
-      const matchesPlatform = state.activePlatform === "all" || trend.platforms.some((platform) => {
-        const value = String(platform).toLowerCase();
-        const active = String(state.activePlatform).toLowerCase();
-        return value === active || value.includes(active);
-      });
+      const activeFilter = String(state.activePlatform).toUpperCase();
+      const matchesPlatform = activeFilter === "ALL" || trend.status === activeFilter;
 
       const matchesSearch = !query ||
         trend.title.toLowerCase().includes(query) ||
@@ -219,6 +240,9 @@ function filterTrends() {
 
   if (elements.signalCount) {
     elements.signalCount.textContent = String(state.trends.length);
+  }
+  if (elements.heroSignalCount) {
+    elements.heroSignalCount.textContent = String(state.trends.length);
   }
 
   const emergingList = document.getElementById("emergingList");
@@ -241,12 +265,25 @@ function filterTrends() {
     article.className = "trend";
     const emergingScore = clampNumber(trend.emergingScore, 0, 100);
     article.innerHTML = `
-      <span class="rank">${String(index + 1).padStart(2, "0")}</span>
-      <div class="trend-main">
-        <h3>${escapeHtml(trend.title)}</h3>
-        <p>${escapeHtml(`${trend.status} · ${trend.velocity}`)}</p>
+      <div class="trend-card-top">
+        <span class="rank">${String(index + 1).padStart(2, "0")}</span>
+        <span class="trend-status trend-status-emerging">EMERGING</span>
       </div>
-      <strong>${trend.emergingScore == null ? "—" : emergingScore}</strong>
+      <div class="trend-card-main">
+        <div class="trend-main">
+          <h3>${escapeHtml(trend.title)}</h3>
+          <p>${escapeHtml(`${trend.status} · ${displayValue(trend.velocity)}`)}</p>
+        </div>
+        <div class="trend-growth">
+          <strong>${trend.emergingScore == null ? "—" : emergingScore}</strong>
+          <span>EMERGING SCORE</span>
+        </div>
+      </div>
+      <div class="trend-card-metrics">
+        <div><span>GLOBAL</span><strong>${trend.globalScore}</strong></div>
+        <div><span>MOMENTUM</span><strong>${trend.momentumScore == null ? "—" : clampNumber(trend.momentumScore, 0, 100)}</strong></div>
+        <div><span>REGIONS</span><strong>${trend.regions.length}</strong></div>
+      </div>
     `;
     article.addEventListener("click", () => openTrend(trend));
     emergingList.appendChild(article);

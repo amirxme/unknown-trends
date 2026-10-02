@@ -58,3 +58,38 @@ test("calculates movement only from historical snapshots", () => {
   assert.ok(trend.growth.endsWith("%"));
   assert.ok(trend.confidenceScore > 0);
 });
+
+test("ignores invalid history rows and clamps impossible coverage", () => {
+  const trend = scoreTrend({
+    title: "Signal",
+    titleKey: "signal",
+    regions: new Map([["US", { code: "US", name: "United States" }]]),
+    ranks: new Map([["US", 1]]),
+    maxTraffic: 1000,
+    regionsTracked: 0
+  }, [{ global_score: "not-a-score" }, { global_score: 20 }]);
+
+  assert.equal(trend.coverageScore, 0);
+  assert.equal(trend.historyCount, 1);
+  assert.equal(trend.momentum, trend.globalScore - 20);
+  assert.equal(trend.history.length, 1);
+});
+
+test("marks a strong positive historical movement as breakout", () => {
+  const trend = scoreTrend({
+    title: "Breakout",
+    titleKey: "breakout",
+    regions: new Map([
+      ["US", { code: "US", name: "United States" }],
+      ["GB", { code: "GB", name: "United Kingdom" }],
+      ["DE", { code: "DE", name: "Germany" }],
+      ["FR", { code: "FR", name: "France" }],
+      ["JP", { code: "JP", name: "Japan" }]
+    ]),
+    ranks: new Map([["US", 1], ["GB", 1], ["DE", 1], ["FR", 1], ["JP", 1]]),
+    maxTraffic: 1000000,
+    regionsTracked: 5
+  }, [{ global_score: 20 }]);
+
+  assert.equal(trend.status, "BREAKOUT");
+});

@@ -1676,3 +1676,392 @@ footer span:first-child {
     margin-top: 10px;
   }
 }
+
+/* Trends visual system */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 80px;
+  align-items: center;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-kicker,
+.section-head .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.hero-kicker span,
+.section-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2d7b54;
+  box-shadow: 0 0 0 5px rgba(45, 123, 84, 0.1);
+}
+
+.hero h1 em {
+  color: #969691;
+  font-style: normal;
+}
+
+.hero-stats {
+  display: grid;
+  border-top: 1px solid var(--line-dark);
+  border-bottom: 1px solid var(--line-dark);
+  background: var(--surface);
+}
+
+.hero-stats div {
+  display: grid;
+  gap: 7px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-stats div:last-child {
+  border-bottom: 0;
+}
+
+.hero-stats strong {
+  font-size: 23px;
+  letter-spacing: -0.05em;
+}
+
+.hero-stats span {
+  color: var(--soft);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.trends {
+  padding-top: 86px;
+}
+
+.trends .section-head {
+  align-items: flex-start;
+}
+
+.trends .section-head h2 {
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 0.9;
+}
+
+.signal-bar {
+  margin-bottom: 16px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.platforms {
+  gap: 5px;
+}
+
+.platform {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+  padding: 7px 10px;
+  font-size: 9px;
+}
+
+.platform:hover {
+  border-color: var(--line-dark);
+  color: var(--text);
+}
+
+.signal-count {
+  margin: 16px 0 30px;
+  color: var(--soft);
+  font-size: 9px;
+}
+
+.signal-count strong {
+  color: var(--text);
+  font-size: 18px;
+  letter-spacing: -0.05em;
+}
+
+.emerging-section {
+  margin: 0 0 54px;
+  padding: 22px 22px 24px;
+  border: 1px solid var(--line-dark);
+  background: #f2f2ef;
+}
+
+.emerging-section .section-head {
+  margin-bottom: 22px;
+}
+
+.emerging-section .section-head h2 {
+  font-size: 30px;
+}
+
+.emerging-section .trend-list {
+  border-top: 0;
+}
+
+.trend-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  border-top: 0;
+}
+
+.trend {
+  min-height: 0;
+  display: block;
+  padding: 20px 22px 18px;
+  border: 1px solid var(--line-dark);
+  background: var(--surface);
+}
+
+.trend:hover {
+  padding: 20px 22px 18px;
+  border-color: #999;
+  background: var(--surface);
+  box-shadow: 0 12px 28px rgba(17, 17, 17, 0.07);
+  transform: translateY(-2px);
+}
+
+.trend-card-top,
+.trend-card-main,
+.trend-card-metrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.trend-card-top {
+  margin-bottom: 34px;
+}
+
+.trend-status {
+  padding: 5px 7px;
+  border: 1px solid var(--line-dark);
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.trend-status-rising {
+  border-color: #91bca2;
+  color: #2d7b54;
+  background: #f1f8f3;
+}
+
+.trend-status-cooling {
+  border-color: #d2aaa0;
+  color: #a05546;
+  background: #fbf3f1;
+}
+
+.trend-status-new,
+.trend-status-emerging {
+  border-color: #a9b6ce;
+  color: #566d99;
+  background: #f2f5fb;
+}
+
+.trend-status-breakout {
+  border-color: #bca86f;
+  color: #80651e;
+  background: #fbf8ec;
+}
+
+.trend-card-main {
+  align-items: flex-end;
+  padding-bottom: 23px;
+  border-bottom: 1px solid var(--line);
+}
+
+.trend-main h3 {
+  max-width: 280px;
+  margin-bottom: 9px;
+  font-size: 21px;
+}
+
+.trend-main p {
+  font-size: 9px;
+}
+
+.trend-main p span {
+  color: var(--line-dark);
+}
+
+.trend-growth {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.trend-growth strong {
+  font-size: 23px;
+  letter-spacing: -0.06em;
+}
+
+.trend-growth span {
+  color: var(--soft);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.trend-card-metrics {
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  padding-top: 17px;
+}
+
+.trend-card-metrics div {
+  flex: 1;
+  display: grid;
+  gap: 7px;
+  border-right: 1px solid var(--line);
+  padding-right: 12px;
+  margin-right: 12px;
+}
+
+.trend-card-metrics div:last-child {
+  border-right: 0;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.trend-card-metrics span {
+  color: var(--soft);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.trend-card-metrics strong {
+  font-size: 17px;
+  letter-spacing: -0.04em;
+}
+
+.momentum-index,
+.momentum-ranking {
+  grid-column: 1 / -1;
+}
+
+.trend-list > .trend:only-child {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+  .hero {
+    display: block;
+    padding-top: 70px;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 34px;
+  }
+
+  .hero-stats div {
+    min-width: 0;
+    padding: 13px 9px;
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+  }
+
+  .hero-stats div:last-child {
+    border-right: 0;
+  }
+
+  .hero-stats strong {
+    font-size: 18px;
+  }
+
+  .hero-stats span {
+    font-size: 7px;
+    line-height: 1.3;
+  }
+
+  .trends {
+    padding-top: 66px;
+  }
+
+  .trends .section-head {
+    display: block;
+  }
+
+  .trends .live-meta {
+    margin-top: 22px;
+  }
+
+  .emerging-section {
+    padding: 17px 13px 18px;
+  }
+
+  .trend-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .trend {
+    padding: 17px 16px 15px;
+  }
+
+  .trend:hover {
+    padding: 17px 16px 15px;
+  }
+
+  .trend-card-top {
+    margin-bottom: 24px;
+  }
+
+  .trend-card-main {
+    gap: 10px;
+  }
+
+  .trend-main h3 {
+    max-width: 205px;
+    font-size: 17px;
+  }
+
+  .trend-growth strong {
+    font-size: 19px;
+  }
+
+  .trend-card-metrics strong {
+    font-size: 15px;
+  }
+
+  .trend-card-metrics span {
+    font-size: 7px;
+  }
+}
+
+.trend-empty {
+  grid-column: 1 / -1;
+  min-height: 110px;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  gap: 7px;
+  cursor: default;
+}
+
+.trend-empty:hover {
+  padding: 20px 22px 18px;
+  transform: none;
+  box-shadow: none;
+}
+
+.trend-empty .trend-main h3 {
+  margin-bottom: 0;
+}
