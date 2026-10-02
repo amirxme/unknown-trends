@@ -340,34 +340,36 @@ export default async function handler(req, res) {
         };
       });
 
-    for (const trend of trends) {
-      await sql`
-        INSERT INTO trend_snapshots (
-          title_key,
-          title,
-          global_score,
-          coverage_score,
-          volume_score,
-          position_score,
-          mentions,
-          regions,
-          signal,
-          status
-        )
-        VALUES (
-          ${trend.titleKey},
-          ${trend.title},
-          ${trend.globalScore},
-          ${trend.coverageScore},
-          ${trend.volumeScore},
-          ${trend.positionScore},
-          ${trend.mentions},
-          ${JSON.stringify(trend.regions)},
-          ${trend.signal},
-          ${trend.status}
-        )
-      `;
-    }
+    await Promise.all(
+      trends.map((trend) =>
+        sql`
+          INSERT INTO trend_snapshots (
+            title_key,
+            title,
+            global_score,
+            coverage_score,
+            volume_score,
+            position_score,
+            mentions,
+            regions,
+            signal,
+            status
+          )
+          VALUES (
+            ${trend.titleKey},
+            ${trend.title},
+            ${trend.globalScore},
+            ${trend.coverageScore},
+            ${trend.volumeScore},
+            ${trend.positionScore},
+            ${trend.mentions},
+            ${JSON.stringify(trend.regions)},
+            ${trend.signal},
+            ${trend.status}
+          )
+        `
+      )
+    );
 
     return res.status(200).json({
       success: true,
