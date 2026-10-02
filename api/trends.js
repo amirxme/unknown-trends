@@ -905,9 +905,11 @@ export default async function handler(req, res) {
         globalScore:
           trend.globalScore,
 
-        momentumScore,
+                momentumScore,
 
         confidenceScore,
+
+        emergingScore,
 
         coverageScore:
           trend.coverageScore,
