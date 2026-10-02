@@ -793,13 +793,7 @@ export default async function handler(req, res) {
             positionScore,
             globalScore
           };
-        })
-        .sort(
-          (a, b) =>
-            b.globalScore -
-            a.globalScore
-        )
-        .slice(0, 20);
+        });
 
     /*
       Load recent history for all current trends
