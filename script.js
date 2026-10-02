@@ -950,9 +950,9 @@ async function openTrend(
 
         <div class="detail-meta">
 
-    <span>
+        <span>
 
-      SCORE
+      GROWTH
 
       <strong>
         ${trend.growth}
