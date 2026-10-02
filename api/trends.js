@@ -1,4 +1,9 @@
-import { sql } from "../lib/db.js";
+import {
+  sql,
+  ensureTrendSnapshotsTable
+} from "../lib/db.js";
+
+await ensureTrendSnapshotsTable();
 
 const regions = [
   { code: "US", name: "United States" },
