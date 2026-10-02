@@ -157,15 +157,20 @@ function parseTraffic(value) {
 
 function trafficScore(traffic) {
   if (traffic >= 1000000) return 100;
-  if (traffic >= 500000) return 90;
-  if (traffic >= 200000) return 80;
-  if (traffic >= 100000) return 70;
-  if (traffic >= 50000) return 60;
-  if (traffic >= 20000) return 50;
-  if (traffic >= 10000) return 40;
-  if (traffic >= 5000) return 30;
-  if (traffic >= 1000) return 20;
-  return 10;
+  if (traffic >= 500000) return 95;
+  if (traffic >= 200000) return 90;
+  if (traffic >= 100000) return 85;
+  if (traffic >= 50000) return 75;
+  if (traffic >= 20000) return 65;
+  if (traffic >= 10000) return 55;
+  if (traffic >= 5000) return 45;
+  if (traffic >= 2000) return 35;
+  if (traffic >= 1000) return 25;
+  if (traffic >= 500) return 18;
+  if (traffic >= 200) return 12;
+  if (traffic >= 100) return 8;
+
+  return 5;
 }
 
 function rankScore(rank) {
