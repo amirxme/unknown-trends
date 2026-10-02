@@ -206,6 +206,12 @@ main {
   letter-spacing: -0.055em;
 }
 
+.live-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .status {
   display: flex;
   align-items: center;
@@ -223,6 +229,51 @@ main {
   border-radius: 50%;
   background: #111;
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.055);
+}
+
+.updated {
+  font-size: 9px;
+  color: var(--soft);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.signal-bar {
+  margin-bottom: 18px;
+}
+
+.platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.platform,
+.explore-filter {
+  border: 1px solid var(--line-dark);
+  background: #f4f4f2;
+  color: #111;
+  padding: 9px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.platform.active,
+.explore-filter.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.signal-count {
+  margin: 14px 0 32px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
 }
 
 .trend-list {
@@ -288,6 +339,141 @@ main {
   letter-spacing: -0.025em;
 }
 
+.momentum-index,
+.momentum-ranking {
+  margin-top: 18px;
+  padding: 18px 20px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.momentum-index-head,
+.momentum-ranking-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.momentum-index-head h2 {
+  font-size: clamp(28px, 4vw, 54px);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+}
+
+.momentum-index-head h2 span {
+  font-size: 0.35em;
+  color: var(--muted);
+}
+
+.momentum-index-status {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.momentum-index-main {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.momentum-index-main > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.momentum-index-main strong {
+  font-size: 18px;
+}
+
+.momentum-index-main span {
+  font-size: 10px;
+  color: var(--soft);
+  letter-spacing: 0.05em;
+}
+
+.momentum-index-bar,
+.momentum-meter {
+  height: 10px;
+  background: #f1f1ee;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.momentum-index-fill,
+.momentum-meter-fill {
+  height: 100%;
+  width: 0;
+  background: #111;
+  border-radius: inherit;
+}
+
+.momentum-ranking {
+  margin-top: 18px;
+}
+
+.momentum-ranking-head {
+  margin-bottom: 12px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.momentum-ranking-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.momentum-ranking-rank {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--soft);
+  letter-spacing: 0.08em;
+}
+
+.momentum-ranking-main {
+  min-width: 0;
+}
+
+.momentum-ranking-main strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.momentum-ranking-main span {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--soft);
+  letter-spacing: 0.05em;
+}
+
+.momentu-ranking-score,
+.momentum-ranking-score {
+  font-size: 15px;
+}
+
+.momentum-status {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
 .about {
   max-width: 850px;
   padding: 110px 0 150px;
@@ -334,114 +520,94 @@ footer span:first-child {
 .hero .subtitle { animation-delay: 0.16s; }
 .hero .search { animation-delay: 0.24s; }
 
-@media (max-width: 700px) {
-  .nav {
-    height: 68px;
-    padding: 0 6vw;
-  }
-
-  .logo { font-size: 15px; }
-  .nav nav { gap: 15px; }
-  .nav nav a { font-size: 8px; }
-
-  main { width: 88vw; }
-
-  .hero {
-    min-height: calc(100vh - 68px);
-    padding: 70px 0 90px;
-  }
-
-  .hero h1 {
-    font-size: clamp(64px, 19vw, 105px);
-    letter-spacing: -0.075em;
-  }
-
-  .subtitle {
-    margin-top: 32px;
-    font-size: 14px;
-  }
-
-  .search {
-    height: 52px;
-    margin-top: 32px;
-  }
-
-  .search input {
-    padding: 0 15px;
-    font-size: 13px;
-    line-height: 1;
-  }
-
-  .search button {
-    padding: 0 16px;
-    min-width: 52px;
-  }
-
-  .trends, .explore {
-    padding: 72px 0 92px;
-  }
-
-  .section-head, .explore-head {
-    align-items: flex-end;
-    gap: 20px;
-  }
-
-  .section-head h2, .explore-head h1 {
-    font-size: 31px;
-    line-height: 0.98;
-  }
-
-  .trend,
-  .explore-item {
-    min-height: 88px;
-    grid-template-columns: 30px minmax(0, 1fr) 58px;
-    gap: 9px;
-  }
-
-  .trend:hover,
-  .explore-item:hover {
-    padding-left: 4px;
-    padding-right: 4px;
-  }
-
-  .rank,
-  .explore-rank {
-    font-size: 8px;
-    letter-spacing: 0.08em;
-  }
-
-  .trend-main h3,
-  .explore-main h3 {
-    margin-bottom: 5px;
-    font-size: 14px;
-    line-height: 1.15;
-  }
-
-  .trend-main p,
-  .explore-main p {
-    font-size: 8px;
-    line-height: 1.2;
-    letter-spacing: 0.04em;
-  }
-
-  .trend strong,
-  .explore-growth strong {
-    font-size: 12px;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  .about { padding: 85px 0 110px; }
-
-  footer {
-    min-height: 80px;
-    padding: 20px 6vw;
-    font-size: 8px;
-  }
+.explore-search {
+  position: relative;
+  margin-bottom: 28px;
 }
 
-.trend {
-  cursor: pointer;
+.explore-search input {
+  width: 100%;
+  height: 64px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 52px 0 20px;
+}
+
+.explore-search span {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #a0a0a0;
+}
+
+.explore-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.explore-results {
+  display: grid;
+  gap: 0;
+}
+
+.explore-empty {
+  display: grid;
+  gap: 8px;
+  min-height: 120px;
+  place-content: center;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 24px;
+}
+
+.explore-empty strong {
+  font-size: 18px;
+}
+
+.explore-empty span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.explore-growth {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.explore-growth span {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+}
+
+.explore-signal-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.explore-signal-meta div {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+  text-align: right;
+}
+
+.explore-signal-meta span {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: var(--soft);
+}
+
+.explore-signal-meta strong {
+  font-size: 16px;
 }
 
 .trend-detail {
@@ -559,62 +725,6 @@ footer span:first-child {
   color: #999;
 }
 
-.explore-search {
-  position: relative;
-  margin-bottom: 28px;
-}
-
-.explore-search input {
-  width: 100%;
-  height: 64px;
-  border: 1px solid var(--line);
-  border-radius: 0;
-  background: var(--surface);
-  color: var(--text);
-  padding: 0 52px 0 20px;
-}
-
-.explore-search span {
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
-  color: #a0a0a0;
-}
-
-.explore-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 28px;
-}
-
-.explore-filter,
-.platform {
-  border: 1px solid var(--line-dark);
-  background: #f4f4f2;
-  color: #111;
-  padding: 9px 12px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.explore-filter.active,
-.platform.active {
-  background: #111;
-  color: #fff;
-  border-color: #111;
-}
-
-.explore-results {
-  display: grid;
-  gap: 0;
-}
-
 .explore-detail-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -654,6 +764,110 @@ footer span:first-child {
 }
 
 @media (max-width: 700px) {
+  .nav {
+    height: 68px;
+    padding: 0 6vw;
+  }
+
+  .logo { font-size: 15px; }
+  .nav nav { gap: 15px; }
+  .nav nav a { font-size: 8px; }
+
+  main { width: 88vw; }
+
+  .hero {
+    min-height: calc(100vh - 68px);
+    padding: 70px 0 90px;
+  }
+
+  .hero h1 {
+    font-size: clamp(64px, 19vw, 105px);
+    letter-spacing: -0.075em;
+  }
+
+  .subtitle {
+    margin-top: 32px;
+    font-size: 14px;
+  }
+
+  .search {
+    height: 52px;
+    margin-top: 32px;
+  }
+
+  .search input {
+    padding: 0 15px;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .search button {
+    padding: 0 16px;
+    min-width: 52px;
+  }
+
+  .trends, .explore {
+    padding: 72px 0 92px;
+  }
+
+  .section-head, .explore-head {
+    align-items: flex-end;
+    gap: 20px;
+  }
+
+  .section-head h2, .explore-head h1 {
+    font-size: 31px;
+    line-height: 0.98;
+  }
+
+  .trend,
+  .explore-item {
+    min-height: 88px;
+    grid-template-columns: 30px minmax(0, 1fr) 58px;
+    gap: 9px;
+  }
+
+  .trend:hover,
+  .explore-item:hover {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .rank,
+  .explore-rank {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .trend-main h3,
+  .explore-main h3 {
+    margin-bottom: 5px;
+    font-size: 14px;
+    line-height: 1.15;
+  }
+
+  .trend-main p,
+  .explore-main p {
+    font-size: 8px;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+  }
+
+  .trend strong,
+  .explore-growth strong {
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .about { padding: 85px 0 110px; }
+
+  footer {
+    min-height: 80px;
+    padding: 20px 6vw;
+    font-size: 8px;
+  }
+
   .detail-meta {
     grid-template-columns: 1fr 1fr;
   }
