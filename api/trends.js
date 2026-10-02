@@ -209,26 +209,24 @@ function calculateDynamics(history, currentScore) {
     )
     .slice(-4);
 
-  const latest = snapshots[snapshots.length - 1];
-
-  const previous =
-    snapshots.length >= 2
-      ? snapshots[snapshots.length - 2]
-      : null;
+    const previous =
+    snapshots[snapshots.length - 1];
 
   const older =
     snapshots.length >= 3
-      ? snapshots[snapshots.length - 3]
+      ? snapshots[snapshots.length - 2]
       : null;
 
-  const latestScore = Number(currentScore) || 0;
-  const previousScore = Number(previous?.global_score) || 0;
+  const latestScore =
+    Number(currentScore) || 0;
 
-  const momentum = latestScore - previousScore;
+  const previousScore =
+    Number(previous?.global_score) || 0;
 
-  const latestTime = new Date(
-    latest?.captured_at
-  ).getTime();
+  const momentum =
+    latestScore - previousScore;
+
+  const latestTime = Date.now();
 
   const previousTime = new Date(
     previous?.captured_at
