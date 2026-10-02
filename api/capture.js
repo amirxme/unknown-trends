@@ -19,11 +19,115 @@ function cleanText(value) {
     .trim();
 }
 
+const aliases = {
+  japon: "japan",
+  japonia: "japan",
+  japao: "japan",
+
+  "日本": "japan",
+  "対": "vs",
+
+  "일본": "japan",
+  "대": "vs",
+
+  "エクアドル": "ecuador",
+  "에콰도르": "ecuador",
+
+  x: "vs",
+  equador: "ecuador",
+
+  alemania: "germany",
+  deutschland: "germany",
+
+  francia: "france",
+
+  reino: "kingdom",
+  unido: "united",
+  uk: "united",
+  england: "united",
+
+  brasil: "brazil",
+
+  canada: "canada",
+
+  corea: "korea",
+  sur: "south",
+
+  estados: "united",
+  unidos: "united",
+
+  ecuador: "ecuador",
+  equateur: "ecuador"
+};
+
+const phraseAliases = {
+  "ecuador vs japon": "ecuador japan",
+  "japan vs ecuador": "ecuador japan",
+
+  "日本 対 エクアドル": "ecuador japan",
+  "エクアドル 対 日本": "ecuador japan",
+
+  "일본 대 에콰도르": "ecuador japan",
+  "에콰도르 대 일본": "ecuador japan",
+
+  "japao x equador": "ecuador japan",
+  "equador x japao": "ecuador japan"
+};
+
 function normalizeTitle(title) {
-  return cleanText(title)
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, " ")
-    .trim();
+  const original = String(title || "").trim();
+  const lowerOriginal = original.toLowerCase();
+
+  const hasEcuador =
+    lowerOriginal.includes("ecuador") ||
+    lowerOriginal.includes("equador") ||
+    original.includes("エクアドル") ||
+    original.includes("에콰도르");
+
+  const hasJapan =
+    lowerOriginal.includes("japan") ||
+    lowerOriginal.includes("japon") ||
+    lowerOriginal.includes("japao") ||
+    original.includes("日本") ||
+    original.includes("일본");
+
+  if (hasEcuador && hasJapan) {
+    return "ecuador japan";
+  }
+
+  const raw = lowerOriginal
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .join(" ");
+
+  if (phraseAliases[raw]) {
+    return phraseAliases[raw];
+  }
+
+  const normalized = raw
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => aliases[word] || word)
+    .filter(
+      (word) =>
+        ![
+          "vs",
+          "versus",
+          "v",
+          "and",
+          "the",
+          "el",
+          "la",
+          "de"
+        ].includes(word)
+    )
+    .sort()
+    .join(" ");
+
+  return phraseAliases[normalized] || normalized;
 }
 
 function parseTraffic(value) {
