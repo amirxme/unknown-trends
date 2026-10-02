@@ -2338,8 +2338,8 @@ footer span:first-child {
 }
 
 .brand-lockup img {
-  width: 25px;
-  height: 25px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
   display: block;
 }
@@ -2354,7 +2354,7 @@ footer span:first-child {
   }
 
   .brand-lockup img {
-    width: 22px;
-    height: 22px;
+    width: 29px;
+    height: 29px;
   }
 }
