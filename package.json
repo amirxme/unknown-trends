@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "echo 'Static site: no dev server required'",
     "build": "echo 'Static site: no build step required'",
-    "start": "echo 'Static site: no start command required'"
+    "start": "echo 'Static site: no start command required'",
+    "test": "node --test"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.0.2"

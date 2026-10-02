@@ -31,6 +31,16 @@ function clampNumber(value, min = 0, max = 100) {
   return Math.min(max, Math.max(min, number));
 }
 
+function optionalScore(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? clampNumber(number, 0, 100) : null;
+}
+
+function displayValue(value, fallback = "—") {
+  return value === null || value === undefined || value === "" ? fallback : String(value);
+}
+
 function normalizeTrend(rawTrend = {}) {
   const trend = rawTrend && typeof rawTrend === "object" ? rawTrend : {};
   const platforms = Array.isArray(trend.platforms)
@@ -44,18 +54,18 @@ function normalizeTrend(rawTrend = {}) {
     titleKey: String(trend.titleKey ?? trend.title ?? "").trim(),
     platforms: normalizedPlatforms,
     platformCount: Number(trend.platformCount) || normalizedPlatforms.length || 1,
-    growth: trend.growth != null ? String(trend.growth) : "+0%",
+    growth: trend.growth != null ? String(trend.growth) : null,
     status: String(trend.status ?? "STABLE").toUpperCase(),
     mentions: trend.mentions != null ? String(trend.mentions) : "0",
-    velocity: trend.velocity != null ? String(trend.velocity) : "+0 pts",
+    velocity: trend.velocity != null ? String(trend.velocity) : null,
     signal: String(trend.signal ?? "LOW").toUpperCase(),
     history: Array.isArray(trend.history) ? trend.history : [],
     historyCount: Number(trend.historyCount) || (Array.isArray(trend.history) ? trend.history.length : 0),
-    momentumScore: clampNumber(trend.momentumScore, 0, 100),
-    confidenceScore: clampNumber(trend.confidenceScore, 0, 100),
-    emergingScore: clampNumber(trend.emergingScore, 0, 100),
-    globalScore: clampNumber(trend.globalScore, 0, 100),
-    acceleration: Number(trend.acceleration) || 0,
+    momentumScore: optionalScore(trend.momentumScore),
+    confidenceScore: optionalScore(trend.confidenceScore),
+    emergingScore: optionalScore(trend.emergingScore),
+    globalScore: optionalScore(trend.globalScore) ?? 0,
+    acceleration: trend.acceleration == null ? null : Number(trend.acceleration),
     description: String(trend.description ?? "No description available.").trim() || "No description available.",
     signalBreakdown: trend.signalBreakdown && typeof trend.signalBreakdown === "object"
       ? {
@@ -110,7 +120,7 @@ function renderTrends(items) {
 
   const normalizedItems = items.map(normalizeTrend);
   const topTrend = normalizedItems[0];
-  const momentum = clampNumber(topTrend.momentumScore, 0, 100);
+  const momentum = topTrend.momentumScore == null ? 0 : clampNumber(topTrend.momentumScore, 0, 100);
   const momentumLabel = momentum >= 70 ? "HIGH MOMENTUM" : momentum >= 50 ? "RISING MOMENTUM" : "LOW MOMENTUM";
 
   const momentumIndex = document.createElement("section");
@@ -126,7 +136,7 @@ function renderTrends(items) {
     <div class="momentum-index-main">
       <div>
         <strong>${escapeHtml(topTrend.title)}</strong>
-        <span>${escapeHtml(topTrend.status)} · ${escapeHtml(topTrend.velocity)}</span>
+        <span>${escapeHtml(topTrend.status)} · ${escapeHtml(displayValue(topTrend.velocity))}</span>
       </div>
       <div class="momentum-index-bar">
         <div class="momentum-index-fill" style="width: ${momentum}%"></div>
@@ -153,7 +163,7 @@ function renderTrends(items) {
       <span class="momentum-ranking-rank">${String(index + 1).padStart(2, "0")}</span>
       <div class="momentum-ranking-main">
         <strong>${escapeHtml(trend.title)}</strong>
-        <span>${escapeHtml(trend.status)} · ${escapeHtml(trend.velocity)}</span>
+      <span>${escapeHtml(trend.status)} · ${escapeHtml(displayValue(trend.velocity))}</span>
       </div>
       <strong class="momentum-ranking-score">${score}</strong>
     `;
@@ -172,7 +182,7 @@ function renderTrends(items) {
         <h3>${escapeHtml(trend.title)}</h3>
         <p>${escapeHtml((trend.platforms || []).join(" · "))}</p>
       </div>
-      <strong>${escapeHtml(trend.growth)}</strong>
+      <strong>${escapeHtml(displayValue(trend.growth))}</strong>
     `;
     article.addEventListener("click", () => openTrend(trend));
     elements.trendList.appendChild(article);
@@ -231,7 +241,7 @@ function filterTrends() {
         <h3>${escapeHtml(trend.title)}</h3>
         <p>${escapeHtml(`${trend.status} · ${trend.velocity}`)}</p>
       </div>
-      <strong>${emergingScore}</strong>
+      <strong>${trend.emergingScore == null ? "—" : emergingScore}</strong>
     `;
     article.addEventListener("click", () => openTrend(trend));
     emergingList.appendChild(article);
@@ -346,8 +356,8 @@ async function openTrend(trend) {
   if (!elements.trendList) return;
 
   const safeTrend = normalizeTrend(trend);
-  const confidence = clampNumber(safeTrend.confidenceScore, 0, 100);
-  const momentum = clampNumber(safeTrend.momentumScore, 0, 100);
+  const confidence = safeTrend.confidenceScore == null ? null : clampNumber(safeTrend.confidenceScore, 0, 100);
+  const momentum = safeTrend.momentumScore == null ? null : clampNumber(safeTrend.momentumScore, 0, 100);
 
   let confidenceLabel = "LOW CONFIDENCE";
   if (confidence >= 75) confidenceLabel = "HIGH CONFIDENCE";
@@ -360,28 +370,28 @@ async function openTrend(trend) {
       <h2>${escapeHtml(safeTrend.title)}</h2>
 
       <div class="detail-meta">
-        <span>GROWTH<strong>${escapeHtml(safeTrend.growth)}</strong></span>
-        <span>MOMENTUM<strong>${momentum}/100</strong>
-          <div class="momentum-meter"><div class="momentum-meter-fill" style="width: ${momentum}%"></div></div>
+        <span>GROWTH<strong>${escapeHtml(displayValue(safeTrend.growth))}</strong></span>
+        <span>MOMENTUM<strong>${momentum == null ? "—" : `${momentum}/100`}</strong>
+          <div class="momentum-meter"><div class="momentum-meter-fill" style="width: ${momentum ?? 0}%"></div></div>
           <small class="momentum-status">${escapeHtml(safeTrend.status)}</small>
         </span>
       </div>
 
       <div class="detail-meta">
-        <span>EMERGING SCORE<strong>${clampNumber(safeTrend.emergingScore, 0, 100)}/100</strong></span>
-        <span>WHY EMERGING<strong>${escapeHtml(safeTrend.velocity)}</strong><small class="momentum-status">VELOCITY · ACCELERATION · MOMENTUM · EARLY SIGNAL</small></span>
+        <span>EMERGING SCORE<strong>${safeTrend.emergingScore == null ? "—" : `${clampNumber(safeTrend.emergingScore, 0, 100)}/100`}</strong></span>
+        <span>WHY EMERGING<strong>${escapeHtml(displayValue(safeTrend.velocity))}</strong><small class="momentum-status">VELOCITY · ACCELERATION · MOMENTUM · EARLY SIGNAL</small></span>
       </div>
 
       <div class="detail-meta">
-        <span>CONFIDENCE<strong>${confidence}%</strong>
-          <div class="momentum-meter"><div class="momentum-meter-fill" style="width: ${confidence}%"></div></div>
-          <small class="momentum-status">${escapeHtml(confidenceLabel)} · ${safeTrend.historyCount} HISTORICAL SNAPSHOT${safeTrend.historyCount === 1 ? "" : "S"}</small>
+        <span>CONFIDENCE<strong>${confidence == null ? "—" : `${confidence}%`}</strong>
+          <div class="momentum-meter"><div class="momentum-meter-fill" style="width: ${confidence ?? 0}%"></div></div>
+          <small class="momentum-status">${escapeHtml(confidence == null ? "HISTORICAL DATA IS BEING COLLECTED" : confidenceLabel)} · ${safeTrend.historyCount} HISTORICAL SNAPSHOT${safeTrend.historyCount === 1 ? "" : "S"}</small>
         </span>
         <span>STATUS<strong>${escapeHtml(safeTrend.status)}</strong></span>
       </div>
 
       <div class="detail-meta">
-        <span>VELOCITY<strong>${escapeHtml(safeTrend.velocity)}</strong></span>
+        <span>VELOCITY<strong>${escapeHtml(displayValue(safeTrend.velocity))}</strong></span>
         <span>MENTIONS<strong>${escapeHtml(safeTrend.mentions)}</strong></span>
       </div>
 
@@ -436,8 +446,8 @@ function renderExplore(items) {
   items.map(normalizeTrend).forEach((trend, index) => {
     const item = document.createElement("article");
     item.className = "explore-item";
-    const momentum = clampNumber(trend.momentumScore, 0, 100);
-    const confidence = clampNumber(trend.confidenceScore, 0, 100);
+    const momentum = trend.momentumScore == null ? null : clampNumber(trend.momentumScore, 0, 100);
+    const confidence = trend.confidenceScore == null ? null : clampNumber(trend.confidenceScore, 0, 100);
 
     item.innerHTML = `
       <span class="explore-rank">${String(index + 1).padStart(2, "0")}</span>
@@ -447,17 +457,17 @@ function renderExplore(items) {
         <span class="explore-platform-count">${trend.platformCount} PLATFORMS</span>
       </div>
       <div class="explore-growth">
-        <strong>${escapeHtml(trend.growth)}</strong>
+        <strong>${escapeHtml(displayValue(trend.growth))}</strong>
         <span>${escapeHtml(trend.status)}</span>
       </div>
       <div class="explore-signal-meta">
         <div>
           <span>MOMENTUM</span>
-          <strong>${momentum}</strong>
+          <strong>${momentum == null ? "—" : momentum}</strong>
         </div>
         <div>
           <span>CONFIDENCE</span>
-          <strong>${confidence}%</strong>
+          <strong>${confidence == null ? "—" : `${confidence}%`}</strong>
         </div>
       </div>
     `;
@@ -498,9 +508,9 @@ async function openExploreTrend(trend) {
 
   const safeTrend = normalizeTrend(trend);
   const globalScore = clampNumber(safeTrend.globalScore, 0, 100);
-  const momentum = clampNumber(safeTrend.momentumScore, 0, 100);
-  const confidence = clampNumber(safeTrend.confidenceScore, 0, 100);
-  const acceleration = Number(safeTrend.acceleration) || 0;
+  const momentum = safeTrend.momentumScore == null ? null : clampNumber(safeTrend.momentumScore, 0, 100);
+  const confidence = safeTrend.confidenceScore == null ? null : clampNumber(safeTrend.confidenceScore, 0, 100);
+  const acceleration = safeTrend.acceleration == null ? null : Number(safeTrend.acceleration);
 
   elements.exploreResults.innerHTML = `
     <article class="explore-detail">
@@ -510,13 +520,13 @@ async function openExploreTrend(trend) {
 
       <div class="explore-detail-meta">
         <div><span>GLOBAL SCORE</span><strong>${globalScore}</strong></div>
-        <div><span>MOMENTUM</span><strong>${momentum}</strong></div>
-        <div><span>CONFIDENCE</span><strong>${confidence}%</strong></div>
-        <div><span>ACCELERATION</span><strong>${acceleration}</strong></div>
-        <div><span>GROWTH</span><strong>${escapeHtml(safeTrend.growth)}</strong></div>
+        <div><span>MOMENTUM</span><strong>${momentum == null ? "—" : momentum}</strong></div>
+        <div><span>CONFIDENCE</span><strong>${confidence == null ? "—" : `${confidence}%`}</strong></div>
+        <div><span>ACCELERATION</span><strong>${acceleration == null ? "—" : acceleration}</strong></div>
+        <div><span>GROWTH</span><strong>${escapeHtml(displayValue(safeTrend.growth))}</strong></div>
         <div><span>STATUS</span><strong>${escapeHtml(safeTrend.status)}</strong></div>
         <div><span>MENTIONS</span><strong>${escapeHtml(safeTrend.mentions)}</strong></div>
-        <div><span>VELOCITY</span><strong>${escapeHtml(safeTrend.velocity)}</strong></div>
+        <div><span>VELOCITY</span><strong>${escapeHtml(displayValue(safeTrend.velocity))}</strong></div>
         <div><span>PLATFORMS</span><strong>${safeTrend.platformCount}</strong></div>
         <div><span>SIGNAL</span><strong>${escapeHtml(safeTrend.signal)}</strong></div>
       </div>
@@ -600,8 +610,7 @@ async function loadTrends() {
   } catch (error) {
     console.error("UNKNOWN API error:", error);
 
-    const fallbackData = Array.isArray(window.unknownTrendsFallback) ? window.unknownTrendsFallback : [];
-    state.trends = fallbackData.map(normalizeTrend);
+    state.trends = [];
 
     if (elements.trendList) {
       elements.trendList.innerHTML = `
