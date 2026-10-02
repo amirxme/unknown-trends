@@ -796,13 +796,21 @@ export default async function handler(req, res) {
   platforms: ["Google"],
 
   growth:
-    `${trend.globalScore}/100`,
+    history.length >= 1 &&
+    Number(history[0].global_score) > 0
+      ? `${(
+          ((trend.globalScore -
+            Number(history[0].global_score)) /
+            Number(history[0].global_score)) *
+          100
+        ).toFixed(1)}%`
+      : "0.0%",
 
-        status,
+  status,
 
-        mentions:
-          trend.traffic ||
-          "Unknown",
+  mentions:
+    trend.traffic ||
+    "Unknown",
 
         velocity:
           `${dynamics.velocity}%/H`,
