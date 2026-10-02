@@ -36,6 +36,12 @@ input {
   font: inherit;
 }
 
+button,
+input,
+a {
+  transition: all 0.2s ease;
+}
+
 button:focus-visible,
 input:focus-visible,
 a:focus-visible {
@@ -76,7 +82,6 @@ a:focus-visible {
   font-weight: 600;
   letter-spacing: 0.11em;
   color: #666;
-  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .nav nav a:hover {
@@ -176,7 +181,6 @@ main {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.13em;
-  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .search button:hover {
@@ -242,7 +246,8 @@ main {
   margin-bottom: 18px;
 }
 
-.platforms {
+.platforms,
+.explore-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -258,7 +263,6 @@ main {
   font-weight: 700;
   letter-spacing: 0.12em;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .platform.active,
@@ -274,6 +278,10 @@ main {
   font-weight: 700;
   letter-spacing: 0.12em;
   color: var(--muted);
+}
+
+.emerging-section {
+  margin-bottom: 24px;
 }
 
 .trend-list {
@@ -413,10 +421,6 @@ main {
   border-radius: inherit;
 }
 
-.momentum-ranking {
-  margin-top: 18px;
-}
-
 .momentum-ranking-head {
   margin-bottom: 12px;
   font-size: 9px;
@@ -461,7 +465,6 @@ main {
   letter-spacing: 0.05em;
 }
 
-.momentu-ranking-score,
 .momentum-ranking-score {
   font-size: 15px;
 }
@@ -473,52 +476,6 @@ main {
   letter-spacing: 0.1em;
   color: var(--muted);
 }
-
-.about {
-  max-width: 850px;
-  padding: 110px 0 150px;
-  border-top: 1px solid var(--line);
-}
-
-footer {
-  min-height: 88px;
-  padding: 0 5vw;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--line);
-  color: #999;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-}
-
-footer span:first-child {
-  color: #111;
-  font-weight: 700;
-}
-
-@keyframes appear {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero .eyebrow,
-.hero h1,
-.hero .subtitle,
-.hero .search {
-  animation: appear 0.7s ease both;
-}
-
-.hero .eyebrow { animation-delay: 0s; }
-.hero h1 { animation-delay: 0.08s; }
-.hero .subtitle { animation-delay: 0.16s; }
-.hero .search { animation-delay: 0.24s; }
 
 .explore-search {
   position: relative;
@@ -541,13 +498,6 @@ footer span:first-child {
   transform: translateY(-50%);
   font-size: 20px;
   color: #a0a0a0;
-}
-
-.explore-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 28px;
 }
 
 .explore-results {
@@ -625,7 +575,6 @@ footer span:first-child {
   font-size: 13px;
   cursor: pointer;
   margin-bottom: 32px;
-  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .back-button:hover,
@@ -682,7 +631,9 @@ footer span:first-child {
   letter-spacing: -0.025em;
 }
 
-.signal-graph { margin: 42px 0 34px; }
+.signal-graph {
+  margin: 42px 0 34px;
+}
 
 .graph-head {
   display: flex;
@@ -763,6 +714,53 @@ footer span:first-child {
   letter-spacing: -0.03em;
 }
 
+.about {
+  max-width: 850px;
+  padding: 110px 0 150px;
+  border-top: 1px solid var(--line);
+}
+
+footer {
+  min-height: 88px;
+  padding: 0 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  color: #999;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+footer span:first-child {
+  color: #111;
+  font-weight: 700;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero .eyebrow,
+.hero h1,
+.hero .subtitle,
+.hero .search {
+  animation: appear 0.7s ease both;
+}
+
+.hero .eyebrow { animation-delay: 0s; }
+.hero h1 { animation-delay: 0.08s; }
+.hero .subtitle { animation-delay: 0.16s; }
+.hero .search { animation-delay: 0.24s; }
+
 @media (max-width: 700px) {
   .nav {
     height: 68px;
@@ -806,16 +804,19 @@ footer span:first-child {
     min-width: 52px;
   }
 
-  .trends, .explore {
+  .trends,
+  .explore {
     padding: 72px 0 92px;
   }
 
-  .section-head, .explore-head {
+  .section-head,
+  .explore-head {
     align-items: flex-end;
     gap: 20px;
   }
 
-  .section-head h2, .explore-head h1 {
+  .section-head h2,
+  .explore-head h1 {
     font-size: 31px;
     line-height: 0.98;
   }
