@@ -320,9 +320,7 @@ export default async function handler(req, res) {
           signal,
           status
         };
-      })
-      .sort((a, b) => b.globalScore - a.globalScore)
-      .slice(0, 20);
+      });
 
     for (const trend of trends) {
       await sql`
