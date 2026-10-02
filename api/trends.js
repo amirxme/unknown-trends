@@ -830,14 +830,25 @@ export default async function handler(req, res) {
 
     if (titleKeys.length > 0) {
       historyRows = await sql`
+        WITH ranked_history AS (
+          SELECT
+            captured_at,
+            title_key,
+            global_score,
+            ROW_NUMBER() OVER (
+              PARTITION BY title_key
+              ORDER BY captured_at DESC
+            ) AS row_number
+          FROM trend_snapshots
+          WHERE title_key = ANY(${titleKeys})
+        )
         SELECT
           captured_at,
           title_key,
           global_score
-        FROM trend_snapshots
-        WHERE title_key = ANY(${titleKeys})
+        FROM ranked_history
+        WHERE row_number <= 4
         ORDER BY captured_at DESC
-        LIMIT 300
       `;
     }
 
