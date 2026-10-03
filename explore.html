@@ -6,6 +6,7 @@
   <title>UNKNOWN — Explore</title>
   <meta name="description" content="Explore global trends and signals across the internet.">
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./polish.css">
 </head>
 <body>
   <header class="nav">
@@ -16,7 +17,6 @@
       <a href="./about.html">ABOUT</a>
     </nav>
   </header>
-
   <main>
     <section class="explore">
       <div class="explore-head">
@@ -30,12 +30,10 @@
           <span class="explore-source">GOOGLE TRENDS · 10 REGIONS</span>
         </div>
       </div>
-
       <div class="explore-search">
         <input id="exploreInput" type="search" placeholder="Search signals..." autocomplete="off" aria-label="Search signals">
         <span aria-hidden="true">⌕</span>
       </div>
-
       <div class="explore-filters">
         <button class="explore-filter active" type="button" data-filter="all" aria-pressed="true">ALL SIGNALS</button>
         <button class="explore-filter" type="button" data-filter="RISING" aria-pressed="false">RISING</button>
@@ -43,22 +41,18 @@
         <button class="explore-filter" type="button" data-filter="COOLING" aria-pressed="false">COOLING</button>
         <button class="explore-filter" type="button" data-filter="BREAKOUT" aria-pressed="false">BREAKOUT</button>
       </div>
-
       <div id="exploreResults" class="explore-results" aria-live="polite" aria-busy="true">
         <div class="explore-empty"><strong>Loading live signals…</strong><span>Fetching the latest global trend data.</span></div>
       </div>
     </section>
   </main>
-
   <footer>
     <span>UNKNOWN</span>
     <span>Global Trend Intelligence</span>
   </footer>
-
   <noscript>
     <div style="padding: 24px; font-family: sans-serif; color: #111;">JavaScript is required to explore signals.</div>
   </noscript>
-
   <script src="./script.js"></script>
   <script src="./honesty.js"></script>
 </body>
