@@ -10,33 +10,12 @@
   letter-spacing: -0.045em !important;
 }
 
-.subtitle {
-  margin-top: 16px !important;
-}
-
-.search {
-  height: 52px !important;
-  margin-top: 22px !important;
-}
-
-.hero-stats div {
-  padding: 14px 0 !important;
-}
-
-.trends,
-.explore,
-.about {
-  padding-top: 28px !important;
-}
-
-.section-head,
-.explore-head {
-  margin-bottom: 22px !important;
-  align-items: flex-end !important;
-}
-
-.trend-main h3,
-.explore-main h3 {
+.subtitle { margin-top: 16px !important; }
+.search { height: 52px !important; margin-top: 22px !important; }
+.hero-stats div { padding: 14px 0 !important; }
+.trends, .explore, .about { padding-top: 28px !important; }
+.section-head, .explore-head { margin-bottom: 22px !important; align-items: flex-end !important; }
+.trend-main h3, .explore-main h3 {
   max-width: none !important;
   white-space: normal !important;
   display: -webkit-box;
@@ -45,104 +24,72 @@
   overflow: hidden;
   line-height: 1.2 !important;
 }
+.trend-card-top { margin-bottom: 14px !important; }
+.trend-card-main { align-items: flex-start !important; gap: 12px !important; padding-bottom: 14px !important; }
+.trend-card-metrics { align-items: flex-end !important; padding-top: 12px !important; }
+.trend-card-metrics strong, .momentum-ranking-score, .hero-stats strong { font-variant-numeric: tabular-nums; }
+.trend-empty { min-height: 0 !important; display: block !important; padding: 18px 20px !important; }
+.trend-empty strong { display: none !important; }
+.momentum-index, .momentum-ranking { padding: 16px 18px 8px !important; }
+.brand-lockup { align-items: center !important; gap: 8px !important; }
+.brand-lockup img { width: 28px !important; height: 28px !important; }
+footer { align-items: center; }
 
-.trend-card-top {
-  margin-bottom: 14px !important;
+.about-block-index,
+.about-label,
+.about-block:nth-child(n) .about-block-index,
+.about-block:nth-child(n) .about-label {
+  background: transparent !important;
+  color: #8d8d89 !important;
 }
+.about-label, .about-block-index { color: #6578b7 !important; }
 
-.trend-card-main {
-  align-items: flex-start !important;
-  gap: 12px !important;
-  padding-bottom: 14px !important;
-}
+@media (max-width: 800px) {
+  .nav { height: 60px !important; padding: 0 18px !important; }
+  .hero { padding: 28px 0 18px !important; }
+  .hero h1, .about-hero h1, .explore-head h1 { font-size: 42px !important; line-height: 0.98 !important; }
+  .hero-stats { margin-top: 16px !important; }
+  .hero-stats strong { font-size: 16px !important; }
+  .trends, .explore { padding-top: 22px !important; padding-bottom: 56px !important; }
+  .trend, .trend:hover { padding: 16px !important; }
+  .trend-main h3 { max-width: none !important; font-size: 17px !important; }
 
-.trend-card-metrics {
-  align-items: flex-end !important;
-  padding-top: 12px !important;
-}
-
-.trend-card-metrics strong,
-.momentum-ranking-score,
-.hero-stats strong {
-  font-variant-numeric: tabular-nums;
-}
-
-.trend-empty {
-  min-height: 0 !important;
-  display: block !important;
-  padding: 18px 20px !important;
-}
-
-.trend-empty strong {
-  display: none !important;
-}
-
-.momentum-index.is-collecting .momentum-index-bar,
-.momentum-ranking.is-empty {
-  display: none !important;
-}
-
-.momentum-index,
-.momentum-ranking {
-  padding: 16px 18px 8px !important;
-}
-
-.brand-lockup {
-  align-items: center !important;
-  gap: 8px !important;
-}
-
-.brand-lockup img {
-  width: 28px !important;
-  height: 28px !important;
-}
-
-footer {
-  align-items: center;
-}
-
-@media (max-width: 700px) {
-  .nav {
-    height: 60px !important;
-    padding: 0 18px !important;
+  .about { padding-top: 24px !important; padding-bottom: 72px !important; }
+  .about-hero { padding-bottom: 28px !important; }
+  .about-lede { margin-top: 14px !important; }
+  .about-proof { display: grid !important; grid-template-columns: 1fr !important; margin-top: 22px !important; }
+  .about-proof div { border-right: 0 !important; border-bottom: 1px solid var(--line) !important; padding: 14px 0 !important; }
+  .about-proof div:last-child { border-bottom: 0 !important; }
+  .about-proof span { font-size: 10px !important; letter-spacing: 0.08em !important; }
+  .about-block { display: block !important; padding: 26px 0 28px !important; }
+  .about-block-index {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 11px !important;
   }
-
-  .hero {
-    padding: 28px 0 18px !important;
+  .about-block-index::after {
+    content: "";
+    width: 56px;
+    height: 2px;
+    background: #6578b7;
   }
-
-  .hero h1 {
-    font-size: 44px !important;
-    line-height: 0.96 !important;
+  .about-label { display: block; margin-bottom: 8px !important; }
+  .about-block h2 { font-size: 30px !important; line-height: 1.02 !important; margin-bottom: 12px !important; }
+  .about-signal-mark, .score-bars, .about-mini-data, .about-confidence, .about-source {
+    width: 100% !important;
+    margin-top: 18px !important;
+    justify-self: stretch !important;
+    grid-column: auto !important;
   }
-
-  .hero-stats {
-    margin-top: 16px !important;
+  .about-signal-mark {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-end !important;
+    height: 64px !important;
+    padding: 0 0 10px !important;
   }
-
-  .hero-stats strong {
-    font-size: 16px !important;
-  }
-
-  .trends,
-  .explore {
-    padding-top: 22px !important;
-    padding-bottom: 56px !important;
-  }
-
-  .trend,
-  .trend:hover {
-    padding: 16px !important;
-  }
-
-  .trend-main h3 {
-    max-width: none !important;
-    font-size: 17px !important;
-  }
-
-  .explore-head h1,
-  .about-hero h1 {
-    font-size: 40px !important;
-    line-height: 0.96 !important;
-  }
+  .score-bars, .about-confidence, .about-source, .about-mini-data { display: grid !important; }
+  .about-mini-data { grid-template-columns: 1fr auto !important; }
 }
