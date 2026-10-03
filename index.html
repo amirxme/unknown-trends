@@ -6,8 +6,7 @@
   <title>UNKNOWN — Global Trend Intelligence</title>
   <meta name="description" content="Discover what is moving across the internet.">
   <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="./layout-fix.css">
-  <link rel="stylesheet" href="./polish.css">
+  <link rel="stylesheet" href="./trends.css">
 </head>
 <body>
   <header class="nav">
@@ -20,48 +19,28 @@
   </header>
   <main>
     <section class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow hero-kicker"><span></span> GLOBAL TREND INTELLIGENCE</p>
-        <h1>See what's<br><em>moving.</em></h1>
-        <p class="subtitle">Signals from ten regions, ranked by coverage, volume and position.</p>
-        <div class="search">
-          <input id="searchInput" type="search" placeholder="Search signals" autocomplete="off" aria-label="Search trends">
-          <button id="searchButton" type="button">SEARCH</button>
-        </div>
+      <p class="eyebrow hero-kicker"><span></span> GLOBAL TREND INTELLIGENCE</p>
+      <h1>See what's<br><em>moving.</em></h1>
+      <p class="subtitle">One list. Ten regions. Ranked by how widely a topic is appearing.</p>
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="Search signals" autocomplete="off" aria-label="Search trends">
+        <button id="searchButton" type="button">SEARCH</button>
       </div>
-      <div class="hero-stats" aria-label="Live source summary">
+      <div class="hero-stats">
         <div><strong>LIVE</strong><span>GOOGLE TRENDS</span></div>
         <div><strong>10</strong><span>REGIONS</span></div>
         <div><strong id="heroSignalCount">—</strong><span>SIGNALS</span></div>
       </div>
     </section>
-    <section id="trends" class="trends">
+    <section class="trends">
       <div class="section-head">
-        <div>
-          <h2>Trending now.</h2>
-        </div>
-        <div class="live-meta">
-          <span class="status"><i></i>UPDATED</span>
-        </div>
+        <h2>Trending now</h2>
+        <span class="status"><i></i>UPDATED</span>
       </div>
-      <div class="signal-bar">
-        <div class="platforms">
-          <button class="platform active" type="button" data-platform="all" aria-pressed="true">ALL</button>
-          <button class="platform" type="button" data-platform="RISING" aria-pressed="false">RISING</button>
-          <button class="platform" type="button" data-platform="NEW" aria-pressed="false">NEW</button>
-          <button class="platform" type="button" data-platform="COOLING" aria-pressed="false">COOLING</button>
-          <button class="platform" type="button" data-platform="BREAKOUT" aria-pressed="false">BREAKOUT</button>
-        </div>
-      </div>
-      <div class="signal-count">SHOWING <strong id="signalCount">0</strong></div>
-      <div id="trendList" class="trend-list" aria-live="polite"></div>
+      <div id="trendList" aria-live="polite"></div>
     </section>
   </main>
-  <footer>
-    <span>UNKNOWN</span>
-    <span>Global Trend Intelligence</span>
-  </footer>
-  <script src="./script.js"></script>
-  <script src="./display.js"></script>
+  <footer><span>UNKNOWN</span><span>Global Trend Intelligence</span></footer>
+  <script src="./sheet.js"></script>
 </body>
 </html>
