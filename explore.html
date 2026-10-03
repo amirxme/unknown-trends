@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNKNOWN — Explore</title>
+  <title>UNKNOWN \u2014 Explore</title>
   <meta name="description" content="Explore global trends and signals across the internet.">
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./polish.css">
@@ -27,12 +27,12 @@
         </div>
         <div class="explore-meta">
           <span class="explore-count" id="exploreCount">LOADING</span>
-          <span class="explore-source">GOOGLE TRENDS · 10 REGIONS</span>
+          <span class="explore-source">GOOGLE TRENDS \u00b7 10 REGIONS</span>
         </div>
       </div>
       <div class="explore-search">
         <input id="exploreInput" type="search" placeholder="Search signals..." autocomplete="off" aria-label="Search signals">
-        <span aria-hidden="true">⌕</span>
+        <span aria-hidden="true">\u2315</span>
       </div>
       <div class="explore-filters">
         <button class="explore-filter active" type="button" data-filter="all" aria-pressed="true">ALL SIGNALS</button>
@@ -42,7 +42,7 @@
         <button class="explore-filter" type="button" data-filter="BREAKOUT" aria-pressed="false">BREAKOUT</button>
       </div>
       <div id="exploreResults" class="explore-results" aria-live="polite" aria-busy="true">
-        <div class="explore-empty"><strong>Loading live signals…</strong><span>Fetching the latest global trend data.</span></div>
+        <div class="explore-empty"><strong>Loading live signals\u2026</strong><span>Fetching the latest global trend data.</span></div>
       </div>
     </section>
   </main>
@@ -50,9 +50,7 @@
     <span>UNKNOWN</span>
     <span>Global Trend Intelligence</span>
   </footer>
-  <noscript>
-    <div style="padding: 24px; font-family: sans-serif; color: #111;">JavaScript is required to explore signals.</div>
-  </noscript>
   <script src="./script.js"></script>
+  <script src="./display.js"></script>
 </body>
 </html>
