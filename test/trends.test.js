@@ -4,8 +4,8 @@ import { normalizeTitleKey, parseGoogleTrendsRss } from "../lib/trends/source-go
 import { scoreTrend } from "../lib/trends/scoring.js";
 
 test("normalizes non-Latin titles without producing an empty key", () => {
-  assert.equal(normalizeTitleKey("プルデンシャル 業務停止命令"), "プルデンシャル 業務停止命令");
-  assert.equal(normalizeTitleKey("Café & AI"), "café and ai");
+  assert.equal(normalizeTitleKey("\u30d7\u30eb\u30c7\u30f3\u30b7\u30e3\u30eb \u696d\u52d9\u505c\u6b62\u547d\u4ee4"), "\u30d7\u30eb\u30c7\u30f3\u30b7\u30e3\u30eb \u696d\u52d9\u505c\u6b62\u547d\u4ee4");
+  assert.equal(normalizeTitleKey("Caf\u00e9 & AI"), "caf\u00e9 and ai");
 });
 
 test("parses an RSS item with its regional rank", () => {
@@ -92,4 +92,11 @@ test("marks a strong positive historical movement as breakout", () => {
   }, [{ global_score: 20 }]);
 
   assert.equal(trend.status, "BREAKOUT");
+});
+
+test("keeps Devanagari marks and merges matchup aliases", () => {
+  assert.equal(normalizeTitleKey("\u092d\u093e\u0930\u0924 \u092c\u0928\u093e\u092e \u0935\u0947\u0938\u094d\u091f\u0907\u0902\u0921\u0940\u091c"), "india vs west indies");
+  assert.equal(normalizeTitleKey("ind vs wi"), "india vs west indies");
+  assert.equal(normalizeTitleKey("India vs West Indies"), "india vs west indies");
+  assert.equal(normalizeTitleKey("\u30d7\u30eb\u30c7\u30f3\u30b7\u30e3\u30eb \u696d\u52d9\u505c\u6b62\u547d\u4ee4"), "\u30d7\u30eb\u30c7\u30f3\u30b7\u30e3\u30eb \u696d\u52d9\u505c\u6b62\u547d\u4ee4");
 });
