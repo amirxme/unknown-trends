@@ -1,4 +1,5 @@
 import { sql, ensureTrendSnapshotsTable } from "../lib/db.js";
+import { collapseSnapshots } from "../lib/trends/collector.js";
 import { normalizeTitleKey } from "../lib/trends/source-google.js";
 
 export default async function handler(req, res) {
@@ -22,7 +23,11 @@ export default async function handler(req, res) {
       LIMIT 100
     `;
 
-    return res.status(200).json({ success: true, title, count: rows.length, history: rows });
+    const history = collapseSnapshots(rows).sort(
+      (a, b) => new Date(a.captured_at) - new Date(b.captured_at)
+    );
+
+    return res.status(200).json({ success: true, title, count: history.length, history });
   } catch (error) {
     console.error("UNKNOWN history API error:", error);
     return res.status(503).json({ success: false, error: "HISTORY UNAVAILABLE" });
