@@ -4,53 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UNKNOWN — Explore</title>
-  <meta name="description" content="Explore global trends and signals across the internet.">
-  <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="./polish.css">
+  <meta name="description" content="Search the current global signal set.">
+  <link rel="stylesheet" href="./app.css">
 </head>
 <body>
-  <header class="nav">
-    <a href="./" class="logo brand-lockup"><img src="./assets/unknown-mark.png" alt="" aria-hidden="true"> <span>UNKNOWN</span></a>
-    <nav>
-      <a href="./">TRENDS</a>
-      <a class="active" href="./explore.html" aria-current="page">EXPLORE</a>
-      <a href="./about.html">ABOUT</a>
-    </nav>
-  </header>
-  <main>
-    <section class="explore">
-      <div class="explore-head">
-        <div>
-          <p class="eyebrow explore-kicker"><span></span> LIVE SIGNAL INDEX</p>
-          <h1>Find a signal.</h1>
-          <p class="explore-intro">Search the current global signal set and inspect why a topic is moving.</p>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="./"><span class="mark" aria-hidden="true">✕</span><span>UNKNOWN</span></a>
+      <nav>
+        <a href="./"><span class="ico">↗</span>Trends</a>
+        <a class="active" href="./explore.html" aria-current="page"><span class="ico">⌕</span>Explore</a>
+        <a href="./about.html"><span class="ico">i</span>About</a>
+      </nav>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <h1>Explore</h1>
+        <label class="search">
+          <span aria-hidden="true">⌕</span>
+          <input id="exploreInput" type="search" placeholder="Search" autocomplete="off" aria-label="Search signals">
+        </label>
+      </header>
+      <main>
+        <div class="toolbar">
+          <div class="filters">
+            <button class="explore-filter active" type="button" data-filter="all" aria-pressed="true">All</button>
+            <button class="explore-filter" type="button" data-filter="NEW" aria-pressed="false">New</button>
+            <button class="explore-filter" type="button" data-filter="RISING" aria-pressed="false">Rising</button>
+            <button class="explore-filter" type="button" data-filter="COOLING" aria-pressed="false">Cooling</button>
+            <button class="explore-filter" type="button" data-filter="BREAKOUT" aria-pressed="false">Breakout</button>
+          </div>
+          <span class="count" id="exploreCount">—</span>
         </div>
-        <div class="explore-meta">
-          <span class="explore-count" id="exploreCount">LOADING</span>
-          <span class="explore-source">GOOGLE TRENDS · 10 REGIONS</span>
-        </div>
-      </div>
-      <div class="explore-search">
-        <input id="exploreInput" type="search" placeholder="Search signals..." autocomplete="off" aria-label="Search signals">
-        <span aria-hidden="true">⌕</span>
-      </div>
-      <div class="explore-filters">
-        <button class="explore-filter active" type="button" data-filter="all" aria-pressed="true">ALL SIGNALS</button>
-        <button class="explore-filter" type="button" data-filter="RISING" aria-pressed="false">RISING</button>
-        <button class="explore-filter" type="button" data-filter="NEW" aria-pressed="false">NEW</button>
-        <button class="explore-filter" type="button" data-filter="COOLING" aria-pressed="false">COOLING</button>
-        <button class="explore-filter" type="button" data-filter="BREAKOUT" aria-pressed="false">BREAKOUT</button>
-      </div>
-      <div id="exploreResults" class="explore-results" aria-live="polite" aria-busy="true">
-        <div class="explore-empty"><strong>Loading live signals…</strong><span>Fetching the latest global trend data.</span></div>
-      </div>
-    </section>
-  </main>
-  <footer>
-    <span>UNKNOWN</span>
-    <span>Global Trend Intelligence</span>
-  </footer>
+        <div id="exploreResults" class="rows explore-results" aria-live="polite" aria-busy="true"></div>
+      </main>
+    </div>
+  </div>
   <script src="./script.js"></script>
-  <script src="./display.js"></script>
 </body>
 </html>

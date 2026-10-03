@@ -517,42 +517,14 @@ function renderExplore(items) {
 
   items.map(normalizeTrend).forEach((trend, index) => {
     const item = document.createElement("article");
-    item.className = "explore-item";
+    item.className = "explore-item signal-row";
     item.setAttribute("role", "button");
     item.setAttribute("tabindex", "0");
-    const momentum = trend.momentumScore == null ? null : clampNumber(trend.momentumScore, 0, 100);
-    const confidence = trend.confidenceScore == null ? null : clampNumber(trend.confidenceScore, 0, 100);
-    const statusClass = trend.status.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
     item.innerHTML = `
-      <div class="explore-card-top">
-        <span class="explore-rank">${String(index + 1).padStart(2, "0")}</span>
-        <span class="explore-status explore-status-${statusClass}">${escapeHtml(trend.status)}</span>
-      </div>
-      <div class="explore-card-main">
-        <div class="explore-main">
-          <h3>${escapeHtml(trend.title)}</h3>
-          <p>${escapeHtml((trend.platforms || []).join(" · "))} <span>·</span> ${regionLabel(trend.regions.length)}</p>
-        </div>
-        <div class="explore-growth">
-          <strong>${escapeHtml(displayValue(trend.growth))}</strong>
-          <span>GROWTH</span>
-        </div>
-      </div>
-      <div class="explore-card-metrics">
-        <div>
-          <span>GLOBAL SCORE</span>
-          <strong>${trend.globalScore}</strong>
-        </div>
-        <div>
-          <span>MOMENTUM</span>
-          <strong>${momentum == null ? "—" : momentum}</strong>
-        </div>
-        <div>
-          <span>CONFIDENCE</span>
-          <strong>${confidence == null ? "—" : `${confidence}%`}</strong>
-        </div>
-      </div>
+      <span class="explore-rank signal-rank">${String(index + 1).padStart(2, "0")}</span>
+      <span class="signal-copy"><h3>${escapeHtml(trend.title)}</h3></span>
+      <span class="explore-score signal-score"><b>${trend.globalScore}</b></span>
     `;
 
     item.addEventListener("click", () => openExploreTrend(trend));
@@ -584,7 +556,7 @@ function filterExplore() {
       return matchesFilter && matchesSearch;
     });
 
-  elements.exploreCount.textContent = `${filtered.length} SIGNALS`;
+  elements.exploreCount.textContent = `${filtered.length}`;
   renderExplore(filtered);
 }
 
@@ -599,7 +571,7 @@ async function openExploreTrend(trend) {
 
   elements.exploreResults.innerHTML = `
     <article class="explore-detail">
-      <button class="explore-back" id="exploreBack" type="button">← BACK TO EXPLORE</button>
+      <button class="explore-back" id="exploreBack" type="button">Back</button>
       <p class="eyebrow">SIGNAL</p>
       <h3>${escapeHtml(safeTrend.title)}</h3>
 

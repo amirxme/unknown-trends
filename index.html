@@ -3,44 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNKNOWN — Global Trend Intelligence</title>
-  <meta name="description" content="Discover what is moving across the internet.">
-  <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="./trends.css">
+  <title>UNKNOWN — Trends</title>
+  <meta name="description" content="See what is moving across ten regions.">
+  <link rel="stylesheet" href="./app.css">
 </head>
 <body>
-  <header class="nav">
-    <a href="./" class="logo brand-lockup"><img src="./assets/unknown-mark.png" alt="" aria-hidden="true"> <span>UNKNOWN</span></a>
-    <nav>
-      <a class="active" href="./" aria-current="page">TRENDS</a>
-      <a href="./explore.html">EXPLORE</a>
-      <a href="./about.html">ABOUT</a>
-    </nav>
-  </header>
-  <main>
-    <section class="hero">
-      <p class="eyebrow hero-kicker"><span></span> GLOBAL TREND INTELLIGENCE</p>
-      <h1>See what's<br><em>moving.</em></h1>
-      <p class="subtitle">One list. Ten regions. Ranked by how widely a topic is appearing.</p>
-      <div class="search">
-        <input id="searchInput" type="search" placeholder="Search signals" autocomplete="off" aria-label="Search trends">
-        <button id="searchButton" type="button">SEARCH</button>
-      </div>
-      <div class="hero-stats">
-        <div><strong>LIVE</strong><span>GOOGLE TRENDS</span></div>
-        <div><strong>10</strong><span>REGIONS</span></div>
-        <div><strong id="heroSignalCount">—</strong><span>SIGNALS</span></div>
-      </div>
-    </section>
-    <section class="trends">
-      <div class="section-head">
-        <h2>Trending now</h2>
-        <span class="status"><i></i>UPDATED</span>
-      </div>
-      <div id="trendList" aria-live="polite"></div>
-    </section>
-  </main>
-  <footer><span>UNKNOWN</span><span>Global Trend Intelligence</span></footer>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="./"><span class="mark" aria-hidden="true">✕</span><span>UNKNOWN</span></a>
+      <nav>
+        <a class="active" href="./" aria-current="page"><span class="ico">↗</span>Trends</a>
+        <a href="./explore.html"><span class="ico">⌕</span>Explore</a>
+        <a href="./about.html"><span class="ico">i</span>About</a>
+      </nav>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <h1>Trends</h1>
+        <label class="search">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="Search" autocomplete="off" aria-label="Search trends">
+        </label>
+      </header>
+      <main>
+        <div class="toolbar" id="listToolbar">
+          <span class="live"><i></i>Live</span>
+          <span class="count" id="heroSignalCount">—</span>
+        </div>
+        <div id="trendList" class="rows" aria-live="polite"></div>
+      </main>
+    </div>
+  </div>
   <script src="./sheet.js"></script>
 </body>
 </html>
