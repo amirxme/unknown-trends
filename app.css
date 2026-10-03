@@ -50,11 +50,11 @@ button { cursor: pointer; }
   letter-spacing: 0.14em;
 }
 .mark {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   display: block;
   object-fit: cover;
-  mix-blend-mode: screen;
+  border-radius: 8px;
 }
 .sidebar nav { display: grid; gap: 4px; }
 .sidebar nav a {
