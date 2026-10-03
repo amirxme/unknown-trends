@@ -1,6 +1,5 @@
 const list = document.getElementById("trendList");
 const search = document.getElementById("searchInput");
-const count = document.getElementById("signalCount");
 const heroCount = document.getElementById("heroSignalCount");
 let signals = [];
 
@@ -12,7 +11,6 @@ function presentTitle(title) {
 }
 function render(items) {
   if (!list) return;
-  if (count) count.textContent = String(items.length);
   if (!items.length) {
     list.innerHTML = `<div class="signal-detail"><h2>No signals found</h2><p>Try another search.</p></div>`;
     return;
@@ -20,13 +18,14 @@ function render(items) {
   list.innerHTML = "";
   items.forEach((signal, index) => {
     const row = document.createElement("button");
-    row.className = "signal-row";
+    row.className = "signal-row" + (index === 0 ? " is-lead" : "");
     row.type = "button";
     const regions = signal.regions?.length || 0;
+    const score = Number(signal.globalScore) || 0;
     row.innerHTML = `
       <span class="signal-rank">${String(index + 1).padStart(2, "0")}</span>
       <span class="signal-copy"><h3>${escapeHtml(presentTitle(signal.title))}</h3><p>${regions} ${regions === 1 ? "region" : "regions"}</p></span>
-      <strong class="signal-score">${signal.globalScore ?? "—"}</strong>
+      <span class="signal-score"><b>${score}</b><i><span style="width:${score}%"></span></i></span>
     `;
     row.addEventListener("click", () => openSignal(signal));
     list.appendChild(row);
@@ -36,7 +35,7 @@ function openSignal(signal) {
   const regions = signal.regions || [];
   list.innerHTML = `
     <article class="signal-detail">
-      <button class="back-link" id="backLink" type="button">BACK</button>
+      <button class="back-link" id="backLink" type="button">BACK TO TRENDS</button>
       <p class="eyebrow">SIGNAL</p>
       <h2>${escapeHtml(presentTitle(signal.title))}</h2>
       <div class="detail-figures">
